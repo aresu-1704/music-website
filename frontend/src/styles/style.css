@@ -1,0 +1,28 @@
+/* Navbar */
+.navbar {
+    background: #111;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.nav-links a {
+    color: white;
+    margin-left: 1rem;
+    text-decoration: none;
+}
+
+.nav-links a:hover {
+    text-decoration: underline;
+}
+
+/* Footer */
+.footer {
+    background: #111;
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    margin-top: auto;
+}

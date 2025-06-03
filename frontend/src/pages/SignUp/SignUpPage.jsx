@@ -27,7 +27,7 @@ export default function SignUpPage() {
     };
 
     return (
-        <div className="d-flex justify-content-center align-items-center vh-100 pt-5">
+        <div className="d-flex justify-content-center align-items-center min-vh-100 pt-5 py-5">
             <div
                 className="card p-4 shadow"
                 style={{
@@ -37,7 +37,10 @@ export default function SignUpPage() {
                     borderRadius: '0.5rem'
                 }}
             >
-                <h2 className="mb-4 text-center" style={{ color: '#ff4d4f' }}>Đăng ký</h2>
+                <div className="d-flex flex-column align-items-center">
+                    <img src="/images/icon.png" alt="Logo" width="150" height="150" />
+                    <h2 className="mb-4 text-center" style={{ color: '#ff4d4f' }}>Đăng ký</h2>
+                </div>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-3">
                         <label className="form-label">Họ và tên</label>

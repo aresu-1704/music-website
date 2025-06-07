@@ -6,17 +6,23 @@ import SignInPage from './pages/SignIn/SignInPage'
 import SignUpPage from './pages/SignUp/SignUpPage'
 import HomePage from './pages/Home/HomePage';
 
+import { ToastContainer } from 'react-toastify/unstyled';
+import {AuthProvider} from "./context/AuthContext";
+
 const App = () => (
   <Router>
-      <MainLayout>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          {/* <Route path="/songs" element={<SongsPage />} />
+      <AuthProvider>
+          <MainLayout>
+              <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  {/* <Route path="/songs" element={<SongsPage />} />
           <Route path="/albums" element={<AlbumsPage />} /> */}
-          <Route path="/signin" element={<SignInPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
-        </Routes>
-      </MainLayout>
+                  <Route path="/signin" element={<SignInPage />} />
+                  <Route path="/signup" element={<SignUpPage />} />
+              </Routes>
+              <ToastContainer />
+          </MainLayout>
+      </AuthProvider>
   </Router>
 );
 

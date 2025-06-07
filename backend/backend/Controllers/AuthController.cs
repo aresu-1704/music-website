@@ -1,5 +1,10 @@
-﻿using backend.Services;
+﻿using backend.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson.Serialization.Attributes;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace backend.Controllers
@@ -15,27 +20,129 @@ namespace backend.Controllers
             _usersService = usersService;
         }
 
-        public class LoginRequest
-        {
-            public string Username { get; set; } = string.Empty;
-            public string Password { get; set; } = string.Empty;
-        }
-
-        //Post: api/auth/login
+        // Post: api/auth/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var (id, role) = await _usersService.VerifyLogin(request.Username, request.Password);
+            var token = await _usersService.VerifyLogin(request.Username, request.Password);
 
-            if (id == null)
+            if (token == null)
             {
-                return Unauthorized(new { message = "Invalid username or password" });
+                // Sai tài khoản hoặc mật khẩu → 401 Unauthorized
+                return Unauthorized(new LoginResponse
+                {
+                    Message = "Sai tên đăng nhập hoặc mật khẩu",
+                    Token = null
+                });
             }
-            else if (role == -1)
+            else if (token == "Tài khoản đã bị khóa")
             {
-                return Unauthorized(new { message = "Account banned" });
+                // Tài khoản bị khóa → 403 Forbidden
+                return StatusCode(StatusCodes.Status403Forbidden, new LoginResponse
+                {
+                    Message = "Tài khoản của bạn đã bị vô hiệu hóa",
+                    Token = null
+                });
             }
-            return Ok(new { message = "Login succesfully", userId = id, userRole = role});
+
+            // Đăng nhập thành công
+            return Ok(new LoginResponse
+            {
+                Message = "Đăng nhập thành công",
+                Token = token
+            });
         }
+
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            string resultMessage = await _usersService.Register(request.Username,
+                                                                request.FullName,
+                                                                request.Email,
+                                                                request.Password,
+                                                                request.PhoneNumber,
+                                                                request.DateOfBirth,
+                                                                request.Gender
+                                                                );
+            return Ok(new RegisterResponse
+            {
+                Message = resultMessage
+            });
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
+
+    //Lớp Request, Response
+
+    #region Đăng nhập
+    public class LoginRequest
+    {
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
+    public class LoginResponse
+    {
+        public string Message { get; set; } = string.Empty;
+        public string? Token { get; set; }
+    }
+    #endregion
+
+    # region Đăng ký
+    public class RegisterRequest
+    {
+        public string FullName { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        public int Gender { get; set; }
+    }
+
+    public class RegisterResponse
+    {
+        public string Message { get; set; } = string.Empty;
+    }
+    #endregion
 }

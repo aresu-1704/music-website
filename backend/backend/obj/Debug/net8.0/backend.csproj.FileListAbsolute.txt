@@ -36,3 +36,11 @@ C:\Users\anly1\Desktop\music-website\backend\backend\obj\Debug\net8.0\refint\bac
 C:\Users\anly1\Desktop\music-website\backend\backend\obj\Debug\net8.0\backend.pdb
 C:\Users\anly1\Desktop\music-website\backend\backend\obj\Debug\net8.0\backend.genruntimeconfig.cache
 C:\Users\anly1\Desktop\music-website\backend\backend\obj\Debug\net8.0\ref\backend.dll
+C:\Users\anly1\Desktop\music-website\backend\backend\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\anly1\Desktop\music-website\backend\backend\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\anly1\Desktop\music-website\backend\backend\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\anly1\Desktop\music-website\backend\backend\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\anly1\Desktop\music-website\backend\backend\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\anly1\Desktop\music-website\backend\backend\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\anly1\Desktop\music-website\backend\backend\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\anly1\Desktop\music-website\backend\backend\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll

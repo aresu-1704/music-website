@@ -3,20 +3,24 @@
   "WorkspaceRootPath": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\services\\usersservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\services\\usersservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\repositories\\iusersrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\repositories\\iusersrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\models\\users.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\models\\users.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\jsoncontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\jsoncontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -25,20 +29,38 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "DockedWidth": 202,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "UsersService.cs",
+              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\UsersService.cs",
+              "RelativeDocumentMoniker": "backend\\Services\\UsersService.cs",
+              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\UsersService.cs",
+              "RelativeToolTip": "backend\\Services\\UsersService.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAASwCMAAABVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-04T12:01:09.48Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "IUsersRepository.cs",
-              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Repositories\\IUsersRepository.cs",
-              "RelativeDocumentMoniker": "backend\\Repositories\\IUsersRepository.cs",
-              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Repositories\\IUsersRepository.cs",
-              "RelativeToolTip": "backend\\Repositories\\IUsersRepository.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "backend\\Controllers\\AuthController.cs",
+              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "backend\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-04T06:25:12.214Z"
+              "WhenOpened": "2025-06-04T07:07:19.076Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
@@ -48,34 +70,40 @@
               "RelativeDocumentMoniker": "backend\\Repositories\\UserRepository.cs",
               "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Repositories\\UserRepository.cs",
               "RelativeToolTip": "backend\\Repositories\\UserRepository.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAmwBUAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAmwBYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-04T06:24:00.919Z"
+            }
+          ]
+        },
+        {
+          "DockedWidth": 198,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "JsonContext.cs",
+              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\JsonContext.cs",
+              "RelativeDocumentMoniker": "backend\\JsonContext.cs",
+              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\JsonContext.cs",
+              "RelativeToolTip": "backend\\JsonContext.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-05T06:38:11.304Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Program.cs",
               "RelativeDocumentMoniker": "backend\\Program.cs",
               "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Program.cs",
               "RelativeToolTip": "backend\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAxAAAAAAAAAA==",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAEkAAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-04T06:16:34.444Z",
+              "WhenOpened": "2025-06-05T06:39:55.356Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Users.cs",
-              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Models\\Users.cs",
-              "RelativeDocumentMoniker": "backend\\Models\\Users.cs",
-              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Models\\Users.cs",
-              "RelativeToolTip": "backend\\Models\\Users.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-04T06:08:10.098Z"
             }
           ]
         }

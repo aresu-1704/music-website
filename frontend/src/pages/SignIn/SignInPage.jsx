@@ -13,7 +13,7 @@ export default function SignInPage() {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const { login } = useAuth();
+    const { user, login } = useAuth();
 
     const navigate = useNavigate();
 
@@ -160,6 +160,10 @@ export default function SignInPage() {
 
     return (
         <>
+            {user.isLoggedIn && (
+                navigate('/')
+            )}
+
             {isSubmitting && (
                 <>
                     <div

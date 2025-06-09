@@ -4,6 +4,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import {Spinner} from "react-bootstrap";
+import {useAuth} from '../../context/AuthContext'
 
 export default function SignUpPage() {
     // Các state input như bạn có
@@ -20,6 +21,8 @@ export default function SignUpPage() {
     
     // Thêm state lưu lỗi
     const [errors, setErrors] = useState({});
+
+    const { user } = useAuth();
 
     // Mảng ngày tháng năm bạn giữ nguyên
     const days = Array.from({ length: 31 }, (_, i) => i + 1);
@@ -214,6 +217,10 @@ export default function SignUpPage() {
 
     return (
         <>
+            {user.isLoggedIn && (
+                navigate('/')
+            )}
+
             {isSubmitting && (
                 <>
                     <div

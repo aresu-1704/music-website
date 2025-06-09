@@ -36,7 +36,7 @@
               "RelativeDocumentMoniker": "backend\\Services\\JWTService.cs",
               "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\JWTService.cs",
               "RelativeToolTip": "backend\\Services\\JWTService.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAxwBcAAAAoAAAAAAAAAA==",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABcAAAAoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-08T12:32:14.506Z",
               "EditorCaption": ""
@@ -51,8 +51,7 @@
               "RelativeToolTip": "backend\\Services\\UsersService.cs",
               "ViewState": "AgIAAFkAAAAAAAAAAAAwwHAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-08T10:09:32.144Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-08T10:09:32.144Z"
             },
             {
               "$type": "Document",

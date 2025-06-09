@@ -1,4 +1,5 @@
 ﻿using backend.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Bson.Serialization.Attributes;
@@ -76,44 +77,30 @@ namespace backend.Controllers
             });
         }
 
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
 
+            if (string.IsNullOrEmpty(token))
+                return BadRequest("Token is missing");
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            var result = await _usersService.Logout(token);
+            if (result == true)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest("Invalid token");
+            }
+        }
     }
 
-    //Lớp Request, Response
+    
 
+    //Lớp Request, Response
     #region Đăng nhập
     public class LoginRequest
     {
@@ -145,4 +132,11 @@ namespace backend.Controllers
         public string Message { get; set; } = string.Empty;
     }
     #endregion
+
+    //#region Đăng xuất
+    //public class LogoutRequest
+    //{
+    //    public str
+    //}
+    //#endregion
 }

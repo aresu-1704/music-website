@@ -3,6 +3,7 @@ import { Google, Facebook, Apple } from 'react-bootstrap-icons';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
+import {Spinner} from "react-bootstrap";
 
 export default function SignUpPage() {
     // Các state input như bạn có
@@ -149,7 +150,7 @@ export default function SignUpPage() {
                     closeOnClick: true,
                     pauseOnHover: false,
                     theme: "colored"
-                });
+                    });
                 }
                 else {
                     toast.success("Đăng ký thành công !", {
@@ -164,6 +165,15 @@ export default function SignUpPage() {
                         navigate('/signin');
                     }, 2000)                    
                 }
+            }
+            else if (response.status === 500) {
+                toast.error("Máy chủ đang bảo trì, vui lòng thử lại sau ít phút !", {
+                    position: "top-center",
+                    autoClose: 2000,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    theme: "colored",
+                });
             }
             else {
                 toast.error("Đăng ký thất bại. Lỗi định dạng dữ liệu !", {
@@ -204,7 +214,30 @@ export default function SignUpPage() {
 
     return (
         <>
-            {
+            {isSubmitting && (
+                <>
+                    <div
+                        className="loading-overlay"
+                        style={{
+                            position: 'fixed',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            zIndex: 9999,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <Spinner animation="border" variant="light" style={{}} />
+                    </div>
+                    <ToastContainer />
+                </>
+            )}
+
+            {!isSubmitting && (
                 <div className="d-flex justify-content-center align-items-center min-vh-100 pt-5 py-5">
                     <div
                         className="card p-4 shadow"
@@ -406,7 +439,7 @@ export default function SignUpPage() {
                         </div>
                     </div>
                 </div>
-            }
+            )}
             <ToastContainer />
         </>
     );

@@ -2,6 +2,7 @@
 using backend.Models;
 using backend.Utils.Securities;
 using MongoDB.Driver;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace backend.Services
 {
@@ -9,10 +10,12 @@ namespace backend.Services
     {
         private readonly IUserRepository _usersRepository;
         private readonly IJWTService _jwtService;
-        public UsersService(IUserRepository usersRepository, IJWTService jwtService)
+        private readonly ITokenBlacklistService _tokenBlacklistService;
+        public UsersService(IUserRepository usersRepository, IJWTService jwtService, ITokenBlacklistService tokenBlaclistService)
         {
             _usersRepository = usersRepository;
             _jwtService = jwtService;
+            _tokenBlacklistService = tokenBlaclistService;
         }
 
         public async Task<string?> VerifyLogin(string username, string password)
@@ -66,7 +69,7 @@ namespace backend.Services
                     CreatedAt = DateTime.UtcNow,
                     Status = true,
                     LastLogin = null,
-                    Role = 1,
+                    Role = "normal",
                     IsEmailVerified = false,
                     IsPhoneVerified = false,
                     AvatarUrl = null,
@@ -85,7 +88,44 @@ namespace backend.Services
                 return "Đăng ký thất bại.";
             }
         }
-        //Task UpdateAsync(string id, Users user);
-        //Task DeleteAsync(string id);
+        
+        public async Task<bool> Logout(string token)
+        {
+            try
+            {
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                var id = jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
+
+                if (string.IsNullOrEmpty(id))
+                {
+                    return false;
+                }
+
+                Users user = await _usersRepository.GetByIdAsync(id);
+                if (user != null)
+                {
+                    user.LastLogin = DateTime.UtcNow;
+                    await _usersRepository.UpdateAsync(id, user);
+
+                    var expires = jwtToken.ValidTo;
+
+                    await _tokenBlacklistService.AddToBlacklistAsync(id, expires);
+
+                    return true;
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to log out: {id} not exist");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                return false;
+            }    
+            return false;
+        }
     }
 }

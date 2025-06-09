@@ -13,10 +13,12 @@ export const AuthProvider = ({ children }) => {
                 const decoded = jwtDecode(token);
                 setUser({
                     id: decoded.sub,
+                    avt: null,
                     role: decoded.role,
                     fullname: decoded.fullname,
                     isLoggedIn: true,
                 });
+
             } catch (err) {
                 console.error("Token không hợp lệ");
                 setUser({ isLoggedIn: false });
@@ -30,17 +32,33 @@ export const AuthProvider = ({ children }) => {
         const decoded = jwtDecode(token);
         setUser({
             id: decoded.sub,
+            avt: null,
             role: decoded.role,
             fullname: decoded.fullname,
             isLoggedIn: true,
         });
+        return user.role;
     };
 
 
     // Hàm log out
-    const logout = () => {
-        localStorage.removeItem('token');
-        setUser({ isLoggedIn: false });
+    const logout = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            await fetch('http://localhost:5270/api/Auth/logout', {
+                method: 'POST',
+                headers: {
+                    "ContentType": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            })
+            localStorage.removeItem('token');
+            setUser({isLoggedIn: false});
+        }
+        catch (error) {
+            localStorage.removeItem('token');
+            setUser({isLoggedIn: false});
+        }
     };
 
     return (

@@ -26,3 +26,18 @@
     background-color: rgba(255, 255, 255, 0.1) !important; /* ✅ hover nhẹ */
     color: #ff4d4f !important; /* ✅ màu đỏ khi hover (hoặc để trắng nếu muốn đơn giản) */
 }
+
+.navbar .nav-link {
+    transition: color 0.3s ease;
+}
+
+/* Hover sẽ nổi đỏ */
+.navbar .nav-link:hover {
+    color: #dc3545 !important; /* Bootstrap màu đỏ danger */
+}
+
+/* Nếu đã active thì giữ nguyên màu đỏ, không thay đổi */
+.navbar .nav-link.active {
+    color: #dc3545 !important;
+    font-weight: 600;
+}

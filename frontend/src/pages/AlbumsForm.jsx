@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
-import { getTopTracks, searchTracks } from '../../services/spotifyService';
+import { getNewReleases, searchAlbums } from '../services/spotifyService';
 
-const SongsPage = () => {
-  const [tracks, setTracks] = useState([]);
+const AlbumsForm = () => {
+  const [albums, setAlbums] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    loadTopTracks();
+    loadNewReleases();
   }, []);
 
-  const loadTopTracks = async () => {
+  const loadNewReleases = async () => {
     try {
-      const topTracks = await getTopTracks();
-      setTracks(topTracks);
+      const releases = await getNewReleases();
+      setAlbums(releases);
       setLoading(false);
     } catch (err) {
-      console.error('Error loading top tracks:', err);
-      setError('Failed to load tracks');
+      console.error('Error loading new releases:', err);
+      setError('Failed to load albums');
       setLoading(false);
     }
   };
@@ -30,12 +30,12 @@ const SongsPage = () => {
 
     setLoading(true);
     try {
-      const results = await searchTracks(searchQuery);
-      setTracks(results);
+      const results = await searchAlbums(searchQuery);
+      setAlbums(results);
       setLoading(false);
     } catch (err) {
-      console.error('Error searching tracks:', err);
-      setError('Failed to search tracks');
+      console.error('Error searching albums:', err);
+      setError('Failed to search albums');
       setLoading(false);
     }
   };
@@ -45,14 +45,14 @@ const SongsPage = () => {
 
   return (
     <Container className="py-4">
-      <h2 className="mb-4">Songs</h2>
+      <h2 className="mb-4">Albums</h2>
       
       <Form onSubmit={handleSearch} className="mb-4">
         <Row>
           <Col md={8}>
             <Form.Control
               type="text"
-              placeholder="Search for songs..."
+              placeholder="Search for albums..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -66,22 +66,22 @@ const SongsPage = () => {
       </Form>
 
       <Row>
-        {tracks.map((track, index) => (
+        {albums.map((album, index) => (
           <Col key={index} md={4} className="mb-4">
             <Card>
               <Card.Img 
                 variant="top" 
-                src={track.album?.images[0]?.url} 
-                alt={track.name}
+                src={album.images[0]?.url} 
+                alt={album.name}
                 style={{ height: '200px', objectFit: 'cover' }}
               />
               <Card.Body>
-                <Card.Title>{track.name}</Card.Title>
+                <Card.Title>{album.name}</Card.Title>
                 <Card.Text>
-                  {track.artists?.map(artist => artist.name).join(', ')}
+                  {album.artists?.map(artist => artist.name).join(', ')}
                 </Card.Text>
                 <Card.Text className="text-muted">
-                  Album: {track.album?.name}
+                  Released: {new Date(album.release_date).toLocaleDateString()}
                 </Card.Text>
               </Card.Body>
             </Card>
@@ -92,4 +92,4 @@ const SongsPage = () => {
   );
 };
 
-export default SongsPage; 
+export default AlbumsForm;

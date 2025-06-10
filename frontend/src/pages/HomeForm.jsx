@@ -1,6 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default function HomePage() {
+export default function HomeForm() {
     return (
         <>
             {/* music_area */}
@@ -22,7 +22,7 @@ export default function HomePage() {
                                     </div>
                                 </div>
                                 <div className="col-md-3 text-md-end mt-3 mt-md-0">
-                                    <a href="/" className="btn btn-outline-light">Buy Album</a>
+                                    <a href="/public" className="btn btn-outline-light">Buy Album</a>
                                 </div>
                             </div>
                         </div>
@@ -92,7 +92,7 @@ export default function HomePage() {
                                         </div>
                                     </div>
                                     <div className="col-md-3 text-md-end mt-3 mt-md-0">
-                                        <a href="/" className="btn btn-outline-light">Buy Album</a>
+                                        <a href="/public" className="btn btn-outline-light">Buy Album</a>
                                     </div>
                                 </div>
                             </div>

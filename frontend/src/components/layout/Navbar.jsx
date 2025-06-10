@@ -4,10 +4,12 @@ import React, { useState } from "react";
 import { Modal, Button, Dropdown } from "react-bootstrap";
 import { FaUser, FaShieldAlt, FaSignOutAlt, FaCogs, FaHeart, FaEye } from 'react-icons/fa';
 import '../../styles/Navbar.css'
+import { useQueryClient } from "@tanstack/react-query";
 
 const Navbar = () => {
     const location = useLocation();
     const { user, logout } = useAuth();
+    const queryClient = useQueryClient();
 
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -20,6 +22,7 @@ const Navbar = () => {
     const handleClose = () => setShowLogoutModal(false);
     const handleConfirmLogout = () => {
         logout();
+        queryClient.invalidateQueries(['profile']);
         setShowLogoutModal(false);
         navigate('/');
     };
@@ -65,6 +68,9 @@ const Navbar = () => {
                             <ul className="navbar-nav mx-auto gap-3 d-flex align-items-center">
                                 <li className="nav-item">
                                     <Link to="/" className={`nav-link ${isActive("/") ? "active text-danger fw-semibold" : "text-secondary"}`}>Trang chủ</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link to="/discover" className={`nav-link ${isActive("/discover") ? "active text-danger fw-semibold" : "text-secondary"}`}>Khám phá</Link>
                                 </li>
                                 <li className="nav-item">
                                     <Link to="/artist" className={`nav-link ${isActive("/artist") ? "active text-danger fw-semibold" : "text-secondary"}`}>Nghệ sĩ</Link>
@@ -185,7 +191,7 @@ const Navbar = () => {
                                                     }}
                                                 >
                                                     <img
-                                                        src={user.avt ? user.avt : "/images/default-avatar.png"}
+                                                        src={user.avatar ? user.avatar : "/images/default-avatar.png"}
                                                         alt="Avatar"
                                                         style={{
                                                             width: "100%",
@@ -202,7 +208,7 @@ const Navbar = () => {
                                                 <Dropdown.Item as={Link} to={`/profile/${user.id}`}>
                                                     <FaUser className="me-2" /> Thông tin cá nhân
                                                 </Dropdown.Item>
-                                                <Dropdown.Item as={Link} to="/upgrade">
+                                                <Dropdown.Item as={Link} to={`/upgrade/${user.id}}`}>
                                                     <FaCogs className="me-2" /> Nâng cấp tài khoản
                                                 </Dropdown.Item>
                                                 <Dropdown.Item as={Link} to="/likes">
@@ -257,7 +263,7 @@ const Navbar = () => {
                                                 }}
                                             >
                                                 <img
-                                                    src={user.avt ? user.avt : "/images/default-avatar.png"}
+                                                    src={user.avatar ? user.avatar : "/images/default-avatar.png"}
                                                     alt="Avatar"
                                                     style={{
                                                         width: "100%",
@@ -273,9 +279,6 @@ const Navbar = () => {
                                         <Dropdown.Menu className="custom-dropdown-menu">
                                             <Dropdown.Item as={Link} to={`/profile/${user.id}`}>
                                                 <FaUser className="me-2" /> Thông tin cá nhân
-                                            </Dropdown.Item>
-                                            <Dropdown.Item as={Link} to="/upgrade">
-                                                <FaCogs className="me-2" /> Nâng cấp tài khoản
                                             </Dropdown.Item>
                                             <Dropdown.Item as={Link} to="/likes">
                                                 <FaHeart className="me-2" /> Đã thích

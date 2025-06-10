@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
-import { getRecommendations, searchTracks, loginToSpotify } from '../../services/spotifyService';
+import { getRecommendations, searchTracks, loginToSpotify } from '../services/spotifyService';
 
-const DiscoverPage = () => {
+const DiscoverForm = () => {
   const [tracks, setTracks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -132,4 +132,4 @@ const DiscoverPage = () => {
   );
 };
 
-export default DiscoverPage; 
+export default DiscoverForm;

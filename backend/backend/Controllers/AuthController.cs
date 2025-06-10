@@ -25,7 +25,7 @@ namespace backend.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            var token = await _usersService.VerifyLogin(request.Username, request.Password);
+            var (token, avatarBase64) = await _usersService.VerifyLogin(request.Username, request.Password);
 
             if (token == null)
             {
@@ -33,7 +33,8 @@ namespace backend.Controllers
                 return Unauthorized(new LoginResponse
                 {
                     Message = "Sai tên đăng nhập hoặc mật khẩu",
-                    Token = null
+                    Token = null,
+                    AvatarBase64 = avatarBase64,
                 });
             }
             else if (token == "Tài khoản đã bị khóa")
@@ -42,7 +43,9 @@ namespace backend.Controllers
                 return StatusCode(StatusCodes.Status403Forbidden, new LoginResponse
                 {
                     Message = "Tài khoản của bạn đã bị vô hiệu hóa",
-                    Token = null
+                    Token = null,
+                    AvatarBase64 = avatarBase64,
+                   
                 });
             }
 
@@ -50,7 +53,8 @@ namespace backend.Controllers
             return Ok(new LoginResponse
             {
                 Message = "Đăng nhập thành công",
-                Token = token
+                Token = token,
+                AvatarBase64 = avatarBase64
             });
         }
 
@@ -112,6 +116,7 @@ namespace backend.Controllers
     {
         public string Message { get; set; } = string.Empty;
         public string? Token { get; set; }
+        public string? AvatarBase64 { get; set; }
     }
     #endregion
 

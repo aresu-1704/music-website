@@ -18,7 +18,7 @@ namespace backend.Services
             _tokenBlacklistService = tokenBlaclistService;
         }
 
-        public async Task<string?> VerifyLogin(string username, string password)
+        public async Task<(string?, string?)> VerifyLogin(string username, string password)
         {
             var loginUser = await _usersRepository.GetByUsernameAsync(username);
 
@@ -26,7 +26,7 @@ namespace backend.Services
             {
                 if(loginUser.Status == false)
                 {
-                    return "Tài khoản đã bị khóa";
+                    return ("Tài khoản đã bị khóa", null);
                 }
 
                 var salt = loginUser.Salt;
@@ -36,16 +36,32 @@ namespace backend.Services
 
                 if(hashPassword == storePassword)
                 {
-                    return _jwtService.GenerateJwtToken(loginUser.Id, loginUser.Name, loginUser.Role.ToString()); ;
+                    string avatarBase64 = null;
+                    if (!string.IsNullOrEmpty(loginUser.AvatarUrl))
+                    {
+                        try
+                        {
+                            byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(loginUser.AvatarUrl);
+                            avatarBase64 = Convert.ToBase64String(imageBytes);
+                            avatarBase64 = $"data:image/jpeg;base64,{avatarBase64}";
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Lỗi khi đọc ảnh: {ex.Message}");
+                            avatarBase64 = null;
+                        }
+                    }
+                    string token = _jwtService.GenerateJwtToken(loginUser.Id, loginUser.Name, loginUser.Role.ToString());
+                    return (token, avatarBase64);
                 }
                 else
                 {
-                    return null;
+                    return (null, null);
                 }
             }
             else
             {
-                return null;
+                return (null, null);
             }
         }
 
@@ -126,6 +142,40 @@ namespace backend.Services
                 return false;
             }    
             return false;
+        }
+
+        public async Task<Users> GetProfileInfo(string userID)
+        {
+            try
+            {
+                return await _usersRepository.GetByIdAsync(userID);
+            }
+            catch (Exception ex) {
+                return null;
+            }
+        }
+
+        public async Task<string> UpdatePersonalData(string userID, string fullname, int gender, DateTime dateOfBirth, string avtUrl = null)
+        {
+            var user = await _usersRepository.GetByIdAsync(userID);
+            if (user != null)
+            {
+                user.Name = fullname;
+                user.Gender = gender;
+                user.DateOfBirth = dateOfBirth;
+                if (avtUrl != null)
+                {
+                    user.AvatarUrl = avtUrl;
+                }                
+
+                await _usersRepository.UpdateAsync(userID, user);
+
+                return "Success";
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

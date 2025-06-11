@@ -5,37 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7fcf1a4e-08d2-4244-ab25-c37e69d2fb59" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/backend/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/app.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/bin/Debug/net8.0/backend.dll" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/bin/Debug/net8.0/backend.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/bin/Debug/net8.0/backend.exe" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/bin/Debug/net8.0/backend.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/bin/Debug/net8.0/backend.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/bin/Debug/net8.0/backend.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/apphost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/apphost.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.AssemblyInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.AssemblyInfoInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.GeneratedMSBuildEditorConfig.editorconfig" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.GeneratedMSBuildEditorConfig.editorconfig" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.MvcApplicationPartsAssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.MvcApplicationPartsAssemblyInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.assets.cache" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.assets.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.csproj.AssemblyReference.cache" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.csproj.AssemblyReference.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.csproj.CoreCompileInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.csproj.CoreCompileInputs.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.csproj.FileListAbsolute.txt" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.csproj.FileListAbsolute.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.dll" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.genruntimeconfig.cache" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.genruntimeconfig.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.pdb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/backend.sourcelink.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/ref/backend.dll" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/ref/backend.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/refint/backend.dll" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/refint/backend.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/rjsmcshtml.dswa.cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/rjsmcshtml.dswa.cache.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/rjsmrazor.dswa.cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/rjsmrazor.dswa.cache.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/rpswa.dswa.cache.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/Debug/net8.0/rpswa.dswa.cache.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/backend.csproj.nuget.dgspec.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/backend.csproj.nuget.dgspec.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/backend.csproj.nuget.g.props" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/backend.csproj.nuget.g.props" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/project.assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/project.assets.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/obj/project.nuget.cache" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/obj/project.nuget.cache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/routes/spotify.js" beforeDir="false" afterPath="$PROJECT_DIR$/backend/routes/spotify.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Discover/DiscoverPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Discover/DiscoverPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Home/HomePage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Home/HomePage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/services/spotifyService.js" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,24 +37,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;npm.start.executor&quot;: &quot;Run&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\WebStorm 2025.1.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "HuyBranch",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "npm.start.executor": "Run",
+    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\WebStorm 2025.1.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="start" type="js.build_tools.npm" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/frontend/package.json" />

@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Container, Nav, Tab, Row, Col, Spinner} from 'react-bootstrap';
+import {Container, Nav, Tab, Row, Col, Spinner, Button, Alert, Card} from 'react-bootstrap';
 import { Person, GeoAlt, ShieldLock, Link45deg } from 'react-bootstrap-icons';
 import '../styles/Profile.css'
 import {useNavigate, useParams} from "react-router-dom";
@@ -15,7 +15,7 @@ export default function ProfileForm() {
     const { userId } = useParams();
     const { data: userData, isLoading, error, refetch } = useUserProfile(userId);
     const [ isSubmitting, setSubmitting ] = useState(false);
-    const { logout } = useAuth();
+    const { user, logout } = useAuth();
 
     if (userData == null){
         toast.error("Không thể kết nối đến máy chủ", { position: "top-center", autoClose: 2000, pauseOnHover: false });
@@ -32,6 +32,11 @@ export default function ProfileForm() {
     if(error){
         toast.error(error, { position: "top-center", autoClose: 3000 });
     }
+
+    const expiredDate = new Date(userData.expiredDate);
+    const today = new Date();
+    const diffTime = expiredDate.getTime() - today.getTime();
+    const daysRemaining = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     const dob = userData.dateOfBirth ? new Date(userData.dateOfBirth) : new Date();
     const initialValues = {
@@ -72,9 +77,13 @@ export default function ProfileForm() {
                 logout();
                 toast.error("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại", {
                     position: "top-center",
-                    autoClose: 2000
+                    autoClose: 2000,
+                    pauseOnHover: false,
                 });
-                navigate('/signin');
+                setTimeout(() => {
+                    navigate('/signin');
+                }, 2500)
+
             } else if (result === "Không thể kết nối đến máy chủ") {
                 toast.error("Không thể kết nối đến máy chủ", { position: "top-center", autoClose: 2000, pauseOnHover: false });
             } else {
@@ -107,7 +116,9 @@ export default function ProfileForm() {
                     position: "top-center",
                     autoClose: 2000
                 });
-                navigate('/signin');
+                setTimeout(() => {
+                    navigate('/signin');
+                }, 2000)
             } else if (result === "Không thể kết nối đến máy chủ") {
                 toast.error("Không thể kết nối đến máy chủ", { position: "top-center", autoClose: 2000, pauseOnHover: false });
             } else {
@@ -147,6 +158,13 @@ export default function ProfileForm() {
                                         <Link45deg className="me-2" /> Liên kết mạng xã hội
                                     </Nav.Link>
                                 </Nav.Item>
+                                {user.role !== "admin" && user.role !== "normal" && user.role !== "artist" && (
+                                    <Nav.Item>
+                                        <Nav.Link eventKey="tier">
+                                            <ShieldLock className="me-2" /> Gói nâng cấp tài khoản
+                                        </Nav.Link>
+                                    </Nav.Item>
+                                )}
                                 <Nav.Item>
                                     <Nav.Link eventKey="security">
                                         <ShieldLock className="me-2" /> Mật khẩu & Bảo mật
@@ -154,117 +172,179 @@ export default function ProfileForm() {
                                 </Nav.Item>
                             </Nav>
                         </Col>
+
+
+
                         <Col xl={9} lg={8} md={7}>
                             <Tab.Content className="p-4 bg-dark rounded shadow text-light">
                                 <Tab.Pane eventKey="profile">
-                                    <h2 className={"mb-3"}>Thông tin cá nhân</h2>
-                                    {isSubmitting && (
-                                        <div className="d-flex justify-content-center align-items-center">
-                                            <Spinner animation="border" role="status" />
-                                        </div>
-                                    )}
+                                    <Card className="bg-dark text-light shadow-lg p-4 rounded-4">
+                                        <h2 className={"mb-3 border-bottom pb-2"}>👤 Thông tin cá nhân</h2>
+                                        {isSubmitting && (
+                                            <div className="d-flex justify-content-center align-items-center">
+                                                <Spinner animation="border" role="status" />
+                                            </div>
+                                        )}
 
-                                    {!isSubmitting && (
-                                        <Formik
-                                            initialValues={initialValues}
-                                            validationSchema={profileSchema}
-                                            enableReinitialize
-                                            onSubmit={async (values) => {
-                                                setSubmitting(true)
+                                        {!isSubmitting && (
+                                            <Formik
+                                                initialValues={initialValues}
+                                                validationSchema={profileSchema}
+                                                enableReinitialize
+                                                onSubmit={async (values) => {
+                                                    setSubmitting(true)
 
-                                                const dateOfBirth = `${values.year.padStart(2, '0')}-${values.month.padStart(2, '0')}-${values.day.padStart(2, '0')}T00:00:00Z`;
+                                                    const dateOfBirth = `${values.year.padStart(2, '0')}-${values.month.padStart(2, '0')}-${values.day.padStart(2, '0')}T00:00:00Z`;
 
-                                                if (values.avatarFile) {
-                                                    const formData = new FormData();
-                                                    formData.append('Fullname', values.fullname);
-                                                    formData.append('Gender', values.gender.toString());
-                                                    formData.append('DateOfBirth', dateOfBirth);
-                                                    formData.append('Avatar', values.avatarFile);
+                                                    if (values.avatarFile) {
+                                                        const formData = new FormData();
+                                                        formData.append('Fullname', values.fullname);
+                                                        formData.append('Gender', values.gender.toString());
+                                                        formData.append('DateOfBirth', dateOfBirth);
+                                                        formData.append('Avatar', values.avatarFile);
 
-                                                    await handleSubmitAvatar(formData);
-                                                }
-                                                else {
-                                                    const submitData = {
-                                                        fullname: values.fullname,
-                                                        gender: values.gender,
-                                                        dateOfBirth,
-                                                    };
+                                                        await handleSubmitAvatar(formData);
+                                                    }
+                                                    else {
+                                                        const submitData = {
+                                                            fullname: values.fullname,
+                                                            gender: values.gender,
+                                                            dateOfBirth,
+                                                        };
 
-                                                    await handleSubmitNoAvt(submitData);
-                                                }
+                                                        await handleSubmitNoAvt(submitData);
+                                                    }
 
-                                            }}
-                                        >
-                                            {({ values, setFieldValue, resetForm }) => (
-                                                <Form>
-                                                    {/* Avatar + nút đổi */}
-                                                    <div className="text-center mb-4">
-                                                        <img
-                                                            src={values.avatarBase64 || values.avatarPreview || '/images/default-avatar.jpg'}
-                                                            alt="Avatar"
-                                                            className="rounded-circle"
-                                                            style={{ width: '120px', height: '120px', objectFit: 'cover' }}
-                                                        />
-                                                        <div className="mt-2">
-                                                            <label className="btn btn-outline-light btn-sm">
-                                                                Đổi ảnh
-                                                                <input
-                                                                    type="file"
-                                                                    accept="image/*"
-                                                                    hidden
-                                                                    onChange={(e) => {
-                                                                        const file = e.target.files[0];
-                                                                        if (file) {
-                                                                            setFieldValue("avatarBase64", null);
-                                                                            setFieldValue("avatarFile", file);
-                                                                            setFieldValue("avatarPreview", URL.createObjectURL(file));
-                                                                        }
-                                                                    }}
-                                                                />
-                                                            </label>
+                                                }}
+                                            >
+                                                {({ values, setFieldValue, resetForm }) => (
+                                                    <Form>
+                                                        {/* Avatar + nút đổi */}
+                                                        <div className="text-center mb-4">
+                                                            <img
+                                                                src={values.avatarBase64 || values.avatarPreview || '/images/default-avatar.jpg'}
+                                                                alt="Avatar"
+                                                                className="rounded-circle"
+                                                                style={{ width: '120px', height: '120px', objectFit: 'cover' }}
+                                                            />
+                                                            <div className="mt-2">
+                                                                <label className="btn btn-outline-light btn-sm">
+                                                                    Đổi ảnh
+                                                                    <input
+                                                                        type="file"
+                                                                        accept="image/*"
+                                                                        hidden
+                                                                        onChange={(e) => {
+                                                                            const file = e.target.files[0];
+                                                                            if (file) {
+                                                                                setFieldValue("avatarBase64", null);
+                                                                                setFieldValue("avatarFile", file);
+                                                                                setFieldValue("avatarPreview", URL.createObjectURL(file));
+                                                                            }
+                                                                        }}
+                                                                    />
+                                                                </label>
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    {/* Họ tên */}
-                                                    <div className="mb-3">
-                                                        <label>Họ tên</label>
-                                                        <Field name="fullname" type="text" className="form-control" />
-                                                    </div>
-
-                                                    {/* Giới tính */}
-                                                    <div className="mb-3">
-                                                        <label>Giới tính</label>
-                                                        <Field as="select" name="gender" className="form-control">
-                                                            <option value={0}>Nam</option>
-                                                            <option value={1}>Nữ</option>
-                                                            <option value={2}>Khác</option>
-                                                            <option value={3}>Không muốn trả lời</option>
-                                                        </Field>
-                                                    </div>
-
-                                                    {/* Ngày sinh */}
-                                                    <div className="mb-3">
-                                                        <label>Ngày sinh</label>
-                                                        <div className="d-flex gap-2">
-                                                            <Field name="day" type="number" placeholder="Ngày" className="form-control" />
-                                                            <Field name="month" type="number" placeholder="Tháng" className="form-control" />
-                                                            <Field name="year" type="number" placeholder="Năm" className="form-control" />
+                                                        {/* Họ tên */}
+                                                        <div className="mb-3">
+                                                            <label>Họ tên</label>
+                                                            <Field name="fullname" type="text" className="form-control" />
                                                         </div>
-                                                    </div>
 
-                                                    {/* Nút submit */}
-                                                    <div className="text-end mt-4 d-flex justify-content-end gap-2">
-                                                        <button type="button" onClick={() => resetForm()} className="btn btn-dark">Hủy</button>
-                                                        <button type="submit" className="btn btn-danger">Cập nhật</button>
-                                                    </div>
-                                                </Form>
-                                            )}
-                                        </Formik>
-                                    )}
+                                                        {/* Giới tính */}
+                                                        <div className="mb-3">
+                                                            <label>Giới tính</label>
+                                                            <Field as="select" name="gender" className="form-control">
+                                                                <option value={0}>Nam</option>
+                                                                <option value={1}>Nữ</option>
+                                                                <option value={2}>Khác</option>
+                                                                <option value={3}>Không muốn trả lời</option>
+                                                            </Field>
+                                                        </div>
+
+                                                        {/* Ngày sinh */}
+                                                        <div className="mb-3">
+                                                            <label>Ngày sinh</label>
+                                                            <div className="d-flex gap-2">
+                                                                <Field name="day" type="number" placeholder="Ngày" className="form-control" />
+                                                                <Field name="month" type="number" placeholder="Tháng" className="form-control" />
+                                                                <Field name="year" type="number" placeholder="Năm" className="form-control" />
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Nút submit */}
+                                                        <div className="text-end mt-4 d-flex justify-content-end gap-2">
+                                                            <button type="button" onClick={() => resetForm()} className="btn btn-dark">Hủy</button>
+                                                            <button type="submit" className="btn btn-danger">Cập nhật</button>
+                                                        </div>
+                                                    </Form>
+                                                )}
+                                            </Formik>
+                                        )}
+                                    </Card>
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="contact">[Form Địa chỉ liên lạc]</Tab.Pane>
                                 <Tab.Pane eventKey="social">[Liên kết mạng xã hội]</Tab.Pane>
-                                <Tab.Pane eventKey="security">[Mật khẩu & bảo mật]</Tab.Pane>
+                                <Tab.Pane eventKey="tier">
+                                    <Card className="bg-dark text-light shadow-lg p-4 rounded-4">
+                                        <h2 className="mb-4 border-bottom pb-2">✨ Quản lý gói nâng cấp</h2>
+
+                                        <Row className="mb-3 align-items-center">
+                                            <Col md={4} className="fw-bold d-flex align-items-center">
+                                                <i className="bi bi-box-seam me-2" /> Tên gói:
+                                            </Col>
+                                            <Col md={8}>
+                                                <span className="text-info">{user.role}</span>
+                                            </Col>
+                                        </Row>
+
+                                        <Row className="mb-3 align-items-center">
+                                            <Col md={4} className="fw-bold d-flex align-items-center">
+                                                <i className="bi bi-calendar-check me-2" /> Ngày hết hạn:
+                                            </Col>
+                                            <Col md={8}>
+                                                <span className="text-warning">{expiredDate.toLocaleDateString('vi-VN')}</span>
+                                            </Col>
+                                        </Row>
+
+                                        <Row className="mb-3 align-items-center">
+                                            <Col md={4} className="fw-bold d-flex align-items-center">
+                                                <i className="bi bi-hourglass-split me-2" /> Số ngày còn lại:
+                                            </Col>
+                                            <Col md={8}>
+                                                {daysRemaining > 0 ? (
+                                                    <span className={`badge bg-${daysRemaining <= 7 ? 'warning text-dark' : 'success'}`}>
+                                                      {daysRemaining} ngày
+                                                    </span>
+                                                ) : (
+                                                    <span className="badge bg-danger">Đã hết hạn</span>
+                                                )}
+                                            </Col>
+                                        </Row>
+
+                                        {daysRemaining <= 7 && (
+                                            <Alert variant="warning" className="rounded-3 mt-3">
+                                                ⚠️ Gói của bạn sắp hết hạn. Vui lòng gia hạn để không bị gián đoạn dịch vụ.
+                                            </Alert>
+                                        )}
+
+                                        <div className="text-end mt-4">
+                                            <Button
+                                                variant="danger"
+                                                className="px-4 py-2 fw-bold"
+                                                onClick={() => navigate(`/upgrade/${user.id}`)}
+                                            >
+                                                Gia hạn ngay
+                                            </Button>
+                                        </div>
+                                    </Card>
+
+                                </Tab.Pane>
+                                <Tab.Pane eventKey="security">
+
+                                </Tab.Pane>
                             </Tab.Content>
                         </Col>
                     </Row>

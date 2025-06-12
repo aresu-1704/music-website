@@ -44,11 +44,11 @@ export default function SignInForm() {
                     navigate(role === "admin" ? '/statistic' : '/');
                 }, 2000);
             } else if (response.status === 401) {
-                toast.error("Sai tên đăng nhập hoặc mật khẩu !", { position: "top-center", autoClose: 2000, pauseOnHover: false });
+                toast.error("Sai tên đăng nhập hoặc mật khẩu", { position: "top-center", autoClose: 2000, pauseOnHover: false });
             } else if (response.status === 403) {
-                toast.error("Tài khoản của bạn đã bị khóa !", { position: "top-center", autoClose: 2000, pauseOnHover: false });
+                toast.error("Tài khoản của bạn đã bị khóa", { position: "top-center", autoClose: 2000, pauseOnHover: false });
             } else {
-                toast.error("Lỗi máy chủ, vui lòng thử lại sau !", { position: "top-center", autoClose: 2000, pauseOnHover: false });
+                toast.error("Lỗi máy chủ, vui lòng thử lại sau", { position: "top-center", autoClose: 2000, pauseOnHover: false });
             }
         } catch (error) {
             toast.error("Không thể kết nối đến máy chủ", { position: "top-center", autoClose: 2000, pauseOnHover: false });

@@ -47,6 +47,7 @@ export const AuthProvider = ({ children }) => {
     // Hàm log out
     const logout = async () => {
         try {
+            await queryClient.invalidateQueries('profile')
             localStorage.removeItem('token');
             localStorage.removeItem('avatarBase64');
             setUser({isLoggedIn: false});

@@ -78,6 +78,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IJWTService, JWTService>();
 builder.Services.AddScoped<ITokenBlacklistService, RedisTokenBlacklistService>();
+builder.Services.AddScoped<IVnPayService, VnPayService>();
+
 
 //Redis cache
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
@@ -122,6 +124,18 @@ builder.Services.AddAuthentication("Bearer")
 
         options.Events = new JwtBearerEvents
         {
+            OnAuthenticationFailed = context =>
+            {
+                if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                {
+                    context.Response.StatusCode = 403;
+                    context.Response.ContentType = "application/json";
+                    return context.Response.WriteAsync("{\"message\": \"Token hết hạn\"}");
+                }
+
+                return Task.CompletedTask;
+            },
+
             OnTokenValidated = async context =>
             {
                 // Lấy service kiểm tra blacklist token từ DI container

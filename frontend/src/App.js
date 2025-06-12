@@ -13,6 +13,7 @@ import ProfileForm from './pages/ProfileForm';
 import AlbumsForm from './pages/AlbumsForm';
 import DiscoverForm from './pages/DiscoverForm';
 import UpgradeAccount from "./pages/UpgradeAccountForm";
+import PaymentResultForm from "./pages/PaymentResultForm";
 
 
 const queryClient = new QueryClient();
@@ -31,6 +32,7 @@ const App = () => (
                         <Route path="/signup" element={<SignUpForm />} />
                         <Route path="/profile/:userId" element={<ProfileForm />} />
                         <Route path="/upgrade/:userId" element={<UpgradeAccount />} />
+                        <Route path="/payment-result" element={<PaymentResultForm />} />
                     </Routes>
                     <ToastContainer />
                 </MainLayout>

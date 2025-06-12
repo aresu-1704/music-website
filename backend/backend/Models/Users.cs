@@ -74,5 +74,11 @@ namespace backend.Models
 
         [BsonElement("is_phone_verified")]
         public bool IsPhoneVerified { get; set; } = false;
+
+
+
+        //Gói nâng cấp tài khoản
+        [BsonElement("expired_date")]
+        public DateTime ExpiredDate { get; set; }
     }
 }

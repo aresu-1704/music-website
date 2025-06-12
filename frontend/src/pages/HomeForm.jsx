@@ -11,7 +11,7 @@ const mainButtonStyle = {
 
 export default function HomePage() {
     return (
-        <div className="home-page" style={{ paddingTop: '60px' }}>
+        <div className="home-page" style={{ paddingBottom: '60px' }}>
             {/* Hero Section */}
             <div className="hero-section text-white py-5" style={{ 
                 background: 'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("/images/hero-bg.jpg")',

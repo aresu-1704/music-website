@@ -3,6 +3,7 @@ using backend.Models;
 using backend.Utils.Securities;
 using MongoDB.Driver;
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 
 namespace backend.Services
 {
@@ -176,6 +177,42 @@ namespace backend.Services
             {
                 return null;
             }
+        }
+
+        public async Task<string> UpgradeTier(string userId, string tier)
+        {
+            var user = await _usersRepository.GetByIdAsync(userId);
+            if (user != null)
+            {
+                user.Role = tier;
+
+                if (user.ExpiredDate == null || user.ExpiredDate < DateTime.Now)
+                {
+                    // Chưa có hạn hoặc đã hết hạn → gán lại từ hôm nay
+                    user.ExpiredDate = DateTime.Now.AddDays(30);
+                }
+                else
+                {
+                    // Nếu cùng tier và còn hiệu lực → cộng thêm 30 ngày
+                    if (user.Role == tier)
+                    {
+                        user.ExpiredDate = user.ExpiredDate.AddDays(30);
+                    }
+                    else
+                    {
+                        // Nếu khác tier → reset lại hạn
+                        user.ExpiredDate = DateTime.Now.AddDays(30);
+                    }
+                }
+
+                await _usersRepository.UpdateAsync(userId, user);
+                return "Success";
+            }
+            else
+            {
+                return null;
+            }
+
         }
     }
 }

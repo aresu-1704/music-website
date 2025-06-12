@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { Google, Facebook, Apple } from 'react-bootstrap-icons';
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
@@ -19,10 +19,14 @@ export default function SignInForm() {
     const navigate = useNavigate();
     const [ isLoading, setIsLoading ] = useState(false);
 
-    if (user.isLoggedIn) {
-        navigate('/');
-        return null;
-    }
+    useEffect(() => {
+        if (user.isLoggedIn) {
+            setTimeout(() => {
+                navigate('/');
+            }, 2000)
+        }
+    }, [user]);
+
 
     const handleSubmit = async (values, { setSubmitting }) => {
         setIsLoading(true);
@@ -62,13 +66,13 @@ export default function SignInForm() {
 
     return (
         <>
-            {isLoading && (
+            {isLoading || user.isLoggedIn && (
                 <div className="d-flex justify-content-center align-items-center vh-100">
                     <Spinner animation="border" role="status" />
                 </div>
             )}
 
-            {!isLoading && (
+            {!isLoading || !user.isLoggedIn && (
                 <div className="d-flex justify-content-center align-items-center pt-5">
                     <div className="card p-4 shadow" style={{ width: 500, backgroundColor: 'rgba(0,0,0,0.7)', color: 'white', borderRadius: '0.5rem' }}>
                         <div className="d-flex flex-column align-items-center">

@@ -15,7 +15,6 @@ import DiscoverForm from './pages/DiscoverForm';
 import UpgradeAccount from "./pages/UpgradeAccountForm";
 import PaymentResultForm from "./pages/PaymentResultForm";
 
-
 const queryClient = new QueryClient();
 
 const App = () => (

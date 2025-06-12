@@ -3,14 +3,56 @@ using backend.Interfaces;
 using backend.Models;
 using backend.Repositories;
 using backend.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
+using StackExchange.Redis;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Text.Json.Serialization;
+using System.Diagnostics;
+
+void StartRedisIfNotRunning()
+{
+    var redisProcesses = Process.GetProcessesByName("redis-server");
+    if (redisProcesses.Length == 0)
+    {
+        var redisPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Utils", "Caches", "redis-server.exe");
+
+        if (!File.Exists(redisPath))
+        {
+            Console.WriteLine($"Redis executable not found at: {redisPath}");
+            return;
+        }
+
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = redisPath,
+            WorkingDirectory = Path.GetDirectoryName(redisPath),
+            UseShellExecute = false,
+            CreateNoWindow = true
+        };
+
+        try
+        {
+            Process.Start(startInfo);
+            Console.WriteLine("Redis started from local folder.");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to start Redis: {ex.Message}");
+        }
+    }
+    else
+    {
+        Console.WriteLine("Redis is already running.");
+    }
+}
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +77,16 @@ builder.Services.AddScoped(serviceProvider =>
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IJWTService, JWTService>();
+builder.Services.AddScoped<ITokenBlacklistService, RedisTokenBlacklistService>();
+builder.Services.AddScoped<IVnPayService, VnPayService>();
+
+
+//Redis cache
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var configuration = builder.Configuration.GetValue<string>("Redis:ConnectionString");
+    return ConnectionMultiplexer.Connect(configuration);
+});
 
 // Add Swagger và Controller
 builder.Services.AddEndpointsApiExplorer();
@@ -69,6 +121,46 @@ builder.Services.AddAuthentication("Bearer")
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(configuration["JWT:Key"]))  // Khóa bí mật để xác thực token
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                {
+                    context.Response.StatusCode = 403;
+                    context.Response.ContentType = "application/json";
+                    return context.Response.WriteAsync("{\"message\": \"Token hết hạn\"}");
+                }
+
+                return Task.CompletedTask;
+            },
+
+            OnTokenValidated = async context =>
+            {
+                // Lấy service kiểm tra blacklist token từ DI container
+                var tokenBlacklistService = context.HttpContext.RequestServices.GetRequiredService<ITokenBlacklistService>();
+
+                // Lấy claim jti (unique id của token) trong token vừa được xác thực
+                var jti = context.Principal?.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti)?.Value;
+
+                // Nếu token không có jti thì fail xác thực
+                if (string.IsNullOrEmpty(jti))
+                {
+                    context.Fail("Token does not contain jti");
+                    return;
+                }
+
+                // Kiểm tra jti này có bị blacklist hay không (ví dụ bị logout trước đó)
+                var isBlacklisted = await tokenBlacklistService.IsBlacklistedAsync(jti);
+
+                // Nếu token nằm trong blacklist thì fail xác thực
+                if (isBlacklisted)
+                {
+                    context.Fail("Token is blacklisted");
+                }
+            }
+        };
     });
 
 // Cái này tao cũng không biết cấu hình cái gì đừng hỏi tao
@@ -86,7 +178,9 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.TypeInfoResolver = JsonContext.Default;
-}); 
+});
+
+StartRedisIfNotRunning();
 
 var app = builder.Build();
 

@@ -1,0 +1,38 @@
+.account-settings {
+    background-color: #1a1a1a;
+    min-height: 100vh;
+    padding-top: 2rem;
+}
+
+.custom-sidebar {
+    min-height: calc(100vh - 100px);
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.settings-title {
+    font-weight: bold;
+    font-size: 2rem;
+}
+
+.custom-tab-nav .nav-link {
+    background: #1a1a1a;
+    color: white;
+    border: none;
+    margin-bottom: 5px;
+    padding: 12px;
+    border-radius: 8px;
+    transition: all 0.2s ease-in-out;
+}
+
+.custom-tab-nav .nav-link:hover,
+.custom-tab-nav .nav-link.active {
+    background: #444444;
+    color: white;
+}
+
+.custom-tab-nav .nav-link:disabled {
+    background-color: #444;
+    color: #bbb;
+}

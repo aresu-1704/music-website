@@ -67,12 +67,18 @@ namespace backend.Models
 
         [Range(1, 4, ErrorMessage = "Quyền tài khoản không hợp lệ.")]
         [BsonElement("role")]
-        public int Role { get; set; } = 2;
+        public string Role { get; set; } = "normal";
 
         [BsonElement("is_email_verified")]
         public bool IsEmailVerified { get; set; } = false;
 
         [BsonElement("is_phone_verified")]
         public bool IsPhoneVerified { get; set; } = false;
+
+
+
+        //Gói nâng cấp tài khoản
+        [BsonElement("expired_date")]
+        public DateTime ExpiredDate { get; set; }
     }
 }

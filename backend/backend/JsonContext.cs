@@ -7,8 +7,13 @@ namespace backend
     [JsonSerializable(typeof(backend.Controllers.LoginResponse))]
     [JsonSerializable(typeof(backend.Controllers.RegisterRequest))]
     [JsonSerializable(typeof(backend.Controllers.RegisterResponse))]
+    [JsonSerializable(typeof(backend.Controllers.GetProfileDataResponse))]
+    [JsonSerializable(typeof(backend.Controllers.PersonalRequest))]
+    [JsonSerializable(typeof(backend.Controllers.PaymentInformationModel))]
+    [JsonSerializable(typeof(backend.Controllers.PaymentResponseModel))]
+    [JsonSerializable(typeof(backend.Controllers.PaymentUrlResponse))]
     [JsonSerializable(typeof(ValidationProblemDetails))]
-
+    
     public partial class JsonContext : JsonSerializerContext
     {
     }

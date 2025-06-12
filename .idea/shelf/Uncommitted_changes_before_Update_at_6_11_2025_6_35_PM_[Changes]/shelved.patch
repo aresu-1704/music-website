@@ -1,0 +1,407 @@
+Index: frontend/src/pages/Discover/DiscoverPage.jsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import React, { useState, useEffect } from 'react';\r\nimport { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';\r\nimport { getRecommendations, searchTracks, loginToSpotify } from '../../services/spotifyService';\r\n\r\nconst DiscoverPage = () => {\r\n  const [tracks, setTracks] = useState([]);\r\n  const [loading, setLoading] = useState(true);\r\n  const [error, setError] = useState(null);\r\n  const [searchQuery, setSearchQuery] = useState('');\r\n\r\n  useEffect(() => {\r\n    loadRecommendations();\r\n  }, []);\r\n\r\n  const loadRecommendations = async () => {\r\n    try {\r\n      setLoading(true);\r\n      setError(null);\r\n      const recommendations = await getRecommendations();\r\n      if (recommendations === null) {\r\n        // User needs to authenticate\r\n        loginToSpotify();\r\n        return;\r\n      }\r\n      setTracks(recommendations);\r\n    } catch (err) {\r\n      console.error('Error loading recommendations:', err);\r\n      setError('Failed to load recommendations. Please try again.');\r\n    } finally {\r\n      setLoading(false);\r\n    }\r\n  };\r\n\r\n  const handleSearch = async (e) => {\r\n    e.preventDefault();\r\n    if (!searchQuery.trim()) return;\r\n\r\n    try {\r\n      setLoading(true);\r\n      setError(null);\r\n      const results = await searchTracks(searchQuery);\r\n      if (results === null) {\r\n        // User needs to authenticate\r\n        loginToSpotify();\r\n        return;\r\n      }\r\n      setTracks(results);\r\n    } catch (err) {\r\n      console.error('Error searching tracks:', err);\r\n      setError('Failed to search tracks. Please try again.');\r\n    } finally {\r\n      setLoading(false);\r\n    }\r\n  };\r\n\r\n  if (loading) return (\r\n    <Container className=\"py-5 text-center\">\r\n      <h3>Loading...</h3>\r\n      <p>Please wait while we fetch your recommendations.</p>\r\n    </Container>\r\n  );\r\n\r\n  if (error) return (\r\n    <Container className=\"py-5 text-center\">\r\n      <h3 className=\"text-danger\">Error</h3>\r\n      <p>{error}</p>\r\n      <Button variant=\"primary\" onClick={loadRecommendations}>\r\n        Try Again\r\n      </Button>\r\n    </Container>\r\n  );\r\n\r\n  return (\r\n    <Container className=\"py-4\">\r\n      <h2 className=\"mb-4\">Discover</h2>\r\n      \r\n      <Form onSubmit={handleSearch} className=\"mb-4\">\r\n        <Row>\r\n          <Col md={8}>\r\n            <Form.Control\r\n              type=\"text\"\r\n              placeholder=\"Search for songs...\"\r\n              value={searchQuery}\r\n              onChange={(e) => setSearchQuery(e.target.value)}\r\n            />\r\n          </Col>\r\n          <Col md={4}>\r\n            <Button type=\"submit\" variant=\"primary\" className=\"w-100\">\r\n              Search\r\n            </Button>\r\n          </Col>\r\n        </Row>\r\n      </Form>\r\n\r\n      {tracks.length === 0 ? (\r\n        <div className=\"text-center py-5\">\r\n          <h3>No tracks found</h3>\r\n          <p>Try searching for something else or check back later for recommendations.</p>\r\n        </div>\r\n      ) : (\r\n        <Row>\r\n          {tracks.map((track, index) => (\r\n            <Col key={index} md={4} className=\"mb-4\">\r\n              <Card>\r\n                <Card.Img \r\n                  variant=\"top\" \r\n                  src={track.album?.images[0]?.url} \r\n                  alt={track.name}\r\n                  style={{ height: '200px', objectFit: 'cover' }}\r\n                />\r\n                <Card.Body>\r\n                  <Card.Title>{track.name}</Card.Title>\r\n                  <Card.Text>\r\n                    {track.artists?.map(artist => artist.name).join(', ')}\r\n                  </Card.Text>\r\n                  <Card.Text className=\"text-muted\">\r\n                    Album: {track.album?.name}\r\n                  </Card.Text>\r\n                  {track.preview_url && (\r\n                    <audio controls className=\"w-100\">\r\n                      <source src={track.preview_url} type=\"audio/mpeg\" />\r\n                      Your browser does not support the audio element.\r\n                    </audio>\r\n                  )}\r\n                </Card.Body>\r\n              </Card>\r\n            </Col>\r\n          ))}\r\n        </Row>\r\n      )}\r\n    </Container>\r\n  );\r\n};\r\n\r\nexport default DiscoverPage; 
+===================================================================
+diff --git a/frontend/src/pages/Discover/DiscoverPage.jsx b/frontend/src/pages/Discover/DiscoverPage.jsx
+--- a/frontend/src/pages/Discover/DiscoverPage.jsx	(revision c1b4d7e6629010ad12d836d197c8a6a3132e2782)
++++ b/frontend/src/pages/Discover/DiscoverPage.jsx	(date 1749570429710)
+@@ -1,135 +1,54 @@
+-import React, { useState, useEffect } from 'react';
+-import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+-import { getRecommendations, searchTracks, loginToSpotify } from '../../services/spotifyService';
++import React, { useEffect, useState } from 'react';
++import { getFeaturedPlaylists } from '../../services/spotifyPublicService';
+ 
+-const DiscoverPage = () => {
+-  const [tracks, setTracks] = useState([]);
+-  const [loading, setLoading] = useState(true);
+-  const [error, setError] = useState(null);
+-  const [searchQuery, setSearchQuery] = useState('');
++export default function DiscoverPage() {
++  const [playlists, setPlaylists] = useState([]);
++  const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+ 
+   useEffect(() => {
+-    loadRecommendations();
++    getFeaturedPlaylists().then(setPlaylists);
+   }, []);
+ 
+-  const loadRecommendations = async () => {
+-    try {
+-      setLoading(true);
+-      setError(null);
+-      const recommendations = await getRecommendations();
+-      if (recommendations === null) {
+-        // User needs to authenticate
+-        loginToSpotify();
+-        return;
+-      }
+-      setTracks(recommendations);
+-    } catch (err) {
+-      console.error('Error loading recommendations:', err);
+-      setError('Failed to load recommendations. Please try again.');
+-    } finally {
+-      setLoading(false);
+-    }
+-  };
+-
+-  const handleSearch = async (e) => {
+-    e.preventDefault();
+-    if (!searchQuery.trim()) return;
+-
+-    try {
+-      setLoading(true);
+-      setError(null);
+-      const results = await searchTracks(searchQuery);
+-      if (results === null) {
+-        // User needs to authenticate
+-        loginToSpotify();
+-        return;
+-      }
+-      setTracks(results);
+-    } catch (err) {
+-      console.error('Error searching tracks:', err);
+-      setError('Failed to search tracks. Please try again.');
+-    } finally {
+-      setLoading(false);
+-    }
+-  };
+-
+-  if (loading) return (
+-    <Container className="py-5 text-center">
+-      <h3>Loading...</h3>
+-      <p>Please wait while we fetch your recommendations.</p>
+-    </Container>
+-  );
+-
+-  if (error) return (
+-    <Container className="py-5 text-center">
+-      <h3 className="text-danger">Error</h3>
+-      <p>{error}</p>
+-      <Button variant="primary" onClick={loadRecommendations}>
+-        Try Again
+-      </Button>
+-    </Container>
+-  );
+-
+   return (
+-    <Container className="py-4">
+-      <h2 className="mb-4">Discover</h2>
+-      
+-      <Form onSubmit={handleSearch} className="mb-4">
+-        <Row>
+-          <Col md={8}>
+-            <Form.Control
+-              type="text"
+-              placeholder="Search for songs..."
+-              value={searchQuery}
+-              onChange={(e) => setSearchQuery(e.target.value)}
++    <div className="container py-5">
++      <h2 className="fw-bold mb-4" style={{ fontSize: '2.2rem' }}>Khám phá playlist nổi bật từ Spotify</h2>
++      <div className="row g-4">
++        {playlists.map(pl => (
++          <div className="col-md-4 col-lg-3" key={pl.id}>
++            <div
++              className="card h-100 shadow-sm"
++              style={{ cursor: 'pointer', border: selectedPlaylist === pl.id ? '2px solid #1db954' : '' }}
++              onClick={() => setSelectedPlaylist(pl.id)}
++            >
++              <img src={pl.images[0]?.url} className="card-img-top" alt={pl.name} />
++              <div className="card-body">
++                <h5 className="card-title">{pl.name}</h5>
++                <p className="card-text text-muted" style={{ fontSize: '0.95rem' }}>
++                  {pl.description}
++                </p>
++              </div>
++            </div>
++          </div>
++        ))}
++      </div>
++
++      {selectedPlaylist && (
++        <div className="mt-5">
++          <h4 className="mb-3">Nghe playlist này trên Spotify</h4>
++          <div style={{ width: '100%', minHeight: 380 }}>
++            <iframe
++              title="Spotify Playlist"
++              src={`https://open.spotify.com/embed/playlist/${selectedPlaylist}?utm_source=generator&theme=0`}
++              width="100%"
++              height="380"
++              frameBorder="0"
++              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
++              loading="lazy"
++              style={{ borderRadius: 16, boxShadow: '0 2px 16px rgba(0,0,0,0.12)' }}
+             />
+-          </Col>
+-          <Col md={4}>
+-            <Button type="submit" variant="primary" className="w-100">
+-              Search
+-            </Button>
+-          </Col>
+-        </Row>
+-      </Form>
+-
+-      {tracks.length === 0 ? (
+-        <div className="text-center py-5">
+-          <h3>No tracks found</h3>
+-          <p>Try searching for something else or check back later for recommendations.</p>
++          </div>
+         </div>
+-      ) : (
+-        <Row>
+-          {tracks.map((track, index) => (
+-            <Col key={index} md={4} className="mb-4">
+-              <Card>
+-                <Card.Img 
+-                  variant="top" 
+-                  src={track.album?.images[0]?.url} 
+-                  alt={track.name}
+-                  style={{ height: '200px', objectFit: 'cover' }}
+-                />
+-                <Card.Body>
+-                  <Card.Title>{track.name}</Card.Title>
+-                  <Card.Text>
+-                    {track.artists?.map(artist => artist.name).join(', ')}
+-                  </Card.Text>
+-                  <Card.Text className="text-muted">
+-                    Album: {track.album?.name}
+-                  </Card.Text>
+-                  {track.preview_url && (
+-                    <audio controls className="w-100">
+-                      <source src={track.preview_url} type="audio/mpeg" />
+-                      Your browser does not support the audio element.
+-                    </audio>
+-                  )}
+-                </Card.Body>
+-              </Card>
+-            </Col>
+-          ))}
+-        </Row>
+       )}
+-    </Container>
++    </div>
+   );
+-};
+-
+-export default DiscoverPage; 
+\ No newline at end of file
++}
+\ No newline at end of file
+Index: frontend/src/pages/Home/HomePage.jsx
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import 'bootstrap/dist/css/bootstrap.min.css';\r\n\r\nexport default function HomePage() {\r\n    return (\r\n        <>\r\n            {/* music_area */}\r\n            <div className=\"music_area py-5 text-white\">\r\n                <div className=\"container\">\r\n                    <div className=\"row justify-content-center align-items-center\">\r\n                        <div className=\"col-lg-10\">\r\n                            <div className=\"row align-items-center\">\r\n                                <div className=\"col-md-9\">\r\n                                    <div className=\"d-flex align-items-center gap-4\">\r\n                                        <img src=\"img/music_man/1.png\" alt=\"\" className=\"img-fluid rounded\" style={{ width: 100 }} />\r\n                                        <div>\r\n                                            <h4>Frando Kally</h4>\r\n                                            <p className=\"mb-1 text-muted\">10 November, 2019</p>\r\n                                            <audio controls className=\"w-100\">\r\n                                                <source src=\"https://www.w3schools.com/html/horse.mp3\" />\r\n                                            </audio>\r\n                                        </div>\r\n                                    </div>\r\n                                </div>\r\n                                <div className=\"col-md-3 text-md-end mt-3 mt-md-0\">\r\n                                    <a href=\"/\" className=\"btn btn-outline-light\">Buy Album</a>\r\n                                </div>\r\n                            </div>\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n\r\n            {/* about_area */}\r\n            <div className=\"about_area py-5 text-white\">\r\n                <div className=\"container\">\r\n                    <div className=\"row align-items-center\">\r\n                        <div className=\"col-md-6 mb-4 mb-md-0\">\r\n                            <img src=\"img/about/about_1.png\" alt=\"\" className=\"img-fluid rounded\" />\r\n                        </div>\r\n                        <div className=\"col-md-6\">\r\n                            <h3>Jack Kalib</h3>\r\n                            <p className=\"text-light\">Esteem spirit temper too say adieus who direct esteem...</p>\r\n                            <img src=\"img/about/signature.png\" alt=\"\" style={{ maxWidth: 150 }} />\r\n                        </div>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n\r\n            {/* youtube_video_area */}\r\n            <div className=\"youtube_video_area text-white py-5\">\r\n                <div className=\"container-fluid\">\r\n                    <div className=\"row g-3\">\r\n                        {[1, 2, 3, 4].map(num => (\r\n                            <div className=\"col-md-6 col-lg-3\" key={num}>\r\n                                <div className=\"card bg-secondary text-white h-100\">\r\n                                    <img src={`img/video/${num}.png`} className=\"card-img-top\" alt=\"\" />\r\n                                    <div className=\"card-body d-flex flex-column\">\r\n                                        <h5 className=\"card-title\">Shadows of My Dream</h5>\r\n                                        <p className=\"card-text text-muted\">New York Show-2018</p>\r\n                                        <a href=\"https://www.youtube.com/watch?v=Hzmp3z6deF8\" className=\"btn btn-outline-light mt-auto\">\r\n                                            <i className=\"fa fa-play me-2\"></i> Watch Video\r\n                                        </a>\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                        ))}\r\n                    </div>\r\n                </div>\r\n            </div>\r\n\r\n            {/* music_gallery */}\r\n            <div className=\"music_gallery bg-black py-5 text-white\">\r\n                <div className=\"container\">\r\n                    <div className=\"text-center mb-5\">\r\n                        <h3>Latest Tracks</h3>\r\n                    </div>\r\n\r\n                    {[1, 2, 3].map(num => (\r\n                        <div key={num} className=\"row align-items-center justify-content-center mb-4\">\r\n                            <div className=\"col-lg-10\">\r\n                                <div className=\"row align-items-center\">\r\n                                    <div className=\"col-md-9\">\r\n                                        <div className=\"d-flex align-items-center gap-4\">\r\n                                            <img src={`img/music_man/${num}.png`} alt=\"\" className=\"img-fluid rounded\" style={{ width: 100 }} />\r\n                                            <div>\r\n                                                <h5>Frando Kally</h5>\r\n                                                <p className=\"text-muted\">10 November, 2019</p>\r\n                                                <audio controls className=\"w-100\">\r\n                                                    <source src=\"https://www.w3schools.com/html/horse.mp3\" />\r\n                                                </audio>\r\n                                            </div>\r\n                                        </div>\r\n                                    </div>\r\n                                    <div className=\"col-md-3 text-md-end mt-3 mt-md-0\">\r\n                                        <a href=\"/\" className=\"btn btn-outline-light\">Buy Album</a>\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                        </div>\r\n                    ))}\r\n                </div>\r\n            </div>\r\n\r\n            {/* gallery_area */}\r\n            <div className=\"gallery_area bg-dark py-5 text-white\">\r\n                <div className=\"container\">\r\n                    <div className=\"text-center mb-5\">\r\n                        <h3>Image Galleries</h3>\r\n                    </div>\r\n                    <div className=\"row g-4\">\r\n                        {[1, 2, 3].map((num, index) => (\r\n                            <div key={num} className=\"col-md-4\">\r\n                                <div className=\"card bg-secondary\">\r\n                                    <img src={`img/gallery/${num}.png`} className=\"card-img-top\" alt=\"\" />\r\n                                    <div className=\"card-body text-center\">\r\n                                        <a href={`img/gallery/${num}.png`} className=\"btn btn-outline-light\">View Image</a>\r\n                                    </div>\r\n                                </div>\r\n                            </div>\r\n                        ))}\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </>\r\n    );\r\n}\r\n
+===================================================================
+diff --git a/frontend/src/pages/Home/HomePage.jsx b/frontend/src/pages/Home/HomePage.jsx
+--- a/frontend/src/pages/Home/HomePage.jsx	(revision c1b4d7e6629010ad12d836d197c8a6a3132e2782)
++++ b/frontend/src/pages/Home/HomePage.jsx	(date 1749568740162)
+@@ -1,126 +1,94 @@
+ import 'bootstrap/dist/css/bootstrap.min.css';
++import { Link } from 'react-router-dom';
++
++const mainButtonStyle = {
++    borderRadius: '2rem',
++    fontSize: '1.15rem',
++    fontWeight: 600,
++    padding: '0.75rem 2.5rem',
++    boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
++};
+ 
+ export default function HomePage() {
+     return (
+-        <>
+-            {/* music_area */}
+-            <div className="music_area py-5 text-white">
+-                <div className="container">
+-                    <div className="row justify-content-center align-items-center">
+-                        <div className="col-lg-10">
+-                            <div className="row align-items-center">
+-                                <div className="col-md-9">
+-                                    <div className="d-flex align-items-center gap-4">
+-                                        <img src="img/music_man/1.png" alt="" className="img-fluid rounded" style={{ width: 100 }} />
+-                                        <div>
+-                                            <h4>Frando Kally</h4>
+-                                            <p className="mb-1 text-muted">10 November, 2019</p>
+-                                            <audio controls className="w-100">
+-                                                <source src="https://www.w3schools.com/html/horse.mp3" />
+-                                            </audio>
+-                                        </div>
+-                                    </div>
+-                                </div>
+-                                <div className="col-md-3 text-md-end mt-3 mt-md-0">
+-                                    <a href="/" className="btn btn-outline-light">Buy Album</a>
+-                                </div>
+-                            </div>
+-                        </div>
+-                    </div>
+-                </div>
+-            </div>
+-
+-            {/* about_area */}
+-            <div className="about_area py-5 text-white">
+-                <div className="container">
+-                    <div className="row align-items-center">
+-                        <div className="col-md-6 mb-4 mb-md-0">
+-                            <img src="img/about/about_1.png" alt="" className="img-fluid rounded" />
+-                        </div>
+-                        <div className="col-md-6">
+-                            <h3>Jack Kalib</h3>
+-                            <p className="text-light">Esteem spirit temper too say adieus who direct esteem...</p>
+-                            <img src="img/about/signature.png" alt="" style={{ maxWidth: 150 }} />
+-                        </div>
+-                    </div>
+-                </div>
+-            </div>
+-
+-            {/* youtube_video_area */}
+-            <div className="youtube_video_area text-white py-5">
+-                <div className="container-fluid">
+-                    <div className="row g-3">
+-                        {[1, 2, 3, 4].map(num => (
+-                            <div className="col-md-6 col-lg-3" key={num}>
+-                                <div className="card bg-secondary text-white h-100">
+-                                    <img src={`img/video/${num}.png`} className="card-img-top" alt="" />
+-                                    <div className="card-body d-flex flex-column">
+-                                        <h5 className="card-title">Shadows of My Dream</h5>
+-                                        <p className="card-text text-muted">New York Show-2018</p>
+-                                        <a href="https://www.youtube.com/watch?v=Hzmp3z6deF8" className="btn btn-outline-light mt-auto">
+-                                            <i className="fa fa-play me-2"></i> Watch Video
+-                                        </a>
+-                                    </div>
+-                                </div>
+-                            </div>
+-                        ))}
+-                    </div>
+-                </div>
+-            </div>
+-
+-            {/* music_gallery */}
+-            <div className="music_gallery bg-black py-5 text-white">
++        <div className="home-page">
++            {/* Hero Section */}
++            <div className="hero-section text-white py-5" style={{ 
++                background: 'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("/images/hero-bg.jpg")',
++                backgroundSize: 'cover',
++                backgroundPosition: 'center'
++            }}>
+                 <div className="container">
+-                    <div className="text-center mb-5">
+-                        <h3>Latest Tracks</h3>
+-                    </div>
+-
+-                    {[1, 2, 3].map(num => (
+-                        <div key={num} className="row align-items-center justify-content-center mb-4">
+-                            <div className="col-lg-10">
+-                                <div className="row align-items-center">
+-                                    <div className="col-md-9">
+-                                        <div className="d-flex align-items-center gap-4">
+-                                            <img src={`img/music_man/${num}.png`} alt="" className="img-fluid rounded" style={{ width: 100 }} />
+-                                            <div>
+-                                                <h5>Frando Kally</h5>
+-                                                <p className="text-muted">10 November, 2019</p>
+-                                                <audio controls className="w-100">
+-                                                    <source src="https://www.w3schools.com/html/horse.mp3" />
+-                                                </audio>
+-                                            </div>
+-                                        </div>
+-                                    </div>
+-                                    <div className="col-md-3 text-md-end mt-3 mt-md-0">
+-                                        <a href="/" className="btn btn-outline-light">Buy Album</a>
+-                                    </div>
+-                                </div>
+-                            </div>
+-                        </div>
+-                    ))}
++                    <div className="row min-vh-50 align-items-center">
++                        <div className="col-lg-6">
++                            <h1 className="display-4 fw-bold mb-4">Khám phá âm nhạc mới</h1>
++                            <p className="lead mb-4">Nghe nhạc trực tuyến miễn phí. Khám phá hàng triệu bài hát và playlist từ các nghệ sĩ trên toàn thế giới.</p>
++                            <Link to="/signup" className="btn btn-danger btn-lg px-4 py-2" style={mainButtonStyle}>
++                                Bắt đầu ngay
++                            </Link>
++                        </div>
++                    </div>
++                </div>
++            </div>
++
++            {/* Explore Trending Playlists Button */}
++            <div className="explore-section py-5 bg-black text-center">
++                <h3 className="text-white mb-4" style={{fontSize: '2rem', fontWeight: 700}}>Khám phá những gì đang thịnh hành trong cộng đồng Musicresu</h3>
++                <Link to="/discover" className="btn btn-light btn-lg fw-bold mb-4" style={mainButtonStyle}>
++                    Khám phá playlist đang thịnh hành
++                </Link>
++            </div>
++
++            {/* Never stop listening Section - background image with overlay text */}
++            <div
++                className="never-stop-listening-section d-flex align-items-center justify-content-center position-relative"
++                style={{
++                    minHeight: 560,
++                    width: '100%',
++                    backgroundImage: 'url(/images/Neverstoplistening.png)',
++                    backgroundSize: 'cover',
++                    backgroundPosition: 'center',
++                    backgroundRepeat: 'no-repeat',
++                    boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
++                }}
++            >
++                <div
++                    className="position-absolute top-0 start-0 w-100 h-100"
++                    style={{
++                        background: 'rgba(0,0,0,0.25)',
++                        zIndex: 1,
++                    }}
++                ></div>
++                <div
++                    className="text-center text-white position-relative"
++                    style={{
++                        zIndex: 2,
++                        maxWidth: 700,
++                        margin: '0 auto',
++                        padding: '32px',
++                    }}
++                >
++                    <h2 className="fw-bold mb-3" style={{fontSize: '3rem', textShadow: '0 2px 8px rgba(0,0,0,0.25)'}}>Âm nhạc không bao giờ dừng</h2>
++                    <p className="lead mb-0" style={{fontSize: '1.5rem', fontWeight: 500, lineHeight: 1.5, textShadow: '0 2px 8px rgba(0,0,0,0.18)'}}>
++                        Musicresu luôn sẵn sàng cho bạn. Thưởng thức bài hát yêu thích của bạn bất cứ lúc nào, ở đâu, trên bất kỳ thiết bị nào.
++                    </p>
+                 </div>
+             </div>
+ 
+-            {/* gallery_area */}
+-            <div className="gallery_area bg-dark py-5 text-white">
++            {/* Thanks for listening. Now join in. Section */}
++            <div className="thanks-section py-5 bg-black text-white text-center">
+                 <div className="container">
+-                    <div className="text-center mb-5">
+-                        <h3>Image Galleries</h3>
++                    <h2 className="fw-bold mb-3" style={{fontSize: '2.4rem'}}>Cảm ơn vì đã lắng nghe. Giờ là lúc tham gia.</h2>
++                    <p className="mb-4" style={{fontSize: '1.2rem'}}>Lưu bài hát, theo dõi nghệ sĩ và tạo playlist. Tất cả miễn phí.</p>
++                    <Link to="/signup" className="btn btn-light btn-lg fw-bold mb-3" style={mainButtonStyle}>
++                        Tạo tài khoản
++                    </Link>
++                    <div className="mt-2">
++                        <span className="text-secondary">Đã có tài khoản? </span>
++                        <Link to="/signin" className="fw-bold text-white text-decoration-underline">Đăng nhập</Link>
+                     </div>
+-                    <div className="row g-4">
+-                        {[1, 2, 3].map((num, index) => (
+-                            <div key={num} className="col-md-4">
+-                                <div className="card bg-secondary">
+-                                    <img src={`img/gallery/${num}.png`} className="card-img-top" alt="" />
+-                                    <div className="card-body text-center">
+-                                        <a href={`img/gallery/${num}.png`} className="btn btn-outline-light">View Image</a>
+-                                    </div>
+-                                </div>
+-                            </div>
+-                        ))}
+-                    </div>
+-                </div>
+-            </div>
+-        </>
++                </div>
++            </div>
++        </div>
+     );
+ }

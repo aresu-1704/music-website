@@ -1,126 +1,94 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Link } from 'react-router-dom';
 
-export default function HomeForm() {
+const mainButtonStyle = {
+    borderRadius: '2rem',
+    fontSize: '1.15rem',
+    fontWeight: 600,
+    padding: '0.75rem 2.5rem',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+};
+
+export default function HomePage() {
     return (
-        <>
-            {/* music_area */}
-            <div className="music_area py-5 text-white">
+        <div className="home-page" style={{ paddingTop: '60px' }}>
+            {/* Hero Section */}
+            <div className="hero-section text-white py-5" style={{ 
+                background: 'linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("/images/hero-bg.jpg")',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+            }}>
                 <div className="container">
-                    <div className="row justify-content-center align-items-center">
-                        <div className="col-lg-10">
-                            <div className="row align-items-center">
-                                <div className="col-md-9">
-                                    <div className="d-flex align-items-center gap-4">
-                                        <img src="img/music_man/1.png" alt="" className="img-fluid rounded" style={{ width: 100 }} />
-                                        <div>
-                                            <h4>Frando Kally</h4>
-                                            <p className="mb-1 text-muted">10 November, 2019</p>
-                                            <audio controls className="w-100">
-                                                <source src="https://www.w3schools.com/html/horse.mp3" />
-                                            </audio>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="col-md-3 text-md-end mt-3 mt-md-0">
-                                    <a href="/public" className="btn btn-outline-light">Buy Album</a>
-                                </div>
-                            </div>
+                    <div className="row min-vh-50 align-items-center">
+                        <div className="col-lg-6">
+                            <h1 className="display-4 fw-bold mb-4">Khám phá âm nhạc mới</h1>
+                            <p className="lead mb-4">Nghe nhạc trực tuyến miễn phí. Khám phá hàng triệu bài hát và playlist từ các nghệ sĩ trên toàn thế giới.</p>
+                            <Link to="/signup" className="btn btn-danger btn-lg px-4 py-2" style={mainButtonStyle}>
+                                Bắt đầu ngay
+                            </Link>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* about_area */}
-            <div className="about_area py-5 text-white">
+            {/* Explore Trending Playlists Button */}
+            <div className="explore-section py-5 bg-black text-center">
+                <h3 className="text-white mb-4" style={{fontSize: '2rem', fontWeight: 700}}>Khám phá những gì đang thịnh hành trong cộng đồng Musicresu</h3>
+                <Link to="/discover" className="btn btn-light btn-lg fw-bold mb-4" style={mainButtonStyle}>
+                    Khám phá playlist đang thịnh hành
+                </Link>
+            </div>
+
+            {/* Never stop listening Section - background image with overlay text */}
+            <div
+                className="never-stop-listening-section d-flex align-items-center justify-content-center position-relative"
+                style={{
+                    minHeight: 560,
+                    width: '100%',
+                    backgroundImage: 'url(/images/Neverstoplistening.png)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    backgroundRepeat: 'no-repeat',
+                    boxShadow: '0 2px 16px rgba(0,0,0,0.08)',
+                }}
+            >
+                <div
+                    className="position-absolute top-0 start-0 w-100 h-100"
+                    style={{
+                        background: 'rgba(0,0,0,0.25)',
+                        zIndex: 1,
+                    }}
+                ></div>
+                <div
+                    className="text-center text-white position-relative"
+                    style={{
+                        zIndex: 2,
+                        maxWidth: 700,
+                        margin: '0 auto',
+                        padding: '32px',
+                    }}
+                >
+                    <h2 className="fw-bold mb-3" style={{fontSize: '3rem', textShadow: '0 2px 8px rgba(0,0,0,0.25)'}}>Âm nhạc không bao giờ dừng</h2>
+                    <p className="lead mb-0" style={{fontSize: '1.5rem', fontWeight: 500, lineHeight: 1.5, textShadow: '0 2px 8px rgba(0,0,0,0.18)'}}>
+                        Musicresu luôn sẵn sàng cho bạn. Thưởng thức bài hát yêu thích của bạn bất cứ lúc nào, ở đâu, trên bất kỳ thiết bị nào.
+                    </p>
+                </div>
+            </div>
+
+            {/* Thanks for listening. Now join in. Section */}
+            <div className="thanks-section py-5 bg-black text-white text-center">
                 <div className="container">
-                    <div className="row align-items-center">
-                        <div className="col-md-6 mb-4 mb-md-0">
-                            <img src="img/about/about_1.png" alt="" className="img-fluid rounded" />
-                        </div>
-                        <div className="col-md-6">
-                            <h3>Jack Kalib</h3>
-                            <p className="text-light">Esteem spirit temper too say adieus who direct esteem...</p>
-                            <img src="img/about/signature.png" alt="" style={{ maxWidth: 150 }} />
-                        </div>
+                    <h2 className="fw-bold mb-3" style={{fontSize: '2.4rem'}}>Cảm ơn vì đã lắng nghe. Giờ là lúc tham gia.</h2>
+                    <p className="mb-4" style={{fontSize: '1.2rem'}}>Lưu bài hát, theo dõi nghệ sĩ và tạo playlist. Tất cả miễn phí.</p>
+                    <Link to="/signup" className="btn btn-light btn-lg fw-bold mb-3" style={mainButtonStyle}>
+                        Tạo tài khoản
+                    </Link>
+                    <div className="mt-2">
+                        <span className="text-secondary">Đã có tài khoản? </span>
+                        <Link to="/signin" className="fw-bold text-white text-decoration-underline">Đăng nhập</Link>
                     </div>
                 </div>
             </div>
-
-            {/* youtube_video_area */}
-            <div className="youtube_video_area text-white py-5">
-                <div className="container-fluid">
-                    <div className="row g-3">
-                        {[1, 2, 3, 4].map(num => (
-                            <div className="col-md-6 col-lg-3" key={num}>
-                                <div className="card bg-secondary text-white h-100">
-                                    <img src={`img/video/${num}.png`} className="card-img-top" alt="" />
-                                    <div className="card-body d-flex flex-column">
-                                        <h5 className="card-title">Shadows of My Dream</h5>
-                                        <p className="card-text text-muted">New York Show-2018</p>
-                                        <a href="https://www.youtube.com/watch?v=Hzmp3z6deF8" className="btn btn-outline-light mt-auto">
-                                            <i className="fa fa-play me-2"></i> Watch Video
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            {/* music_gallery */}
-            <div className="music_gallery bg-black py-5 text-white">
-                <div className="container">
-                    <div className="text-center mb-5">
-                        <h3>Latest Tracks</h3>
-                    </div>
-
-                    {[1, 2, 3].map(num => (
-                        <div key={num} className="row align-items-center justify-content-center mb-4">
-                            <div className="col-lg-10">
-                                <div className="row align-items-center">
-                                    <div className="col-md-9">
-                                        <div className="d-flex align-items-center gap-4">
-                                            <img src={`img/music_man/${num}.png`} alt="" className="img-fluid rounded" style={{ width: 100 }} />
-                                            <div>
-                                                <h5>Frando Kally</h5>
-                                                <p className="text-muted">10 November, 2019</p>
-                                                <audio controls className="w-100">
-                                                    <source src="https://www.w3schools.com/html/horse.mp3" />
-                                                </audio>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-md-3 text-md-end mt-3 mt-md-0">
-                                        <a href="/public" className="btn btn-outline-light">Buy Album</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* gallery_area */}
-            <div className="gallery_area bg-dark py-5 text-white">
-                <div className="container">
-                    <div className="text-center mb-5">
-                        <h3>Image Galleries</h3>
-                    </div>
-                    <div className="row g-4">
-                        {[1, 2, 3].map((num, index) => (
-                            <div key={num} className="col-md-4">
-                                <div className="card bg-secondary">
-                                    <img src={`img/gallery/${num}.png`} className="card-img-top" alt="" />
-                                    <div className="card-body text-center">
-                                        <a href={`img/gallery/${num}.png`} className="btn btn-outline-light">View Image</a>
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </div>
-        </>
+        </div>
     );
 }

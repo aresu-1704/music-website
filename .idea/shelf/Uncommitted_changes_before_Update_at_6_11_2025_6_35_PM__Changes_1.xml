@@ -1,0 +1,34 @@
+<changelist name="Uncommitted_changes_before_Update_at_6_11_2025_6_35_PM_[Changes]1" date="1749641788987" recycled="true" deleted="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_6_11_2025_6_35_PM_[Changes]1/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Update at 6/11/2025 6:35 PM [Changes]" />
+  <binary>
+    <option name="BEFORE_PATH" value="backend/backend/obj/Debug/net8.0/backend.dll" />
+    <option name="AFTER_PATH" value="backend/backend/obj/Debug/net8.0/backend.dll" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_6_11_2025_6_35_PM_[Changes]1/backend.dll" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="backend/backend/bin/Debug/net8.0/backend.exe" />
+    <option name="AFTER_PATH" value="backend/backend/bin/Debug/net8.0/backend.exe" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_6_11_2025_6_35_PM_[Changes]1/backend.exe" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="backend/backend/obj/Debug/net8.0/backend.assets.cache" />
+    <option name="AFTER_PATH" value="backend/backend/obj/Debug/net8.0/backend.assets.cache" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_6_11_2025_6_35_PM_[Changes]1/backend.assets.cache" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="backend/backend/obj/Debug/net8.0/backend.pdb" />
+    <option name="AFTER_PATH" value="backend/backend/obj/Debug/net8.0/backend.pdb" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_6_11_2025_6_35_PM_[Changes]1/backend.pdb" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="backend/backend/obj/Debug/net8.0/backend.csproj.AssemblyReference.cache" />
+    <option name="AFTER_PATH" value="backend/backend/obj/Debug/net8.0/backend.csproj.AssemblyReference.cache" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_6_11_2025_6_35_PM_[Changes]1/backend.csproj.AssemblyReference.cache" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="backend/backend/obj/Debug/net8.0/apphost.exe" />
+    <option name="AFTER_PATH" value="backend/backend/obj/Debug/net8.0/apphost.exe" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_6_11_2025_6_35_PM_[Changes]1/apphost.exe" />
+  </binary>
+</changelist>

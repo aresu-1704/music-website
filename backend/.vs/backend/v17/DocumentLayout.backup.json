@@ -3,28 +3,24 @@
   "WorkspaceRootPath": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\repositories\\artistrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\repositories\\artistrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\interfaces\\iartistrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\interfaces\\iartistrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\services\\artistservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\services\\artistservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\controllers\\artistcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\controllers\\artistcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\interfaces\\iartistrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\interfaces\\iartistrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\services\\jwtservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\services\\jwtservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\services\\artistservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\services\\artistservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\repositories\\artistrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\repositories\\artistrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 202,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,28 +38,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 4,
               "Title": "ArtistRepository.cs",
               "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Repositories\\ArtistRepository.cs",
               "RelativeDocumentMoniker": "backend\\Repositories\\ArtistRepository.cs",
-              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Repositories\\ArtistRepository.cs*",
-              "RelativeToolTip": "backend\\Repositories\\ArtistRepository.cs*",
+              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Repositories\\ArtistRepository.cs",
+              "RelativeToolTip": "backend\\Repositories\\ArtistRepository.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAA5AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-14T06:46:30.944Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "JWTService.cs",
-              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\JWTService.cs",
-              "RelativeDocumentMoniker": "backend\\Services\\JWTService.cs",
-              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\JWTService.cs",
-              "RelativeToolTip": "backend\\Services\\JWTService.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAswCsAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-14T06:11:37.434Z",
               "EditorCaption": ""
             },
             {
@@ -81,33 +64,33 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 1,
               "Title": "ArtistController.cs",
               "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\ArtistController.cs",
               "RelativeDocumentMoniker": "backend\\Controllers\\ArtistController.cs",
               "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\ArtistController.cs",
               "RelativeToolTip": "backend\\Controllers\\ArtistController.cs",
-              "ViewState": "AgIAABQAAAAAAAAAAAAmwCEAAABOAAAAAAAAAA==",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAcwBsAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-14T06:10:57.596Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 0,
               "Title": "ArtistService.cs",
               "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\ArtistService.cs",
               "RelativeDocumentMoniker": "backend\\Services\\ArtistService.cs",
               "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\ArtistService.cs",
               "RelativeToolTip": "backend\\Services\\ArtistService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAswCgAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAwAAAAAAAAAAADwvyQAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-14T06:07:50.399Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "IArtistRepository.cs",
               "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Interfaces\\IArtistRepository.cs",
               "RelativeDocumentMoniker": "backend\\Interfaces\\IArtistRepository.cs",

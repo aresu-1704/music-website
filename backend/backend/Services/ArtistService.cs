@@ -34,12 +34,12 @@ namespace backend.Services
             artist.UpdatedAt = DateTime.UtcNow;
             artist.IsApproved = false;
 
-            //var user = await _userRepository.GetByIdAsync(userId);
-            //if (user != null)
-            //{
-            //    user.Role = "Artist";
-            //    await _userRepository.UpdateAsync(userId, user);
-            //}
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user != null)
+            {
+                user.Role = "ArtistWaitApprove";
+                await _userRepository.UpdateAsync(userId, user);
+            }
 
             await _artistRepository.CreateAsync(artist);
             return "Success.";

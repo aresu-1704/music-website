@@ -46,8 +46,7 @@
               "RelativeToolTip": "backend\\Repositories\\ArtistRepository.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAA5AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-14T06:46:30.944Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-14T06:46:30.944Z"
             },
             {
               "$type": "Document",
@@ -59,8 +58,7 @@
               "RelativeToolTip": "backend\\Program.cs",
               "ViewState": "AgIAAGIAAAAAAAAAAAAQwH0AAAA3AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-14T06:17:46.577Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-14T06:17:46.577Z"
             },
             {
               "$type": "Document",
@@ -72,8 +70,7 @@
               "RelativeToolTip": "backend\\Controllers\\ArtistController.cs",
               "ViewState": "AgIAAA8AAAAAAAAAAAAcwBsAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-14T06:10:57.596Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-14T06:10:57.596Z"
             },
             {
               "$type": "Document",
@@ -83,7 +80,7 @@
               "RelativeDocumentMoniker": "backend\\Services\\ArtistService.cs",
               "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\ArtistService.cs",
               "RelativeToolTip": "backend\\Services\\ArtistService.cs",
-              "ViewState": "AgIAAAwAAAAAAAAAAADwvyQAAAAMAAAAAAAAAA==",
+              "ViewState": "AgIAAA8AAAAAAAAAAADwvycAAAAuAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-14T06:07:50.399Z",
               "EditorCaption": ""
@@ -98,8 +95,7 @@
               "RelativeToolTip": "backend\\Interfaces\\IArtistRepository.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-14T06:07:11.541Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-14T06:07:11.541Z"
             }
           ]
         }

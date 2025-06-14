@@ -57,5 +57,10 @@ namespace backend.Repositories
 
             await _artists.UpdateOneAsync(a => a.Id == id, update);
         }
+
+        public async Task DeleteByUserIdAsync(string userId)
+        {
+            await _artists.DeleteOneAsync(a => a.UserId == userId);
+        }
     }
 }

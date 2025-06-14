@@ -74,6 +74,37 @@ namespace backend.Controllers
                 });
             }
         }
+
+        [Authorize]
+        [HttpGet("check-approved/{userId}")]
+        public async Task<IActionResult> CheckApproveResult(string userId)
+        {
+            return Ok(new CheckApprovedResponse()
+            {
+                Message = await _artistService.CheckApproveResult(userId)
+            });
+        }
+
+        [Authorize]
+        [HttpPut("cancel-register/{userId}")]
+        public async Task<IActionResult> CancelRegister(string userId)
+        {
+            var result = await _artistService.CancelRegister(userId);
+            if (result == true) {
+
+                return Ok(new CancelRegisterResponse()
+                {
+                    Message = "Thành công"
+                });
+            }
+            else
+            {
+                return Ok(new CancelRegisterResponse()
+                {
+                    Message = "Thất bại"
+                });
+            }
+        }
     }
 
     public class CreateArtistRequest
@@ -83,6 +114,16 @@ namespace backend.Controllers
     }
 
     public class CreateArtistResponse
+    {
+        public string Message { get; set; }
+    }
+
+    public class CheckApprovedResponse
+    {
+        public string Message { get; set; }
+    }
+
+    public class CancelRegisterResponse
     {
         public string Message { get; set; }
     }

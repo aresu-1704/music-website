@@ -44,5 +44,34 @@ namespace backend.Services
             await _artistRepository.CreateAsync(artist);
             return "Success.";
         }
+
+        public async Task<string> CheckApproveResult(string userId)
+        {
+            var artist = await _artistRepository.GetByUserIdAsync(userId);
+            if (artist != null)
+            {
+                if (artist.IsApproved)
+                {
+                    return "Đã được duyệt";
+                }
+                else
+                {
+                    return "Chưa được duyệt";
+                }
+            }
+            return "Không tồn tại";
+        }
+
+        public async Task<bool> CancelRegister(string userId)
+        {
+            try
+            {
+                await _artistRepository.DeleteByUserIdAsync(userId);
+                return true;
+            }
+            catch (Exception ex) {
+                return false;
+            }
+        }
     }
 }

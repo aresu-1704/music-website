@@ -16,6 +16,8 @@ namespace backend
     [JsonSerializable(typeof(backend.Controllers.UploadTrackResponse))]
     [JsonSerializable(typeof(backend.Controllers.CreateArtistRequest))]
     [JsonSerializable(typeof(backend.Controllers.CreateArtistResponse))]
+    [JsonSerializable(typeof(backend.Controllers.CheckApprovedResponse))]
+    [JsonSerializable(typeof(backend.Controllers.CancelRegisterResponse))]
     [JsonSerializable(typeof(ValidationProblemDetails))]
     
     public partial class JsonContext : JsonSerializerContext

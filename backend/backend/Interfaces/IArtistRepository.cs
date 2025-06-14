@@ -9,6 +9,7 @@ namespace backend.Interfaces
         Task<IEnumerable<Artists>> GetAllAsync();
         Task<Artists> GetByIdAsync(string id);
         Task<Artists> GetByUserIdAsync(string userId);
+        Task DeleteByUserIdAsync(string userId);
         Task CreateAsync(Artists artist);
         Task UpdateAsync(string id, Artists artist);
         Task DeleteAsync(string id);

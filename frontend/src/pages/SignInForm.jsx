@@ -66,13 +66,13 @@ export default function SignInForm() {
 
     return (
         <>
-            {isLoading || user.isLoggedIn && (
+            {(isLoading || user.isLoggedIn) && (
                 <div className="d-flex justify-content-center align-items-center vh-100">
                     <Spinner animation="border" role="status" />
                 </div>
             )}
 
-            {!isLoading || !user.isLoggedIn && (
+            {(!isLoading || !user.isLoggedIn) && (
                 <div className="d-flex justify-content-center align-items-center pt-5">
                     <div className="card p-4 shadow" style={{ width: 500, backgroundColor: 'rgba(0,0,0,0.7)', color: 'white', borderRadius: '0.5rem' }}>
                         <div className="d-flex flex-column align-items-center">

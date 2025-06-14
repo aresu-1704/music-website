@@ -222,7 +222,7 @@ export default function ProfileForm() {
                                                         {/* Avatar + nút đổi */}
                                                         <div className="text-center mb-4">
                                                             <img
-                                                                src={values.avatarBase64 || values.avatarPreview || '/images/default-avatar.jpg'}
+                                                                src={values.avatarBase64 || values.avatarPreview || '/images/default-avatar.png'}
                                                                 alt="Avatar"
                                                                 className="rounded-circle"
                                                                 style={{ width: '120px', height: '120px', objectFit: 'cover' }}

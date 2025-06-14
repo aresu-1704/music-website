@@ -79,7 +79,10 @@ builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IJWTService, JWTService>();
 builder.Services.AddScoped<ITokenBlacklistService, RedisTokenBlacklistService>();
 builder.Services.AddScoped<IVnPayService, VnPayService>();
-
+builder.Services.AddScoped<ITrackRepository, TrackRepository>();
+builder.Services.AddScoped<ITrackService, TrackService>();
+builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
+builder.Services.AddScoped<IArtistService, ArtistService>();
 
 //Redis cache
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
@@ -119,7 +122,8 @@ builder.Services.AddAuthentication("Bearer")
             ValidIssuer = configuration["JWT:Issuer"],            // Tên ứng dụng phát hành token
             ValidAudience = configuration["JWT:Audience"],             // Đối tượng sử dụng token
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(configuration["JWT:Key"]))  // Khóa bí mật để xác thực token
+                Encoding.UTF8.GetBytes(configuration["JWT:Key"])),  // Khóa bí mật để xác thực token
+            NameClaimType = JwtRegisteredClaimNames.Sub
         };
 
         options.Events = new JwtBearerEvents

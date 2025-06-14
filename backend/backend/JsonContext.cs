@@ -12,6 +12,10 @@ namespace backend
     [JsonSerializable(typeof(backend.Controllers.PaymentInformationModel))]
     [JsonSerializable(typeof(backend.Controllers.PaymentResponseModel))]
     [JsonSerializable(typeof(backend.Controllers.PaymentUrlResponse))]
+    [JsonSerializable(typeof(backend.Controllers.UploadTrackRequest))]
+    [JsonSerializable(typeof(backend.Controllers.UploadTrackResponse))]
+    [JsonSerializable(typeof(backend.Controllers.CreateArtistRequest))]
+    [JsonSerializable(typeof(backend.Controllers.CreateArtistResponse))]
     [JsonSerializable(typeof(ValidationProblemDetails))]
     
     public partial class JsonContext : JsonSerializerContext

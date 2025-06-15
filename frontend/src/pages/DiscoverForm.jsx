@@ -1,135 +1,166 @@
-// import React, { useState, useEffect } from 'react';
-// import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
-// import { getRecommendations, searchTracks, loginToSpotify } from '../services/spotifyService';
-//
-// const DiscoverForm = () => {
-//   const [tracks, setTracks] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-//   const [searchQuery, setSearchQuery] = useState('');
-//
-//   useEffect(() => {
-//     loadRecommendations();
-//   }, []);
-//
-//   const loadRecommendations = async () => {
-//     try {
-//       setLoading(true);
-//       setError(null);
-//       const recommendations = await getRecommendations();
-//       if (recommendations === null) {
-//         // User needs to authenticate
-//         loginToSpotify();
-//         return;
-//       }
-//       setTracks(recommendations);
-//     } catch (err) {
-//       console.error('Error loading recommendations:', err);
-//       setError('Failed to load recommendations. Please try again.');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-//
-//   const handleSearch = async (e) => {
-//     e.preventDefault();
-//     if (!searchQuery.trim()) return;
-//
-//     try {
-//       setLoading(true);
-//       setError(null);
-//       const results = await searchTracks(searchQuery);
-//       if (results === null) {
-//         // User needs to authenticate
-//         loginToSpotify();
-//         return;
-//       }
-//       setTracks(results);
-//     } catch (err) {
-//       console.error('Error searching tracks:', err);
-//       setError('Failed to search tracks. Please try again.');
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-//
-//   if (loading) return (
-//     <Container className="py-5 text-center">
-//       <h3>Loading...</h3>
-//       <p>Please wait while we fetch your recommendations.</p>
-//     </Container>
-//   );
-//
-//   if (error) return (
-//     <Container className="py-5 text-center">
-//       <h3 className="text-danger">Error</h3>
-//       <p>{error}</p>
-//       <Button variant="primary" onClick={loadRecommendations}>
-//         Try Again
-//       </Button>
-//     </Container>
-//   );
-//
-//   return (
-//     <Container className="py-4">
-//       <h2 className="mb-4">Discover</h2>
-//
-//       <Form onSubmit={handleSearch} className="mb-4">
-//         <Row>
-//           <Col md={8}>
-//             <Form.Control
-//               type="text"
-//               placeholder="Search for songs..."
-//               value={searchQuery}
-//               onChange={(e) => setSearchQuery(e.target.value)}
-//             />
-//           </Col>
-//           <Col md={4}>
-//             <Button type="submit" variant="primary" className="w-100">
-//               Search
-//             </Button>
-//           </Col>
-//         </Row>
-//       </Form>
-//
-//       {tracks.length === 0 ? (
-//         <div className="text-center py-5">
-//           <h3>No tracks found</h3>
-//           <p>Try searching for something else or check back later for recommendations.</p>
-//         </div>
-//       ) : (
-//         <Row>
-//           {tracks.map((track, index) => (
-//             <Col key={index} md={4} className="mb-4">
-//               <Card>
-//                 <Card.Img
-//                   variant="top"
-//                   src={track.album?.images[0]?.url}
-//                   alt={track.name}
-//                   style={{ height: '200px', objectFit: 'cover' }}
-//                 />
-//                 <Card.Body>
-//                   <Card.Title>{track.name}</Card.Title>
-//                   <Card.Text>
-//                     {track.artists?.map(artist => artist.name).join(', ')}
-//                   </Card.Text>
-//                   <Card.Text className="text-muted">
-//                     Album: {track.album?.name}
-//                   </Card.Text>
-//                   {track.preview_url && (
-//                     <audio controls className="w-100">
-//                       <source src={track.preview_url} type="audio/mpeg" />
-//                       Your browser does not support the audio element.
-//                     </audio>
-//                   )}
-//                 </Card.Body>
-//               </Card>
-//             </Col>
-//           ))}
-//         </Row>
-//       )}
-//     </Container>
-//   );
-// };
-//
-// export default DiscoverForm;
+import React, { useEffect, useState } from 'react';
+import {Container, Button, Spinner} from 'react-bootstrap';
+import { PlayCircle, Heart, Info, ChevronRight, ChevronLeft } from 'lucide-react';
+import {getTopLikeTracks, getTopTracks} from "../services/trackService";
+import { useMusicPlayer } from '../context/musicPlayerContext';
+import '../styles/Discover.css'
+
+const MusicCard = ({ title, subtitle, imageUrl, onPlay }) => {
+    const [hover, setHover] = useState(false);
+
+    return (
+        <div
+            className="music-card text-center text-white px-2"
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+            style={{ cursor: 'pointer' }}
+        >
+            <img
+                src={imageUrl || '/images/default-music.jpg'}
+                alt={title}
+                style={{
+                    width: '100%',
+                    height: '340px',
+                    objectFit: 'cover',
+                    borderRadius: '16px',
+                    boxShadow: '0 6px 15px rgba(0, 0, 0, 0.6)',
+                }}
+            />
+
+            <div className="music-icons-top d-flex gap-3">
+                <Heart size={22} />
+                <Info size={22} />
+            </div>
+
+            <div className="music-card-overlay">
+                <button className="play-button border-0 bg-transparent" onClick={onPlay}>
+                    <PlayCircle size={60} color="white" />
+                </button>
+            </div>
+
+            <div className="mt-3">
+                <div className="fw-bold" style={{ fontSize: '16px' }}>{title}</div>
+                <div style={{ fontSize: '13px', color: '#ccc' }}>{subtitle}</div>
+            </div>
+        </div>
+    );
+};
+
+const ScrollableSection = ({ title, items, onPlay }) => {
+    const visibleCount = 5;
+    const [startIndex, setStartIndex] = useState(0);
+    const maxStartIndex = Math.max(0, items.length - visibleCount);
+
+    const handlePrev = () => setStartIndex((prev) => Math.max(prev - visibleCount, 0));
+    const handleNext = () => setStartIndex((prev) => Math.min(prev + visibleCount, maxStartIndex));
+
+    useEffect(() => setStartIndex(0), [items]);
+
+    const visibleItems = items.slice(startIndex, startIndex + visibleCount);
+
+    return (
+        <div className="mb-5">
+            <h4 className="text-white mb-4">{title}</h4>
+
+            <div className="position-relative" style={{ height: '400px' }}>
+                <div className="d-flex overflow-hidden flex-nowrap w-100 h-100" style={{ padding: '0 60px' }}>
+                    {visibleItems.map((item) => (
+                        <div
+                            key={item.id}
+                            style={{ flex: `0 0 calc(100% / ${visibleCount})`, padding: '0 8px' }}
+                        >
+                            <MusicCard {...item} onPlay={() => onPlay(item)} />
+                        </div>
+                    ))}
+                </div>
+                <Button variant="dark" onClick={handlePrev} disabled={startIndex === 0} style={navBtnStyle('left')}>
+                    <ChevronLeft size={24} />
+                </Button>
+                <Button variant="dark" onClick={handleNext} disabled={startIndex >= maxStartIndex} style={navBtnStyle('right')}>
+                    <ChevronRight size={24} />
+                </Button>
+            </div>
+        </div>
+    );
+};
+
+const navBtnStyle = (side) => ({
+    position: 'absolute',
+    top: '44%',
+    [side]: '10px',
+    transform: 'translateY(-50%)',
+    zIndex: 10,
+    height: '48px',
+    width: '48px',
+    borderRadius: '50%',
+    boxShadow: '0 0 8px rgba(0,0,0,0.5)',
+});
+
+const DiscoverForm = () => {
+    const [trendingSongs, setTrendingSongs] = useState([]);
+    const [favoriteSongs, setFavoriteSongs] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const { playTrackList } = useMusicPlayer();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            const trackList = await getTopTracks();
+            const likeLists = await getTopLikeTracks();
+
+            const topSongs = trackList.map((track, index) => ({
+                id: track.id || index,
+                title: track.title || `Bài hát ${index + 1}`,
+                subtitle: 'Top Trending',
+                imageUrl: track.imageBase64 || '/images/default-music.jpg',
+                url: track.audioUrl || ''
+            }));
+
+            const topFavoritesSongs = likeLists.map((track, index) => ({
+                id: track.id || index,
+                title: track.title || `Bài hát ${index + 1}`,
+                subtitle: 'Top Trending',
+                imageUrl: track.imageBase64 || '/images/default-music.jpg',
+                url: track.audioUrl || ''
+            }));
+
+            setTrendingSongs(topSongs);
+            setFavoriteSongs(topFavoritesSongs);
+            setIsLoading(false);
+        };
+        fetchData();
+    }, []);
+
+    return (
+        <>
+            {isLoading && (
+                <div className="d-flex justify-content-center align-items-center vh-100">
+                    <Spinner animation="border" role="status" />
+                </div>
+            )}
+
+            {!isLoading && (
+                <Container fluid className="bg-dark py-5" style={{ minHeight: '100vh' }}>
+                    <ScrollableSection
+                        title="Những bài hát phổ biến nhất"
+                        items={trendingSongs}
+                        onPlay={(track) => {
+                            const index = trendingSongs.findIndex(t => t.id === track.id);
+                            playTrackList(trendingSongs, index);
+                        }}
+                    />
+                    <ScrollableSection
+                        title="Những bài hát được yêu thích nhất"
+                        items={favoriteSongs}
+                        onPlay={(track) => {
+                            const index = trendingSongs.findIndex(t => t.id === track.id);
+                            playTrackList(trendingSongs, index);
+                        }}
+                    />
+                </Container>
+            )}
+        </>
+    );
+};
+
+export default DiscoverForm;

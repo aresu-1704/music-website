@@ -22,11 +22,8 @@ namespace backend.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string? ArtistId { get; set; }
 
-        [BsonElement("album")]
-        public string? Album { get; set; }
-
-        [BsonElement("genre")]
-        public string[]? Genre { get; set; }
+        [BsonElement("genres")]
+        public string[]? Genres { get; set; }
 
         // ========== Thông tin file ==========
         [Required(ErrorMessage = "Tên file không được để trống.")]
@@ -34,7 +31,7 @@ namespace backend.Models
         [BsonElement("filename")]
         public string Filename { get; set; }
 
-        [BsonElement("cover")]
+        [BsonElement("cover_image")]
         public string? Cover { get; set; }
 
         // ========== Tương tác ==========

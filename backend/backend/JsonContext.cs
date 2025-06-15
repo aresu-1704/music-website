@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using backend.Controllers;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 
 namespace backend
@@ -14,10 +15,9 @@ namespace backend
     [JsonSerializable(typeof(backend.Controllers.PaymentUrlResponse))]
     [JsonSerializable(typeof(backend.Controllers.UploadTrackRequest))]
     [JsonSerializable(typeof(backend.Controllers.UploadTrackResponse))]
-    [JsonSerializable(typeof(backend.Controllers.CreateArtistRequest))]
-    [JsonSerializable(typeof(backend.Controllers.CreateArtistResponse))]
-    [JsonSerializable(typeof(backend.Controllers.CheckApprovedResponse))]
-    [JsonSerializable(typeof(backend.Controllers.CancelRegisterResponse))]
+    [JsonSerializable(typeof(backend.Controllers.TrackDetail))]
+    [JsonSerializable(typeof(Dictionary<string, string>))]
+    [JsonSerializable(typeof(List<TrackThumbnail>))]
     [JsonSerializable(typeof(ValidationProblemDetails))]
     
     public partial class JsonContext : JsonSerializerContext

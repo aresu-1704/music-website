@@ -81,8 +81,6 @@ builder.Services.AddScoped<ITokenBlacklistService, RedisTokenBlacklistService>()
 builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddScoped<ITrackRepository, TrackRepository>();
 builder.Services.AddScoped<ITrackService, TrackService>();
-builder.Services.AddScoped<IArtistRepository, ArtistRepository>();
-builder.Services.AddScoped<IArtistService, ArtistService>();
 
 //Redis cache
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>

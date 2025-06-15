@@ -52,5 +52,23 @@ namespace backend.Repositories
             var update = Builders<Track>.Update.Inc(t => t.LikeCount, 1);
             await _tracks.UpdateOneAsync(t => t.Id == id, update);
         }
+
+        public async Task<List<Track>> GetTopPlayedTracksAsync(int limit = 20)
+        {
+            var sort = Builders<Track>.Sort.Descending(t => t.PlayCount);
+            return await _tracks.Find(_ => true)
+                                .Sort(sort)
+                                .Limit(limit)
+                                .ToListAsync();
+        }
+
+        public async Task<List<Track>> GetTopLikeTracksAsync(int limit = 20)
+        {
+            var sort = Builders<Track>.Sort.Descending(t => t.LikeCount);
+            return await _tracks.Find(_ => true)
+                                .Sort(sort)
+                                .Limit(limit)
+                                .ToListAsync();
+        }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using backend.Models;
+using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using backend.Controllers;
 
 namespace backend.Interfaces
 {
@@ -15,5 +17,8 @@ namespace backend.Interfaces
         Task<bool> DeleteAsync(string id);
         Task IncrementPlayCountAsync(string id);
         Task IncrementLikeCountAsync(string id);
+        Task<List<Track>> GetTopPlayedTracksAsync(int limit = 20);
+        Task<List<Track>> GetTopLikeTracksAsync(int limit = 20);
+
     }
 }

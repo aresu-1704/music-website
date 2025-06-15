@@ -14,6 +14,7 @@ import AlbumsForm from './pages/AlbumsForm';
 import DiscoverForm from './pages/DiscoverForm';
 import UpgradeAccount from "./pages/UpgradeAccountForm";
 import PaymentResultForm from "./pages/PaymentResultForm";
+import {MusicPlayerProvider} from "./context/musicPlayerContext";
 
 const queryClient = new QueryClient();
 
@@ -21,20 +22,21 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
         <Router>
             <AuthProvider>
-                <MainLayout>
-                    <Routes>
-                        <Route path="/" element={<HomeForm />} />
-                        {/* <Route path="/songs" element={<SongsPage />} /> */}
-                        <Route path="/albums" element={<AlbumsForm />} />
-                        <Route path="/discover" element={<DiscoverForm />} />
-                        <Route path="/signin" element={<SignInForm />} />
-                        <Route path="/signup" element={<SignUpForm />} />
-                        <Route path="/profile/:userId" element={<ProfileForm />} />
-                        <Route path="/upgrade/:userId" element={<UpgradeAccount />} />
-                        <Route path="/payment-result" element={<PaymentResultForm />} />
-                    </Routes>
-                    <ToastContainer />
-                </MainLayout>
+                <MusicPlayerProvider>
+                    <MainLayout>
+                        <Routes>
+                            <Route path="/" element={<HomeForm />} />
+                            <Route path="/albums" element={<AlbumsForm />} />
+                            <Route path="/discover" element={<DiscoverForm />} />
+                            <Route path="/signin" element={<SignInForm />} />
+                            <Route path="/signup" element={<SignUpForm />} />
+                            <Route path="/profile/:userId" element={<ProfileForm />} />
+                            <Route path="/upgrade/:userId" element={<UpgradeAccount />} />
+                            <Route path="/payment-result" element={<PaymentResultForm />} />
+                        </Routes>
+                        <ToastContainer />
+                    </MainLayout>
+                </MusicPlayerProvider>
             </AuthProvider>
         </Router>
     </QueryClientProvider>

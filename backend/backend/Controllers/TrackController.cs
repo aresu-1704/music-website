@@ -1,5 +1,9 @@
 ﻿using backend.Interfaces;
+using backend.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.StaticFiles;
+using SharpCompress.Common;
 using System.ComponentModel.DataAnnotations;
 
 namespace backend.Controllers
@@ -26,7 +30,6 @@ namespace backend.Controllers
                     request.File,
                     request.Title,
                     request.ArtistId,
-                    request.Album,
                     request.Genre,
                     request.Cover
                 );
@@ -62,6 +65,88 @@ namespace backend.Controllers
 
             return Ok(track);
         }
+
+        [HttpGet("top-played")]
+        public async Task<IActionResult> GetTopPlayedTracks()
+        {
+            var result = await _trackService.GetTopPlayedThumbnailsAsync();
+            return Ok(result);
+        }
+
+        [HttpGet("top-like")]
+        public async Task<IActionResult> GetTopLikeTracks()
+        {
+            var result = await _trackService.GetTopLikeThumbnailsAsync();
+            return Ok(result);
+        }
+
+
+        [HttpGet("audio/{id}")]
+        public async Task<IActionResult> GetTrackAudio(string id)
+        {
+            var trackDetail = await _trackService.GetMusicByIdAsync(id);
+            if (trackDetail == null)
+            {
+                return NotFound(new Dictionary<string, string>
+                {
+                    { "error", "Không tìm thấy bài hát hoặc file mp3 không tồn tại." }
+                });
+            }
+
+
+            var filePath = trackDetail.AudioUrl;
+            if (!System.IO.File.Exists(filePath))
+            {
+                return NotFound(new Dictionary<string, string>
+                {
+                    { "error", "File mp3 không tồn tại." }
+                });
+            }
+
+            var provider = new FileExtensionContentTypeProvider();
+            if (!provider.TryGetContentType(filePath, out var contentType))
+            {
+                contentType = "application/octet-stream";
+            }
+
+            var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            return File(stream, contentType, enableRangeProcessing: true);
+        }
+
+        [HttpGet("track-info/{id}")]
+        public async Task<IActionResult> GetTrackDetail(string id)
+        {
+            var trackDetail = await _trackService.GetByIdAsync(id);
+            if (trackDetail != null)
+            {
+                var apiAudioUrl = "http://localhost:5270/api/Track/audio/" + id;
+                return Ok(new TrackDetail()
+                {
+                    AudioUrl = apiAudioUrl,
+                    LikeCount = trackDetail.LikeCount,
+                    PlayCount = trackDetail.PlayCount,
+                    IsPublic = trackDetail.IsPublic,
+                });
+            }
+            else
+            {
+                return Ok("Không tìm thấy nhạc");
+            }
+        }
+
+        [HttpPut("play-count/{id}")]
+        public async Task<IActionResult> UpdatePlayCount(string id)
+        {
+            var result = await _trackService.UpdatePlayCount(id);
+            if (result == "Success")
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }            
+        }
     }
 
     #region Úp load nhạc
@@ -91,4 +176,26 @@ namespace backend.Controllers
         public DateTime CreatedAt { get; set; }
     }
     #endregion
+
+    #region Danh sách nhạc
+    public class TrackThumbnail
+    {
+        public string Id { get; set; }
+        public string Title { get; set; }
+        public string ImageBase64 { get; set; }
+    }
+    #endregion
+
+    public class TrackMusic
+    {
+        public string AudioUrl { get; set; }
+    }    
+
+    public class TrackDetail
+    {
+        public string AudioUrl { get; set; }
+        public int LikeCount { get; set; }
+        public int PlayCount { get; set; }
+        public bool IsPublic { get; set; }
+    }
 }

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { Google, Facebook, Apple } from 'react-bootstrap-icons';
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Spinner } from 'react-bootstrap';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { loginUser } from '../services/authService'; // 👈 import service mới
 
 const validationSchema = Yup.object().shape({
     username: Yup.string().required('Tên đăng nhập không được để trống'),
@@ -17,51 +18,48 @@ const validationSchema = Yup.object().shape({
 export default function SignInForm() {
     const { user, login } = useAuth();
     const navigate = useNavigate();
-    const [ isLoading, setIsLoading ] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (user.isLoggedIn) {
             setTimeout(() => {
                 navigate('/');
-            }, 2000)
+            }, 2000);
         }
     }, [user]);
 
-
     const handleSubmit = async (values, { setSubmitting }) => {
         setIsLoading(true);
-        try {
-            const response = await fetch('http://localhost:5270/api/Auth/login', {
-                method: 'POST',
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(values)
-            });
 
-            if (response.ok) {
-                const result = await response.json();
-                const token = result.token;
-                const avatarBase64 = result.avatarBase64;
-                toast.success("Đăng nhập thành công", { position: "top-center", autoClose: 2000, pauseOnHover: false });
+        const result = await loginUser(values);
 
-                setTimeout(() => {
-                    const role = login(token, avatarBase64);
-                    navigate(role === "admin" ? '/statistic' : '/');
-                }, 2000);
-            } else if (response.status === 401) {
-                toast.error("Sai tên đăng nhập hoặc mật khẩu", { position: "top-center", autoClose: 2000, pauseOnHover: false });
-            } else if (response.status === 403) {
-                toast.error("Tài khoản của bạn đã bị khóa", { position: "top-center", autoClose: 2000, pauseOnHover: false });
-            } else {
-                toast.error("Lỗi máy chủ, vui lòng thử lại sau", { position: "top-center", autoClose: 2000, pauseOnHover: false });
-            }
-        } catch (error) {
-            toast.error("Không thể kết nối đến máy chủ", { position: "top-center", autoClose: 2000, pauseOnHover: false });
-        } finally {
+        if (result.success) {
+            toast.success("Đăng nhập thành công", { position: "top-center", autoClose: 2000, pauseOnHover: false });
+
             setTimeout(() => {
-                setSubmitting(false);
-                setIsLoading(false);
-            }, 2500)
+                const role = login(result.token, result.avatarBase64);
+                navigate(role === "admin" ? '/statistic' : '/');
+            }, 2000);
+        } else {
+            switch (result.status) {
+                case 401:
+                    toast.error("Sai tên đăng nhập hoặc mật khẩu", { position: "top-center", autoClose: 2000 });
+                    break;
+                case 403:
+                    toast.error("Tài khoản của bạn đã bị khóa", { position: "top-center", autoClose: 2000 });
+                    break;
+                case undefined:
+                    toast.error("Không thể kết nối đến máy chủ", { position: "top-center", autoClose: 2000 });
+                    break;
+                default:
+                    toast.error("Lỗi máy chủ, vui lòng thử lại sau", { position: "top-center", autoClose: 2000 });
+            }
         }
+
+        setTimeout(() => {
+            setSubmitting(false);
+            setIsLoading(false);
+        }, 2500);
     };
 
     return (
@@ -108,17 +106,14 @@ export default function SignInForm() {
 
                         <div>
                             <div className="text-center mb-3">Hoặc đăng nhập với</div>
-
                             <button onClick={() => alert("Google")} className="btn btn-outline-danger w-100 mb-2 position-relative">
                                 <Google size={20} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
                                 <span className="d-block text-center w-100">Đăng nhập với Google</span>
                             </button>
-
                             <button onClick={() => alert("Facebook")} className="btn btn-outline-primary w-100 mb-2 position-relative">
                                 <Facebook size={20} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
                                 <span className="d-block text-center w-100">Đăng nhập với Facebook</span>
                             </button>
-
                             <button onClick={() => alert("Apple")} className="btn btn-outline-secondary w-100 position-relative">
                                 <Apple size={20} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
                                 <span className="d-block text-center w-100">Đăng nhập với Apple</span>

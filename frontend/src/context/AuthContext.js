@@ -1,11 +1,13 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { queryClient } from "./QueryClientContext";
+import {useNavigate} from "react-router-dom";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState({ isLoggedIn: false });
+    const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -59,6 +61,7 @@ export const AuthProvider = ({ children }) => {
                     "Authorization": `Bearer ${token}`
                 }
             })
+            navigate('/')
         }
         catch (error) {
             localStorage.removeItem('token');

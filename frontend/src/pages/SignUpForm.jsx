@@ -6,7 +6,7 @@ import { Spinner } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/authContext';
 import { registerUser } from '../services/authService';
 
 export default function SignUpForm() {

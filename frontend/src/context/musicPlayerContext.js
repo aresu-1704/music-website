@@ -46,7 +46,7 @@ export const MusicPlayerProvider = ({ children }) => {
             audioUrl,
             isPlaying,
             setIsPlaying,
-            playTrackList
+            playTrackList,
         }}>
             {children}
         </MusicPlayerContext.Provider>

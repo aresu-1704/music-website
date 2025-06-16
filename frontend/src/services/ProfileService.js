@@ -48,7 +48,7 @@ export const updatePersonalData = async (userID, data) => {
         }
     }
     catch (error) {
-        return "Không thể kết nối đến maáy chủ"
+        return error.message;
     }
 }
 

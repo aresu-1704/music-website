@@ -103,6 +103,7 @@ namespace backend.Services
                 {
                     Id = track.Id,
                     Title = track.Title,
+
                     ImageBase64 = base64Image
                 });
             }
@@ -142,6 +143,7 @@ namespace backend.Services
                 {
                     Id = track.Id,
                     Title = track.Title,
+                    IsPublic = track.IsPublic,
                     ImageBase64 = base64Image
                 });
             }

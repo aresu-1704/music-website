@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Container, Nav, Tab, Row, Col, Spinner, Button, Alert, Card} from 'react-bootstrap';
 import { Person, GeoAlt, ShieldLock, Link45deg } from 'react-bootstrap-icons';
 import '../styles/Profile.css'
@@ -8,7 +8,8 @@ import { useUserProfile, updatePersonalData, updatePersonalDataWithAvatar } from
 import { toast, ToastContainer } from "react-toastify";
 import {Field, Form, Formik} from "formik";
 import * as Yup from 'yup';
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/authContext'
+import {useLoginSessionOut} from "../services/loginSessionOut";
 
 export default function ProfileForm() {
     const navigate = useNavigate();
@@ -16,16 +17,15 @@ export default function ProfileForm() {
     const { data: userData, isLoading, error, refetch } = useUserProfile(userId);
     const [ isSubmitting, setSubmitting ] = useState(false);
     const { user, logout } = useAuth();
-
-    if (userData == null){
-        toast.error("Không thể kết nối đến máy chủ", { position: "top-center", autoClose: 2000, pauseOnHover: false });
-    }
+    const handleSessionOut = useLoginSessionOut()
 
     if (isLoading) {
         return (
-            <div className="d-flex justify-content-center align-items-center vh-100">
-                <Spinner animation="border" role="status" />
-            </div>
+            <Container fluid className="bg-dark py-5" style={{ minHeight: '100vh' }}>
+                <div className="d-flex justify-content-center align-items-center vh-100">
+                    <Spinner animation="border" role="status" />
+                </div>
+            </Container>
         );
     }
 
@@ -75,15 +75,7 @@ export default function ProfileForm() {
 
             } else if (result === "Phiên đăng nhập hết hạn") {
                 logout();
-                toast.error("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại", {
-                    position: "top-center",
-                    autoClose: 2000,
-                    pauseOnHover: false,
-                });
-                setTimeout(() => {
-                    navigate('/signin');
-                }, 2500)
-
+                handleSessionOut();
             } else if (result === "Không thể kết nối đến máy chủ") {
                 toast.error("Không thể kết nối đến máy chủ", { position: "top-center", autoClose: 2000, pauseOnHover: false });
             } else {
@@ -112,13 +104,7 @@ export default function ProfileForm() {
                 });
                 await queryClient.invalidateQueries(['profile', userId]);
             } else if (result === "Phiên đăng nhập hết hạn") {
-                toast.error("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại", {
-                    position: "top-center",
-                    autoClose: 2000
-                });
-                setTimeout(() => {
-                    navigate('/signin');
-                }, 2000)
+                handleSessionOut();
             } else if (result === "Không thể kết nối đến máy chủ") {
                 toast.error("Không thể kết nối đến máy chủ", { position: "top-center", autoClose: 2000, pauseOnHover: false });
             } else {
@@ -172,8 +158,6 @@ export default function ProfileForm() {
                                 </Nav.Item>
                             </Nav>
                         </Col>
-
-
 
                         <Col xl={9} lg={8} md={7}>
                             <Tab.Content className="p-4 bg-dark rounded shadow text-light">

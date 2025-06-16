@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Google, Facebook, Apple } from 'react-bootstrap-icons';
 import { toast, ToastContainer } from "react-toastify";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { Spinner } from 'react-bootstrap';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { loginUser } from '../services/authService'; // 👈 import service mới
+import { loginUser } from '../services/authService';
 
 const validationSchema = Yup.object().shape({
     username: Yup.string().required('Tên đăng nhập không được để trống'),

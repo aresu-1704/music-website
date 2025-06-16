@@ -4,6 +4,7 @@ using backend.Utils.Securities;
 using MongoDB.Driver;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using StackExchange.Redis;
 
 namespace backend.Services
 {
@@ -12,11 +13,16 @@ namespace backend.Services
         private readonly IUserRepository _usersRepository;
         private readonly IJWTService _jwtService;
         private readonly ITokenBlacklistService _tokenBlacklistService;
-        public UsersService(IUserRepository usersRepository, IJWTService jwtService, ITokenBlacklistService tokenBlaclistService)
+        private readonly IConnectionMultiplexer _redis;
+        private readonly IConfiguration _config;
+
+        public UsersService(IUserRepository usersRepository, IJWTService jwtService, ITokenBlacklistService tokenBlaclistService, IConnectionMultiplexer redis, IConfiguration config)
         {
             _usersRepository = usersRepository;
             _jwtService = jwtService;
             _tokenBlacklistService = tokenBlaclistService;
+            _redis = redis;
+            _config = config;
         }
 
         public async Task<(string?, string?)> VerifyLogin(string username, string password)
@@ -213,6 +219,64 @@ namespace backend.Services
                 return null;
             }
 
+        }
+
+        public async Task<bool> SendOtpAsync(string email)
+        {
+            var db = _redis.GetDatabase();
+            var user = await _usersRepository.GetByEmailAsync(email);
+            if (user == null) return false;
+
+            // Check spam limit
+            if (await db.StringGetAsync($"otp-limit:{email}") != RedisValue.Null)
+                return false;
+
+            // Gen OTP
+            var otp = new Random().Next(100000, 999999).ToString();
+            await db.StringSetAsync($"otp:{email}", otp, TimeSpan.FromMinutes(5));
+            await db.StringSetAsync($"otp-limit:{email}", "1", TimeSpan.FromSeconds(60));
+
+            // Send mail
+            var smtpUser = _config["Gmail:Username"];
+            var smtpPass = _config["Gmail:AppPassword"];
+
+            using var client = new System.Net.Mail.SmtpClient("smtp.gmail.com")
+            {
+                Port = 587,
+                Credentials = new System.Net.NetworkCredential(smtpUser, smtpPass),
+                EnableSsl = true,
+            };
+
+            await client.SendMailAsync(
+                new System.Net.Mail.MailMessage(
+                    from: smtpUser,
+                    to: email,
+                    subject: "Your OTP Code",
+                    body: $"Your OTP is: {otp}"
+                )
+            );
+
+            return true;
+        }
+
+        public async Task<bool> VerifyOtpAsync(string email, string otp, string newPassword)
+        {
+            var db = _redis.GetDatabase();
+            var savedOtp = await db.StringGetAsync($"otp:{email}");
+            if (savedOtp.IsNullOrEmpty || savedOtp != otp) return false;
+
+            var user = await _usersRepository.GetByEmailAsync(email);
+            if (user == null) return false;
+
+            var newSalt = HashingUtil.GenerateSalt();
+            var newHash = HashingUtil.HashPassword(newPassword, newSalt);
+            user.Password = newHash;
+            user.Salt = newSalt;
+
+            await _usersRepository.UpdateAsync(user.Id, user);
+
+            await db.KeyDeleteAsync($"otp:{email}");
+            return true;
         }
     }
 }

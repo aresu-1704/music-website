@@ -7,6 +7,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using backend.Models;
+using backend.Services;
 
 namespace backend.Controllers
 {
@@ -100,6 +102,24 @@ namespace backend.Controllers
                 return BadRequest("Invalid token");
             }
         }
+
+        [HttpPost("send-otp")]
+        public async Task<IActionResult> SendOtp([FromBody] SendOtpRequest request)
+        {
+            await _usersService.SendOtpAsync(request.Email);
+            return Ok(ApiResponse.SuccessResponse("OTP đã được gửi."));
+        }
+
+        [HttpPost("verify-otp")]
+        public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequest request)
+        {
+            var result = await _usersService.VerifyOtpAsync(request.Email, request.Otp, request.NewPassword);
+            if (!result)
+            {
+                return BadRequest(ApiResponse.ErrorResponse("OTP không hợp lệ hoặc đã hết hạn."));
+            }
+            return Ok(ApiResponse.SuccessResponse("Mật khẩu đã được đặt lại thành công."));
+        }
     }
 
     
@@ -138,10 +158,17 @@ namespace backend.Controllers
     }
     #endregion
 
-    //#region Đăng xuất
-    //public class LogoutRequest
-    //{
-    //    public str
-    //}
-    //#endregion
+    #region Quên mật khẩu
+    public class SendOtpRequest
+    {
+        public string Email { get; set; }
+    }
+
+    public class VerifyOtpRequest
+    {
+        public string Email { get; set; }
+        public string Otp { get; set; }
+        public string NewPassword { get; set; }
+    }
+    #endregion
 }

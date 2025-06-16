@@ -31,6 +31,11 @@ namespace backend.Repositories
             return await _usersCollection.Find(u => u.Username == username).FirstOrDefaultAsync();
         }
 
+        public async Task<Users> GetByEmailAsync(string email)
+        {
+            return await _usersCollection.Find(u => u.Email == email).FirstOrDefaultAsync();
+        }
+
         public async Task CreateAsync(Users user)
         {
             await _usersCollection.InsertOneAsync(user);

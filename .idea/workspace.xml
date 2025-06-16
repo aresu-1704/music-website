@@ -6,7 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="7fcf1a4e-08d2-4244-ab25-c37e69d2fb59" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.vs/ProjectEvaluation/backend.metadata.v9.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.vs/ProjectEvaluation/backend.projects.v9.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.vs/ProjectEvaluation/backend.strings.v9.bin" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -14,6 +16,11 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -39,10 +46,11 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "HuyBranch",
+    "git-widget-placeholder": "Mail",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "node.js.detected.package.eslint": "true",
@@ -79,6 +87,7 @@
       <option name="presentableId" value="Default" />
       <updated>1749564765160</updated>
       <workItem from="1749564768008" duration="9262000" />
+      <workItem from="1750000236675" duration="479000" />
     </task>
     <servers />
   </component>

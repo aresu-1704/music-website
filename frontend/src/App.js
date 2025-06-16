@@ -14,6 +14,8 @@ import AlbumsForm from './pages/AlbumsForm';
 import DiscoverForm from './pages/DiscoverForm';
 import UpgradeAccount from "./pages/UpgradeAccountForm";
 import PaymentResultForm from "./pages/PaymentResultForm";
+import ForgotPassword from "./pages/ForgotPassword";
+import NewPassword from "./pages/NewPassword";
 import {MusicPlayerProvider} from "./context/musicPlayerContext";
 
 const queryClient = new QueryClient();
@@ -33,6 +35,8 @@ const App = () => (
                             <Route path="/profile/:userId" element={<ProfileForm />} />
                             <Route path="/upgrade/:userId" element={<UpgradeAccount />} />
                             <Route path="/payment-result" element={<PaymentResultForm />} />
+                            <Route path="/forgot-password" element={<ForgotPassword />} />
+                            <Route path="/new-password" element={<NewPassword />} />
                         </Routes>
                         <ToastContainer />
                     </MainLayout>

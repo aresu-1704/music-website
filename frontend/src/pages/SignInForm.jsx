@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Google, Facebook, Apple } from 'react-bootstrap-icons';
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Spinner } from 'react-bootstrap';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -74,7 +74,7 @@ export default function SignInForm() {
                 <div className="d-flex justify-content-center align-items-center pt-5">
                     <div className="card p-4 shadow" style={{ width: 500, backgroundColor: 'rgba(0,0,0,0.7)', color: 'white', borderRadius: '0.5rem' }}>
                         <div className="d-flex flex-column align-items-center">
-                            <img src="/images/icon.png" alt="Logo" width="120" height="120" />
+                            <img src="/images/icon.png" alt="Logo" width="500" height="500" />
                             <h2 className="mb-4 text-center" style={{ color: '#ff4d4f' }}>Đăng nhập</h2>
                         </div>
 
@@ -95,6 +95,9 @@ export default function SignInForm() {
                                         <label htmlFor="password" className="form-label">Mật khẩu</label>
                                         <Field name="password" type="password" placeholder="Nhập mật khẩu" className="form-control" style={{ backgroundColor: 'white', color: 'black' }} />
                                         <ErrorMessage name="password" component="div" className="text-danger" />
+                                        <div className="text-end mt-1">
+                                            <Link to="/forgot-password" className="text-white text-decoration-none">Quên mật khẩu?</Link>
+                                        </div>
                                     </div>
 
                                     <button type="submit" className="btn btn-danger w-100 mb-3" disabled={isSubmitting}>

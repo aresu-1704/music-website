@@ -89,6 +89,12 @@ export default function HomePage() {
                     </div>
                 </div>
             </div>
+            {/* Privacy Policy Banner */}
+            <div className="privacy-policy-banner text-center py-3" style={{ background: '#18191c', color: '#fff', marginTop: '0', borderTop: '1px solid #222' }}>
+                <Link to="/policy" style={{ color: '#ff3b3f', fontWeight: 600, textDecoration: 'underline', fontSize: '1.1rem' }}>
+                    Xem Chính sách Quyền riêng tư của chúng tôi
+                </Link>
+            </div>
         </div>
     );
 }

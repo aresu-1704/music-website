@@ -16,6 +16,8 @@ import UpgradeAccount from "./pages/UpgradeAccountForm";
 import PaymentResultForm from "./pages/PaymentResultForm";
 import {MusicPlayerProvider} from "./context/musicPlayerContext";
 
+import PolicyForm from "./pages/PolicyForm";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -33,6 +35,8 @@ const App = () => (
                             <Route path="/profile/:userId" element={<ProfileForm />} />
                             <Route path="/upgrade/:userId" element={<UpgradeAccount />} />
                             <Route path="/payment-result" element={<PaymentResultForm />} />
+
+                            <Route path="/policy" element={<PolicyForm />} />
                         </Routes>
                         <ToastContainer />
                     </MainLayout>

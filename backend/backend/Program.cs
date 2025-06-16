@@ -53,7 +53,6 @@ void StartRedisIfNotRunning()
     }
 }
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Cấu hình MongoDB từ appsettings.json
@@ -81,6 +80,8 @@ builder.Services.AddScoped<ITokenBlacklistService, RedisTokenBlacklistService>()
 builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddScoped<ITrackRepository, TrackRepository>();
 builder.Services.AddScoped<ITrackService, TrackService>();
+builder.Services.AddScoped<IFavoritesRepository, FavoritesRepository>();
+builder.Services.AddScoped<IFavoritesService, FavoritesService>();
 
 //Redis cache
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
@@ -194,6 +195,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Map route cho controller
 app.MapControllers();

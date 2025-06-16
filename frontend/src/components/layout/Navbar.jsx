@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/authContext";
 import React, { useState } from "react";
 import { Modal, Button, Dropdown } from "react-bootstrap";
 import { FaUser, FaShieldAlt, FaSignOutAlt, FaCogs, FaHeart, FaEye } from 'react-icons/fa';

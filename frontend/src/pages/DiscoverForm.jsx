@@ -134,9 +134,11 @@ const DiscoverForm = () => {
     return (
         <>
             {isLoading && (
-                <div className="d-flex justify-content-center align-items-center vh-100">
-                    <Spinner animation="border" role="status" />
-                </div>
+                <Container fluid className="bg-dark py-5" style={{ minHeight: '100vh' }}>
+                    <div className="d-flex justify-content-center align-items-center vh-100">
+                        <Spinner animation="border" role="status" />
+                    </div>
+                </Container>
             )}
 
             {!isLoading && (

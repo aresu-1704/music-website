@@ -19,7 +19,10 @@ namespace backend
     [JsonSerializable(typeof(Dictionary<string, string>))]
     [JsonSerializable(typeof(List<TrackThumbnail>))]
     [JsonSerializable(typeof(ValidationProblemDetails))]
-    
+    [JsonSerializable(typeof(FavoriteCheckResponse))]
+    [JsonSerializable(typeof(FavoriteToggleResponse))]
+    [JsonSerializable(typeof(FavoriteTrackIdsResponse))]
+
     public partial class JsonContext : JsonSerializerContext
     {
     }

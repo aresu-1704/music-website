@@ -4,6 +4,7 @@ using backend.Utils.Securities;
 using MongoDB.Driver;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using StackExchange.Redis;
 
 namespace backend.Services
 {
@@ -12,11 +13,16 @@ namespace backend.Services
         private readonly IUserRepository _usersRepository;
         private readonly IJWTService _jwtService;
         private readonly ITokenBlacklistService _tokenBlacklistService;
-        public UsersService(IUserRepository usersRepository, IJWTService jwtService, ITokenBlacklistService tokenBlaclistService)
+        private readonly IConnectionMultiplexer _redis;
+        private readonly IConfiguration _config;
+
+        public UsersService(IUserRepository usersRepository, IJWTService jwtService, ITokenBlacklistService tokenBlaclistService, IConnectionMultiplexer redis, IConfiguration config)
         {
             _usersRepository = usersRepository;
             _jwtService = jwtService;
             _tokenBlacklistService = tokenBlaclistService;
+            _redis = redis;
+            _config = config;
         }
 
         public async Task<(string?, string?)> VerifyLogin(string username, string password)
@@ -124,11 +130,23 @@ namespace backend.Services
 
                 Users user = await _usersRepository.GetByIdAsync(id);
                 if (user != null)
+<<<<<<< HEAD
                 {            
+=======
+                {
+                    // Update last login time
+                    user.LastLogin = DateTime.UtcNow;
+                    await _usersRepository.UpdateAsync(id, user);
+>>>>>>> Mail
 
+                    // Add token to blacklist
                     var expires = jwtToken.ValidTo;
-
                     await _tokenBlacklistService.AddToBlacklistAsync(id, expires);
+
+                    // Clear any existing OTP and limit keys for this user
+                    var db = _redis.GetDatabase();
+                    await db.KeyDeleteAsync($"otp:{user.Email}");
+                    await db.KeyDeleteAsync($"otp-limit:{user.Email}");
 
                     return true;
                 }
@@ -213,6 +231,158 @@ namespace backend.Services
                 return null;
             }
 
+        }
+
+        public async Task<bool> SendOtpAsync(string email)
+        {
+            try
+            {
+                Console.WriteLine($"SendOtpAsync called for email: {email}");
+                var db = _redis.GetDatabase();
+                var user = await _usersRepository.GetByEmailAsync(email);
+
+                if (user == null)
+                {
+                    Console.WriteLine($"User not found for email: {email}");
+                    return false;
+                }
+                Console.WriteLine($"User found for email: {email}, user ID: {user.Id}");
+
+                // Check if Redis is connected
+                if (!_redis.IsConnected)
+                {
+                    Console.WriteLine("Redis is not connected. Attempting to reconnect...");
+                    try
+                    {
+                        await _redis.GetDatabase().PingAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Failed to connect to Redis: {ex.Message}");
+                        return false;
+                    }
+                }
+
+                // Check spam limit with retry
+                var retryCount = 0;
+                var maxRetries = 3;
+                while (retryCount < maxRetries)
+                {
+                    try
+                    {
+                        var limitKey = $"otp-limit:{email}";
+                        var existingLimit = await db.StringGetAsync(limitKey);
+                        
+                        if (existingLimit != RedisValue.Null)
+                        {
+                            Console.WriteLine($"OTP limit exists for email: {email}, waiting for it to expire...");
+                            // Force delete the limit key if it exists
+                            await db.KeyDeleteAsync(limitKey);
+                            Console.WriteLine($"Force deleted limit key for email: {email}");
+                        }
+
+                        // Gen OTP
+                        var otp = new Random().Next(100000, 999999).ToString();
+                        
+                        // Set OTP and limit atomically
+                        var otpKey = $"otp:{email}";
+                        var transaction = db.CreateTransaction();
+                        transaction.StringSetAsync(otpKey, otp, TimeSpan.FromMinutes(5));
+                        transaction.StringSetAsync(limitKey, "1", TimeSpan.FromSeconds(60));
+                        
+                        if (await transaction.ExecuteAsync())
+                        {
+                            // Send mail
+                            var smtpUser = _config["Gmail:Username"];
+                            var smtpPass = _config["Gmail:AppPassword"];
+
+                            using var client = new System.Net.Mail.SmtpClient("smtp.gmail.com")
+                            {
+                                Port = 587,
+                                Credentials = new System.Net.NetworkCredential(smtpUser, smtpPass),
+                                EnableSsl = true,
+                            };
+
+                            var mailMessage = new System.Net.Mail.MailMessage
+                            {
+                                From = new System.Net.Mail.MailAddress(smtpUser),
+                                Subject = "Mã xác thực OTP",
+                                Body = $"Mã OTP của bạn là: {otp}. Mã này có hiệu lực trong 5 phút.",
+                                IsBodyHtml = false,
+                            };
+                            mailMessage.To.Add(email);
+
+                            await client.SendMailAsync(mailMessage);
+                            Console.WriteLine($"OTP sent successfully to {email}");
+                            return true;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Failed to set OTP in Redis transaction");
+                            retryCount++;
+                            await Task.Delay(100); // Wait before retry
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error in SendOtpAsync retry {retryCount}: {ex.Message}");
+                        retryCount++;
+                        if (retryCount == maxRetries)
+                            throw;
+                        await Task.Delay(100); // Wait before retry
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in SendOtpAsync: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> VerifyOnlyOtpAsync(string email, string otp)
+        {
+            var db = _redis.GetDatabase();
+            var savedOtp = await db.StringGetAsync($"otp:{email}");
+            return !savedOtp.IsNullOrEmpty && savedOtp == otp;
+        }
+
+        public async Task<bool> VerifyOtpAsync(string email, string otp, string newPassword)
+        {
+            try
+            {
+                if (!await VerifyOnlyOtpAsync(email, otp))
+                {
+                    return false;
+                }
+
+                var user = await _usersRepository.GetByEmailAsync(email);
+                if (user == null)
+                {
+                    return false;
+                }
+
+                var newSalt = HashingUtil.GenerateSalt();
+                var newHash = HashingUtil.HashPassword(newPassword, newSalt);
+                user.Password = newHash;
+                user.Salt = newSalt;
+
+                await _usersRepository.UpdateAsync(user.Id, user);
+
+                var db = _redis.GetDatabase();
+                // Delete both OTP and limit keys
+                await db.KeyDeleteAsync($"otp:{email}");
+                await db.KeyDeleteAsync($"otp-limit:{email}");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"VerifyOtpAsync: An unexpected error occurred: {ex.ToString()}");
+                return false;
+            }
         }
     }
 }

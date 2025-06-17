@@ -2,6 +2,7 @@
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
+using backend.Models;
 
 namespace backend
 {
@@ -17,15 +18,25 @@ namespace backend
     [JsonSerializable(typeof(backend.Controllers.UploadTrackRequest))]
     [JsonSerializable(typeof(backend.Controllers.UploadTrackResponse))]
     [JsonSerializable(typeof(backend.Controllers.TrackDetail))]
+    [JsonSerializable(typeof(backend.Controllers.SendOtpRequest))]
+    [JsonSerializable(typeof(backend.Controllers.VerifyOtpRequest))]
+    [JsonSerializable(typeof(backend.Controllers.ResetPasswordRequest))]
     [JsonSerializable(typeof(Dictionary<string, string>))]
     [JsonSerializable(typeof(List<TrackThumbnail>))]
+    [JsonSerializable(typeof(ProblemDetails))]
     [JsonSerializable(typeof(ValidationProblemDetails))]
+    [JsonSerializable(typeof(ApiResponse))]
+    [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
     [JsonSerializable(typeof(FavoriteCheckResponse))]
     [JsonSerializable(typeof(FavoriteToggleResponse))]
+<<<<<<< HEAD
     [JsonSerializable(typeof(List<FavoriteTracksResponse>))]
     [JsonSerializable(typeof(List<HistoryTrackResponse>))]
 
 
+=======
+    [JsonSerializable(typeof(FavoriteTrackIdsResponse))]
+>>>>>>> Mail
     public partial class JsonContext : JsonSerializerContext
     {
     }

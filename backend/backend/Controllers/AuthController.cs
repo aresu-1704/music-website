@@ -88,7 +88,7 @@ namespace backend.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", " ");
 
             if (string.IsNullOrEmpty(token))
                 return BadRequest("Token is missing");

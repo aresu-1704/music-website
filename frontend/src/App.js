@@ -19,6 +19,7 @@ import NewPassword from "./pages/NewPassword";
 import {MusicPlayerProvider} from "./context/musicPlayerContext";
 
 import PolicyForm from "./pages/PolicyForm";
+import NotFoundForm from "./pages/NotFoundForm";
 
 const queryClient = new QueryClient();
 
@@ -40,6 +41,8 @@ const App = () => (
                             <Route path="/forgot-password" element={<ForgotPassword />} />
                             <Route path="/new-password" element={<NewPassword />} />
                             <Route path="/policy" element={<PolicyForm />} />
+
+                            <Route path="/*" element={<NotFoundForm />} />
                         </Routes>
                         <ToastContainer />
                     </MainLayout>

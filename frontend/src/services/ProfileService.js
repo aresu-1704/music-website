@@ -35,7 +35,7 @@ export const updatePersonalData = async (userID, data) => {
             return "Thành công"
         }
 
-        else if (res.status === 403) {
+        else if (res.status === 403 ||  res.status === 401) {
             return "Phiên đăng nhập hết hạn";
         }
 

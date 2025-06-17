@@ -61,6 +61,7 @@ const Footer = () => {
             if (currentTrack?.id && user.isLoggedIn) {
                 try {
                     const res = await checkUserIsFavorites(currentTrack.id, handleSessionOut);
+                    await updateTrackPlayCount(currentTrack.id, handleSessionOut);
                     setIsLiked(res.favorited);
                 } catch (err) {
                     console.error("Lỗi khi kiểm tra yêu thích:", err);

@@ -53,6 +53,8 @@ namespace backend.Services
                         }
                     }
                     string token = _jwtService.GenerateJwtToken(loginUser.Id, loginUser.Name, loginUser.Role.ToString());
+                    loginUser.LastLogin = DateTime.UtcNow;
+                    await _usersRepository.UpdateAsync(loginUser.Id, loginUser);
                     return (token, avatarBase64);
                 }
                 else
@@ -122,9 +124,7 @@ namespace backend.Services
 
                 Users user = await _usersRepository.GetByIdAsync(id);
                 if (user != null)
-                {
-                    user.LastLogin = DateTime.UtcNow;
-                    await _usersRepository.UpdateAsync(id, user);
+                {            
 
                     var expires = jwtToken.ValidTo;
 

@@ -17,6 +17,7 @@ import PaymentResultForm from "./pages/PaymentResultForm";
 import {MusicPlayerProvider} from "./context/musicPlayerContext";
 
 import PolicyForm from "./pages/PolicyForm";
+import NotFoundForm from "./pages/NotFoundForm";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,8 @@ const App = () => (
                             <Route path="/payment-result" element={<PaymentResultForm />} />
 
                             <Route path="/policy" element={<PolicyForm />} />
+
+                            <Route path="/*" element={<NotFoundForm />} />
                         </Routes>
                         <ToastContainer />
                     </MainLayout>

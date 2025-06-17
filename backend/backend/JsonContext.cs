@@ -1,4 +1,5 @@
 ﻿using backend.Controllers;
+using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
 
@@ -21,7 +22,9 @@ namespace backend
     [JsonSerializable(typeof(ValidationProblemDetails))]
     [JsonSerializable(typeof(FavoriteCheckResponse))]
     [JsonSerializable(typeof(FavoriteToggleResponse))]
-    [JsonSerializable(typeof(FavoriteTrackIdsResponse))]
+    [JsonSerializable(typeof(List<FavoriteTracksResponse>))]
+    [JsonSerializable(typeof(List<HistoryTrackResponse>))]
+
 
     public partial class JsonContext : JsonSerializerContext
     {

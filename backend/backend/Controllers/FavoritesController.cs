@@ -42,14 +42,9 @@ namespace backend.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-            var trackIds = await _favoritesService.GetFavoriteTrackIdsByUserAsync(userId);
+            var track = await _favoritesService.GetFavoriteTrackByUserAsync(userId);
 
-            var response = new FavoriteTrackIdsResponse
-            {
-                TrackIds = trackIds
-            };
-
-            return Ok(response);
+            return Ok(track);
         }
 
         // Kiểm tra bài hát có đang được user yêu thích không
@@ -81,8 +76,10 @@ namespace backend.Controllers
         public bool Favorited { get; set; }
     }
 
-    public class FavoriteTrackIdsResponse
+    public class FavoriteTracksResponse
     {
-        public List<string> TrackIds { get; set; }
+        public string trackId { get; set; }
+        public string title { get; set; }
+        public bool isPublic { get; set; }
     }
 }

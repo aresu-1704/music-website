@@ -55,6 +55,7 @@ namespace backend.Repositories
 
         public async Task<List<Track>> GetTopPlayedTracksAsync(int limit = 20)
         {
+            var filter = Builders<Track>.Filter.Eq(t => t.IsApproved, true);
             var sort = Builders<Track>.Sort.Descending(t => t.PlayCount);
             return await _tracks.Find(_ => true)
                                 .Sort(sort)

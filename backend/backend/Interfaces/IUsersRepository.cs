@@ -9,6 +9,7 @@ namespace backend.Interfaces
         Task<List<Users>> GetAllAsync();
         Task<Users> GetByIdAsync(string id);
         Task<Users> GetByUsernameAsync(string username);
+        Task<Users> GetByEmailAsync(string email);
         Task CreateAsync(Users user);
         Task UpdateAsync(string id, Users user);
         Task DeleteAsync(string id);

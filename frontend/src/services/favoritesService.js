@@ -13,7 +13,7 @@ export const checkUserIsFavorites = async (trackId, handleSessionOut) => {
         return await res.json();
     }
 
-    else if (res.status === 401) {
+    else if (res.status === 401 ||  res.status === 403) {
         handleSessionOut()
     }
 }
@@ -27,7 +27,7 @@ export const toggleFavorites = async (trackId, handleSessionOut) => {
         }
     })
 
-    if (res.status === 401) {
+    if (res.status === 401 || res.status === 403) {
         handleSessionOut()
     }
 }

@@ -29,25 +29,13 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpGet("get-detail/{trackId}")]
-        public async Task<IActionResult> GetHistory(string trackId)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var history = await _historyService.GetHistoryAsync(userId, trackId);
-            if (history == null)
-                return NotFound(new { message = "History not found" });
-
-            return Ok(history);
-        }
-
-        [Authorize]
         [HttpPost("play/{trackId}")]
         public async Task<IActionResult> UpdatePlay(string trackId)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             if (string.IsNullOrEmpty(userId))
-                return Unauthorized(new { message = "User not authenticated" });
+                return Unauthorized("User not authenticated");
 
             await _historyService.UpdatePlayHistoryAsync(userId, trackId);
             return Ok("Play history updated");
@@ -62,5 +50,23 @@ namespace backend.Controllers
             await _historyService.DeleteHistoryAsync(userId, trackId);
             return Ok("History deleted");
         }
+
+        [Authorize]
+        [HttpDelete("delete-all")]
+        public async Task<IActionResult> DeleteAllHistory()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            await _historyService.DeleteAll(userId);
+            return Ok("History deleted");
+        }
     }
+
+    public class HistoryTrackResponse 
+    {
+        public string trackId { get; set; }
+        public string title { get; set; }
+        public bool isPublic { get; set; }
+        public DateTime? lastPlay {  get; set; }
+    }
+
 }

@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0c8aaf66-e18d-4868-96f6-1c067c9507e5" name="Changes" comment="Trang chủ của Huy">
+      <change beforePath="$PROJECT_DIR$/src/pages/SignInForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/SignInForm.jsx" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CSS File" />
+        <option value="JavaScript File" />
+        <option value="JSX File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/.." value="Upload-Music" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="UPDATE_TYPE" value="REBASE" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;aresu-1704&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/aresu-1704/music-website.git&quot;,
+    &quot;accountId&quot;: &quot;b917a1e0-1eda-49df-94bf-961a5677cbac&quot;
+  },
+  &quot;recentNewPullRequestHead&quot;: {
+    &quot;server&quot;: {
+      &quot;useHttp&quot;: false,
+      &quot;host&quot;: &quot;github.com&quot;,
+      &quot;port&quot;: null,
+      &quot;suffix&quot;: null
+    },
+    &quot;owner&quot;: &quot;aresu-1704&quot;,
+    &quot;repository&quot;: &quot;music-website&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2xwSV6AmTlJrc5Tg4KP4xdsTgET" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Node.js.SignInPage.jsx.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/anly1/Desktop/music-website/frontend&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.start.executor&quot;: &quot;Run&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;actions.on.save&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\WebStorm 2025.1.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;ChangesTree.GroupingKeys&quot;: [
+      &quot;repository&quot;
+    ]
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\anly1\Desktop\music-website\frontend\src\styles" />
+      <recent name="C:\Users\anly1\Desktop\music-website\frontend\src\pages" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="start" type="js.build_tools.npm" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="start" />
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-WS-251.25410.117" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0c8aaf66-e18d-4868-96f6-1c067c9507e5" name="Changes" comment="" />
+      <created>1748847665709</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1748847665709</updated>
+      <workItem from="1748847669617" duration="901000" />
+      <workItem from="1748919554767" duration="18000" />
+      <workItem from="1748961060949" duration="3688000" />
+      <workItem from="1749205811490" duration="61000" />
+      <workItem from="1749205874001" duration="2156000" />
+      <workItem from="1749219416338" duration="1266000" />
+      <workItem from="1749229420536" duration="180000" />
+      <workItem from="1749266498538" duration="966000" />
+      <workItem from="1749276773529" duration="3474000" />
+      <workItem from="1749345428457" duration="1415000" />
+      <workItem from="1749351065916" duration="1690000" />
+      <workItem from="1749354625678" duration="901000" />
+      <workItem from="1749374816756" duration="7620000" />
+      <workItem from="1749384440410" duration="3145000" />
+      <workItem from="1749467156663" duration="1831000" />
+      <workItem from="1749480087047" duration="2054000" />
+      <workItem from="1749482319599" duration="4321000" />
+      <workItem from="1749524165767" duration="2674000" />
+      <workItem from="1749531254697" duration="10756000" />
+      <workItem from="1749548974962" duration="5437000" />
+      <workItem from="1749562631396" duration="9067000" />
+      <workItem from="1749623284238" duration="1662000" />
+      <workItem from="1749639142629" duration="683000" />
+      <workItem from="1749651024688" duration="3956000" />
+      <workItem from="1749655193205" duration="58000" />
+      <workItem from="1749690084109" duration="4113000" />
+      <workItem from="1749702807032" duration="2578000" />
+      <workItem from="1749730991997" duration="510000" />
+      <workItem from="1749731708695" duration="2733000" />
+      <workItem from="1749736100830" duration="1335000" />
+      <workItem from="1749737950961" duration="2637000" />
+      <workItem from="1749741737940" duration="364000" />
+      <workItem from="1749880800532" duration="2259000" />
+      <workItem from="1749885019747" duration="1001000" />
+      <workItem from="1749899057717" duration="2197000" />
+      <workItem from="1749911182076" duration="5173000" />
+      <workItem from="1749981889688" duration="10319000" />
+      <workItem from="1749997694633" duration="2402000" />
+      <workItem from="1750000312492" duration="741000" />
+      <workItem from="1750084843216" duration="9516000" />
+      <workItem from="1750096068911" duration="129000" />
+      <workItem from="1750144655363" duration="1000" />
+      <workItem from="1750147744570" duration="308000" />
+      <workItem from="1750170993623" duration="6018000" />
+      <workItem from="1750180238128" duration="615000" />
+    </task>
+    <task id="LOCAL-00001">
+      <option name="closed" value="true" />
+      <created>1749481147394</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1749481147394</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Chuức năng cập nhật thông tin cá nhân, avatar và giao diện thanh toán nâng cấp tài khoản">
+      <option name="closed" value="true" />
+      <created>1749571298262</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1749571298262</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Tích hợp API thanh toán VNPay">
+      <option name="closed" value="true" />
+      <created>1749731831275</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1749731831275</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Tích hợp API thanh toán VNPay">
+      <option name="closed" value="true" />
+      <created>1749731891366</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1749731891366</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Trang chủ của Huy">
+      <option name="closed" value="true" />
+      <created>1749739519091</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1749739519091</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Trang chủ của Huy">
+      <option name="closed" value="true" />
+      <created>1749739800697</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1749739800697</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Phân quyền" />
+    <MESSAGE value="Merge remote-tracking branch 'origin/HuyBranch' into frontend&#10;&#10;# Conflicts:&#10;#&#9;backend/backend/bin/Debug/net8.0/appsettings.json&#10;#&#9;backend/backend/bin/Debug/net8.0/backend.deps.json&#10;#&#9;backend/backend/bin/Debug/net8.0/backend.dll&#10;#&#9;backend/backend/bin/Debug/net8.0/backend.exe&#10;#&#9;backend/backend/bin/Debug/net8.0/backend.pdb" />
+    <MESSAGE value="Chuức năng cập nhật thông tin cá nhân, avatar và giao diện thanh toán nâng cấp tài khoản" />
+    <MESSAGE value="Tích hợp API thanh toán VNPay" />
+    <MESSAGE value="Trang chủ của Huy" />
+    <option name="LAST_COMMIT_MESSAGE" value="Trang chủ của Huy" />
+  </component>
+</project>

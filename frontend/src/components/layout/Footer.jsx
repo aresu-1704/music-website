@@ -1,13 +1,19 @@
 import '../../styles/Footer.css';
 import { FaPlay, FaPause, FaStepBackward, FaStepForward, FaVolumeMute, FaVolumeDown, FaVolumeUp, FaHeart, FaRedo } from "react-icons/fa";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useMusicPlayer } from '../../context/musicPlayerContext';
 import {updateTrackPlayCount} from "../../services/trackService";
 import {toast, ToastContainer} from "react-toastify";
+import { useAuth } from "../../context/authContext";
+import {checkUserIsFavorites, toggleFavorites} from "../../services/favoritesService";
+import {useLoginSessionOut} from "../../services/loginSessionOut";
+import {Button, Modal} from "react-bootstrap";
+import {useNavigate} from "react-router-dom";
 
 const Footer = () => {
     const audioRef = useRef(null);
     const progressRef = useRef(null);
+    const { user } = useAuth();
 
     const {
         playlist,
@@ -16,7 +22,7 @@ const Footer = () => {
         audioUrl,
         isPlaying,
         setIsPlaying,
-        playTrackList
+        playTrackList,
     } = useMusicPlayer();
 
     const [progress, setProgress] = useState(0);
@@ -25,18 +31,58 @@ const Footer = () => {
     const [volume, setVolume] = useState(1);
     const [isReplay, setIsReplay] = useState(false);
     const [isLiked, setIsLiked] = useState(false);
+    const [showConfirmSigninModal, setShowConfirmSigninModal] = useState(false);
     const isReplayRef = useRef(isReplay);
+    const handleSessionOut = useLoginSessionOut();
+    const navigate = useNavigate();
+
+    const handleConfirmSigninClick = () => setShowConfirmSigninModal(true);
+    const handleSigninClose = () => setShowConfirmSigninModal(false);
+    const handleConfirmSignin = () => {
+        setIsPlaying(false);
+        playTrackList([], 0); // clear playlist
+        navigate('/signin');
+        setShowConfirmSigninModal(false);
+    }
+
+    useEffect(() => {
+        if (!user.isLoggedIn) {
+            setIsLiked(false); // Reset lại khi logout
+        }
+    }, [user.isLoggedIn]);
+
 
     useEffect(() => {
         isReplayRef.current = isReplay; // cập nhật khi isReplay thay đổi
     }, [isReplay]);
 
+    useEffect(() => {
+        const fetchFavoriteStatus = async () => {
+            if (currentTrack?.id && user.isLoggedIn) {
+                try {
+                    const res = await checkUserIsFavorites(currentTrack.id, handleSessionOut);
+                    setIsLiked(res.favorited);
+                } catch (err) {
+                    console.error("Lỗi khi kiểm tra yêu thích:", err);
+                }
+            }
+        };
+        fetchFavoriteStatus();
+    }, [currentTrack?.id]);
+
+
     const handleReplay = () => {
         setIsReplay(prev => !prev);
     };
 
-    const handleLike = () => {
-        setIsLiked(prev => !prev);
+    const handleLike = async () => {
+        if (user.isLoggedIn) {
+            setIsLiked(prev => !prev);
+            const res = await toggleFavorites(currentTrack.id, handleSessionOut);
+        }
+        else {
+            handleConfirmSigninClick()
+        }
     };
 
 
@@ -113,7 +159,7 @@ const Footer = () => {
 
     return (
         <>
-            {currentTrack && audioUrl && (
+            {currentTrack && audioUrl&& (
                 <footer className="footer-player">
                     {/* Thông tin nhạc */}
                     <div className="track-info">
@@ -199,6 +245,17 @@ const Footer = () => {
                 </footer>
             )}
             <ToastContainer />
+
+            <Modal show={showConfirmSigninModal} onHide={handleSigninClose} centered dialogClassName={"custom-modal-overlay"} backdrop={true}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Cần phải đăng nhập</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>Bạn có muốn đăng nhập không?</Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleSigninClose}>Hủy</Button>
+                    <Button variant="danger" onClick={handleConfirmSignin}>Đồng ý</Button>
+                </Modal.Footer>
+            </Modal>
         </>
     );
 };

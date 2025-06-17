@@ -181,6 +181,7 @@ namespace backend.Controllers
     public class TrackThumbnail
     {
         public string Id { get; set; }
+        public bool IsPublic { get; set; }
         public string Title { get; set; }
         public string ImageBase64 { get; set; }
     }

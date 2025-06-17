@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ToastContainer } from 'react-toastify/unstyled';
-import {AuthProvider} from "./context/AuthContext";
+import {AuthProvider} from "./context/authContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 //Điều hướng
@@ -18,13 +18,15 @@ import ForgotPassword from "./pages/ForgotPassword";
 import NewPassword from "./pages/NewPassword";
 import {MusicPlayerProvider} from "./context/musicPlayerContext";
 
+import PolicyForm from "./pages/PolicyForm";
+
 const queryClient = new QueryClient();
 
 const App = () => (
     <QueryClientProvider client={queryClient}>
         <Router>
-            <AuthProvider>
-                <MusicPlayerProvider>
+            <MusicPlayerProvider>
+                <AuthProvider>
                     <MainLayout>
                         <Routes>
                             <Route path="/" element={<HomeForm />} />
@@ -37,11 +39,12 @@ const App = () => (
                             <Route path="/payment-result" element={<PaymentResultForm />} />
                             <Route path="/forgot-password" element={<ForgotPassword />} />
                             <Route path="/new-password" element={<NewPassword />} />
+                            <Route path="/policy" element={<PolicyForm />} />
                         </Routes>
                         <ToastContainer />
                     </MainLayout>
-                </MusicPlayerProvider>
-            </AuthProvider>
+                </AuthProvider>
+            </MusicPlayerProvider>
         </Router>
     </QueryClientProvider>
 );

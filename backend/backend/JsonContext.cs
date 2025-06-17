@@ -25,8 +25,10 @@ namespace backend
     [JsonSerializable(typeof(ProblemDetails))]
     [JsonSerializable(typeof(ValidationProblemDetails))]
     [JsonSerializable(typeof(ApiResponse))]
-    
     [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
+    [JsonSerializable(typeof(FavoriteCheckResponse))]
+    [JsonSerializable(typeof(FavoriteToggleResponse))]
+    [JsonSerializable(typeof(FavoriteTrackIdsResponse))]
     public partial class JsonContext : JsonSerializerContext
     {
     }

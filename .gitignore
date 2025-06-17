@@ -1,6 +1,6 @@
 frontend/.env
-backend/backend/bin/
-backend/backend/obj/
+backend/backend/bin
+backend/backend/obj
 backend/backend/storage/
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.

@@ -1,11 +1,12 @@
 import React, {useState} from "react";
-import {Card, Button, Badge, Alert, OverlayTrigger, Tooltip, Modal, Spinner} from "react-bootstrap";
+import {Card, Button, Badge, Alert, OverlayTrigger, Tooltip, Modal, Spinner, Container} from "react-bootstrap";
 import { BadgeCheck, Star, Music, Download, Headphones, ShieldCheck, UploadCloud, Users } from "lucide-react";
 import '../styles/Upgrade.css';
 import {useNavigate, useParams} from "react-router-dom";
 import {getPaymentsUrl} from "../services/PaymentService";
 import {toast, ToastContainer} from "react-toastify";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/authContext";
+import {loginSessionOut, useLoginSessionOut} from "../services/loginSessionOut";
 
 const UpgradeAccount = () => {
   const tiers = [
@@ -58,31 +59,7 @@ const UpgradeAccount = () => {
       buttonLabel: "Nâng cấp Premium",
       priceReal: 199000,
       highlight: true,
-    },
-    {
-      title: "Nghệ sĩ",
-      icon: <Music size={40} color="#ec4899" />,
-      description: [
-        {
-          text: "Tạo hồ sơ nghệ sĩ",
-          icon: <Music size={18} className="text-pink" />,
-          detail: "Tạo trang hồ sơ cá nhân để giới thiệu bản thân và âm nhạc."
-        },
-        {
-          text: "Chia sẻ nhạc",
-          icon: <UploadCloud size={18} className="text-pink" />,
-          detail: "Tải lên các bản nhạc gốc và chia sẻ với cộng đồng."
-        },
-        {
-          text: "Kiếm tiền từ người nghe",
-          icon: <Users size={18} className="text-pink" />,
-          detail: "Nhận thu nhập từ lượt nghe, ủng hộ và quảng cáo."
-        }
-      ],
-      price: "Miễn phí đăng ký",
-      buttonLabel: "Đăng ký nghệ sĩ",
-      highlight: false,
-    },
+    }
   ];
 
   const { logout } = useAuth();
@@ -90,14 +67,17 @@ const UpgradeAccount = () => {
   const navigate = useNavigate();
   const [showConfirmModal, setConfirmModal] = useState(false);
   const [selectedTier, setSelectedTier] = useState(null);
+  const handleSessionOut = useLoginSessionOut();
 
   const [loading, setLoading] = useState(false);
 
   if (loading) {
     return (
-        <div className="d-flex justify-content-center align-items-center vh-100">
-          <Spinner animation="border" role="status" />
-        </div>
+        <Container fluid className="bg-dark py-5" style={{ minHeight: '100vh' }}>
+          <div className="d-flex justify-content-center align-items-center vh-100">
+            <Spinner animation="border" role="status" />
+          </div>
+        </Container>
     );
   }
   const handleClose = () => setConfirmModal(false);
@@ -112,10 +92,6 @@ const UpgradeAccount = () => {
       return;
     }
 
-    if (tier.title === "Nghệ sĩ") {
-      navigate("/artist/register");
-      return;
-    }
     else {
       let data = {
         "orderType": "billpayment",
@@ -129,15 +105,7 @@ const UpgradeAccount = () => {
       const result = await getPaymentsUrl(JSON.stringify(data));
 
       if (result === "Phiên đăng nhập hết hạn") {
-        toast.error("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại", {
-          position: "top-center",
-          autoClose: 2000,
-          pauseOnHover: false,
-        });
-        setTimeout(() => {
-          logout();
-          navigate('/signin');
-        }, 2500)
+        handleSessionOut();
       }
 
       else if (result === "Máy chủ đang bảo trì"){
@@ -157,15 +125,7 @@ const UpgradeAccount = () => {
 
       else {
         if (result === "Failed to fetch") {
-          toast.error("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại", {
-            position: "top-center",
-            autoClose: 2000,
-            pauseOnHover: false,
-          });
-          setTimeout(() => {
-            logout();
-            navigate('/signin');
-          }, 2500)
+          handleSessionOut();
         }
         else {
           toast.error(`Lỗi không xác định ${result}`, {

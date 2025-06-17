@@ -4,6 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="7fcf1a4e-08d2-4244-ab25-c37e69d2fb59" name="Changes" comment="Sửa lại bộ đếm và giảm thời gian redis cache">
       <change beforePath="$PROJECT_DIR$/backend/.vs/ProjectEvaluation/backend.metadata.v9.bin" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.vs/ProjectEvaluation/backend.metadata.v9.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/.vs/ProjectEvaluation/backend.projects.v9.bin" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.vs/ProjectEvaluation/backend.projects.v9.bin" afterDir="false" />
@@ -20,6 +21,12 @@
       <change beforePath="$PROJECT_DIR$/backend/backend/bin/Debug/net8.0/backend.dll" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/backend/bin/Debug/net8.0/backend.exe" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/backend/bin/Debug/net8.0/backend.pdb" beforeDir="false" />
+=======
+    <list default="true" id="7fcf1a4e-08d2-4244-ab25-c37e69d2fb59" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/HomeForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/HomeForm.jsx" afterDir="false" />
+>>>>>>> main
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,15 +47,19 @@
     &quot;assignee&quot;: &quot;huytn593&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/aresu-1704/music-website.git&quot;,
-    &quot;accountId&quot;: &quot;35fb7c53-3ace-4946-980b-f90b265d12d5&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/aresu-1704/music-website.git",
+    "accountId": "077e68b1-9ab1-4475-abaf-ffe41c1301ab"
   }
+<<<<<<< HEAD
 }</component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
+=======
+}]]></component>
+>>>>>>> main
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 8
@@ -58,6 +69,7 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
+<<<<<<< HEAD
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
@@ -75,6 +87,25 @@
     &quot;npm.start.executor&quot;: &quot;Run&quot;,
     &quot;ts.external.directory.path&quot;: &quot;C:\\Program Files\\JetBrains\\WebStorm 2025.1.2\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+=======
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "Policy",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "npm.start.executor": "Run",
+    "ts.external.directory.path": "C:\\Program Files\\JetBrains\\WebStorm 2025.1.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
+>>>>>>> main
   }
 }</component>
   <component name="RunManager">
@@ -89,7 +120,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-js-predefined-d6986cc7102b-b26f3e71634d-JavaScript-WS-251.26094.131" />
+        <option value="bundled-js-predefined-d6986cc7102b-6a121458b545-JavaScript-WS-251.25410.117" />
       </set>
     </attachedChunks>
   </component>
@@ -101,7 +132,11 @@
       <option name="presentableId" value="Default" />
       <updated>1749564765160</updated>
       <workItem from="1749564768008" duration="9262000" />
+<<<<<<< HEAD
       <workItem from="1750000236675" duration="479000" />
+=======
+      <workItem from="1750046882133" duration="1558000" />
+>>>>>>> main
     </task>
     <task id="LOCAL-00001" summary="Xong OTP và giao diện">
       <option name="closed" value="true" />

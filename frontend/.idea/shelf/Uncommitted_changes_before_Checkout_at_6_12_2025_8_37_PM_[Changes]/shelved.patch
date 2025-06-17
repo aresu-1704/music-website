@@ -1,0 +1,574 @@
+Index: ../backend/backend/backend.csproj
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><Project Sdk=\"Microsoft.NET.Sdk.Web\">\r\n\r\n  <PropertyGroup>\r\n    <TargetFramework>net8.0</TargetFramework>\r\n    <Nullable>enable</Nullable>\r\n    <ImplicitUsings>enable</ImplicitUsings>\r\n    <InvariantGlobalization>true</InvariantGlobalization>\r\n    <PublishAot>true</PublishAot>\r\n  </PropertyGroup>\r\n\r\n  <ItemGroup>\r\n    <PackageReference Include=\"Microsoft.AspNetCore.Authentication.JwtBearer\" Version=\"8.0.16\" />\r\n    <PackageReference Include=\"MongoDB.Driver\" Version=\"3.4.0\" />\r\n    <PackageReference Include=\"Newtonsoft.Json\" Version=\"13.0.3\" />\r\n    <PackageReference Include=\"StackExchange.Redis\" Version=\"2.8.37\" />\r\n    <PackageReference Include=\"Swashbuckle.AspNetCore\" Version=\"8.1.3\" />\r\n    <PackageReference Include=\"Swashbuckle.AspNetCore.Swagger\" Version=\"8.1.3\" />\r\n    <PackageReference Include=\"Swashbuckle.AspNetCore.SwaggerGen\" Version=\"8.1.3\" />\r\n    <PackageReference Include=\"Swashbuckle.AspNetCore.SwaggerUI\" Version=\"8.1.3\" />\r\n  </ItemGroup>\r\n\r\n  <ItemGroup>\r\n    <None Update=\"Utils\\Caches\\redis-server.exe\">\r\n      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>\r\n    </None>\r\n  </ItemGroup>\r\n\r\n</Project>\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../backend/backend/backend.csproj b/../backend/backend/backend.csproj
+--- a/../backend/backend/backend.csproj	(revision aeb6be960cb4cbaa0c67d1e206d909392b79e0ae)
++++ b/../backend/backend/backend.csproj	(date 1749735405798)
+@@ -25,4 +25,8 @@
+     </None>
+   </ItemGroup>
+ 
++  <ItemGroup>
++    <Folder Include="storage\tracks\" />
++  </ItemGroup>
++
+ </Project>
+Index: ../backend/backend/obj/Debug/net8.0/backend.AssemblyInfoInputs.cache
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>c208089ed509adcb0347b95c5524faf69d83b666787ef73d93226df56fb160c3\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../backend/backend/obj/Debug/net8.0/backend.AssemblyInfoInputs.cache b/../backend/backend/obj/Debug/net8.0/backend.AssemblyInfoInputs.cache
+--- a/../backend/backend/obj/Debug/net8.0/backend.AssemblyInfoInputs.cache	(revision aeb6be960cb4cbaa0c67d1e206d909392b79e0ae)
++++ b/../backend/backend/obj/Debug/net8.0/backend.AssemblyInfoInputs.cache	(date 1749735393049)
+@@ -1,1 +1,1 @@
+-c208089ed509adcb0347b95c5524faf69d83b666787ef73d93226df56fb160c3
++8049a17d5055eabbfe1fc93f5576031b732142173fcf887a2c018db7c5d8bd1f
+Index: ../backend/backend/Program.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using backend;\r\nusing backend.Interfaces;\r\nusing backend.Models;\r\nusing backend.Repositories;\r\nusing backend.Services;\r\nusing Microsoft.AspNetCore.Authentication.JwtBearer;\r\nusing Microsoft.AspNetCore.Builder;\r\nusing Microsoft.AspNetCore.Mvc;\r\nusing Microsoft.Extensions.Options;\r\nusing Microsoft.IdentityModel.Tokens;\r\nusing Microsoft.OpenApi.Models;\r\nusing MongoDB.Driver;\r\nusing StackExchange.Redis;\r\nusing System.IdentityModel.Tokens.Jwt;\r\nusing System.Text;\r\nusing System.Text.Json.Serialization;\r\nusing System.Diagnostics;\r\n\r\nvoid StartRedisIfNotRunning()\r\n{\r\n    var redisProcesses = Process.GetProcessesByName(\"redis-server\");\r\n    if (redisProcesses.Length == 0)\r\n    {\r\n        var redisPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, \"Utils\", \"Caches\", \"redis-server.exe\");\r\n\r\n        if (!File.Exists(redisPath))\r\n        {\r\n            Console.WriteLine($\"Redis executable not found at: {redisPath}\");\r\n            return;\r\n        }\r\n\r\n        var startInfo = new ProcessStartInfo\r\n        {\r\n            FileName = redisPath,\r\n            WorkingDirectory = Path.GetDirectoryName(redisPath),\r\n            UseShellExecute = false,\r\n            CreateNoWindow = true\r\n        };\r\n\r\n        try\r\n        {\r\n            Process.Start(startInfo);\r\n            Console.WriteLine(\"Redis started from local folder.\");\r\n        }\r\n        catch (Exception ex)\r\n        {\r\n            Console.WriteLine($\"Failed to start Redis: {ex.Message}\");\r\n        }\r\n    }\r\n    else\r\n    {\r\n        Console.WriteLine(\"Redis is already running.\");\r\n    }\r\n}\r\n\r\n\r\nvar builder = WebApplication.CreateBuilder(args);\r\n\r\n// Cấu hình MongoDB từ appsettings.json\r\nbuilder.Services.Configure<MongoDbSettings>(\r\n    builder.Configuration.GetSection(\"MongoDbSettings\"));\r\n\r\nbuilder.Services.AddSingleton<IMongoClient>(sp =>\r\n{\r\n    var settings = sp.GetRequiredService<IOptions<MongoDbSettings>>().Value;\r\n    return new MongoClient(settings.ConnectionString);\r\n});\r\n\r\nbuilder.Services.AddScoped(serviceProvider =>\r\n{\r\n    var settings = serviceProvider.GetRequiredService<IOptions<MongoDbSettings>>().Value;\r\n    var client = serviceProvider.GetRequiredService<IMongoClient>();\r\n    return client.GetDatabase(settings.DatabaseName);\r\n});\r\n\r\n// Đăng ký Repository và Service\r\nbuilder.Services.AddScoped<IUserRepository, UserRepository>();\r\nbuilder.Services.AddScoped<IUsersService, UsersService>();\r\nbuilder.Services.AddScoped<IJWTService, JWTService>();\r\nbuilder.Services.AddScoped<ITokenBlacklistService, RedisTokenBlacklistService>();\r\nbuilder.Services.AddScoped<IVnPayService, VnPayService>();\r\n\r\n\r\n//Redis cache\r\nbuilder.Services.AddSingleton<IConnectionMultiplexer>(sp =>\r\n{\r\n    var configuration = builder.Configuration.GetValue<string>(\"Redis:ConnectionString\");\r\n    return ConnectionMultiplexer.Connect(configuration);\r\n});\r\n\r\n// Add Swagger và Controller\r\nbuilder.Services.AddEndpointsApiExplorer();\r\nbuilder.Services.AddSwaggerGen(c =>\r\n{\r\n    c.SwaggerDoc(\"v1\", new OpenApiInfo\r\n    {\r\n        Title = \"Musicresu backend API\",\r\n        Version = \"1.0.0\",\r\n        Description = \"API backend của website nghe nhạc Musciresu\",\r\n        Contact = new OpenApiContact\r\n        {\r\n            Name = \"Lý Thuận An\",\r\n            Email = \"aresu.work1704@gmail.com\"\r\n        }\r\n    });\r\n});\r\n\r\nvar configuration = builder.Configuration;\r\nbuilder.Services.AddAuthentication(\"Bearer\")\r\n    .AddJwtBearer(\"Bearer\", options =>\r\n    {\r\n        options.TokenValidationParameters = new TokenValidationParameters\r\n        {\r\n            ValidateIssuer = true,\r\n            ValidateAudience = true,\r\n            ValidateLifetime = true,\r\n            ValidateIssuerSigningKey = true,\r\n\r\n            ValidIssuer = configuration[\"JWT:Issuer\"],            // Tên ứng dụng phát hành token\r\n            ValidAudience = configuration[\"JWT:Audience\"],             // Đối tượng sử dụng token\r\n            IssuerSigningKey = new SymmetricSecurityKey(\r\n                Encoding.UTF8.GetBytes(configuration[\"JWT:Key\"]))  // Khóa bí mật để xác thực token\r\n        };\r\n\r\n        options.Events = new JwtBearerEvents\r\n        {\r\n            OnAuthenticationFailed = context =>\r\n            {\r\n                if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))\r\n                {\r\n                    context.Response.StatusCode = 403;\r\n                    context.Response.ContentType = \"application/json\";\r\n                    return context.Response.WriteAsync(\"{\\\"message\\\": \\\"Token hết hạn\\\"}\");\r\n                }\r\n\r\n                return Task.CompletedTask;\r\n            },\r\n\r\n            OnTokenValidated = async context =>\r\n            {\r\n                // Lấy service kiểm tra blacklist token từ DI container\r\n                var tokenBlacklistService = context.HttpContext.RequestServices.GetRequiredService<ITokenBlacklistService>();\r\n\r\n                // Lấy claim jti (unique id của token) trong token vừa được xác thực\r\n                var jti = context.Principal?.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti)?.Value;\r\n\r\n                // Nếu token không có jti thì fail xác thực\r\n                if (string.IsNullOrEmpty(jti))\r\n                {\r\n                    context.Fail(\"Token does not contain jti\");\r\n                    return;\r\n                }\r\n\r\n                // Kiểm tra jti này có bị blacklist hay không (ví dụ bị logout trước đó)\r\n                var isBlacklisted = await tokenBlacklistService.IsBlacklistedAsync(jti);\r\n\r\n                // Nếu token nằm trong blacklist thì fail xác thực\r\n                if (isBlacklisted)\r\n                {\r\n                    context.Fail(\"Token is blacklisted\");\r\n                }\r\n            }\r\n        };\r\n    });\r\n\r\n// Cái này tao cũng không biết cấu hình cái gì đừng hỏi tao\r\nbuilder.Services.AddCors(options =>\r\n{\r\n    options.AddPolicy(\"AllowAll\",\r\n        builder =>\r\n        {\r\n            builder.AllowAnyOrigin()\r\n                   .AllowAnyHeader()\r\n                   .AllowAnyMethod();\r\n        });\r\n});\r\n\r\nbuilder.Services.AddControllers().AddJsonOptions(options =>\r\n{\r\n    options.JsonSerializerOptions.TypeInfoResolver = JsonContext.Default;\r\n});\r\n\r\nStartRedisIfNotRunning();\r\n\r\nvar app = builder.Build();\r\n\r\n// Bật Swagger nếu đang ở môi trường Development\r\nif (app.Environment.IsDevelopment())\r\n{\r\n    app.UseSwagger();\r\n    app.UseSwaggerUI();\r\n}\r\n\r\napp.UseCors(\"AllowAll\");\r\n\r\n// Map route cho controller\r\napp.MapControllers();\r\n\r\napp.Run();\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../backend/backend/Program.cs b/../backend/backend/Program.cs
+--- a/../backend/backend/Program.cs	(revision aeb6be960cb4cbaa0c67d1e206d909392b79e0ae)
++++ b/../backend/backend/Program.cs	(date 1749735405811)
+@@ -15,6 +15,7 @@
+ using System.Text;
+ using System.Text.Json.Serialization;
+ using System.Diagnostics;
++using backend.Interfaces;
+ 
+ void StartRedisIfNotRunning()
+ {
+@@ -79,6 +80,8 @@
+ builder.Services.AddScoped<IJWTService, JWTService>();
+ builder.Services.AddScoped<ITokenBlacklistService, RedisTokenBlacklistService>();
+ builder.Services.AddScoped<IVnPayService, VnPayService>();
++builder.Services.AddScoped<ITracksRepository, TracksRepository>();
++builder.Services.AddScoped<ITracksService, TracksService>();
+ 
+ 
+ //Redis cache
+Index: ../backend/backend/obj/Debug/net8.0/backend.csproj.CoreCompileInputs.cache
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>4395b5fd8bbbef2821abefd63699c64e395e8408254bb1232fa39259508cf58c\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../backend/backend/obj/Debug/net8.0/backend.csproj.CoreCompileInputs.cache b/../backend/backend/obj/Debug/net8.0/backend.csproj.CoreCompileInputs.cache
+--- a/../backend/backend/obj/Debug/net8.0/backend.csproj.CoreCompileInputs.cache	(revision aeb6be960cb4cbaa0c67d1e206d909392b79e0ae)
++++ b/../backend/backend/obj/Debug/net8.0/backend.csproj.CoreCompileInputs.cache	(date 1749735405948)
+@@ -1,1 +1,1 @@
+-4395b5fd8bbbef2821abefd63699c64e395e8408254bb1232fa39259508cf58c
++f5992d1bf01cd511b4b02be64039c4baf4e67ab8057f4017d2f1114abaa48d71
+Index: ../backend/backend/JsonContext.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>using Microsoft.AspNetCore.Mvc;\r\nusing System.Text.Json.Serialization;\r\n\r\nnamespace backend\r\n{\r\n    [JsonSerializable(typeof(backend.Controllers.LoginRequest))]\r\n    [JsonSerializable(typeof(backend.Controllers.LoginResponse))]\r\n    [JsonSerializable(typeof(backend.Controllers.RegisterRequest))]\r\n    [JsonSerializable(typeof(backend.Controllers.RegisterResponse))]\r\n    [JsonSerializable(typeof(backend.Controllers.GetProfileDataResponse))]\r\n    [JsonSerializable(typeof(backend.Controllers.PersonalRequest))]\r\n    [JsonSerializable(typeof(backend.Controllers.PaymentInformationModel))]\r\n    [JsonSerializable(typeof(backend.Controllers.PaymentResponseModel))]\r\n    [JsonSerializable(typeof(backend.Controllers.PaymentUrlResponse))]\r\n    [JsonSerializable(typeof(ValidationProblemDetails))]\r\n    \r\n    public partial class JsonContext : JsonSerializerContext\r\n    {\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../backend/backend/JsonContext.cs b/../backend/backend/JsonContext.cs
+--- a/../backend/backend/JsonContext.cs	(revision aeb6be960cb4cbaa0c67d1e206d909392b79e0ae)
++++ b/../backend/backend/JsonContext.cs	(date 1749735405955)
+@@ -12,6 +12,8 @@
+     [JsonSerializable(typeof(backend.Controllers.PaymentInformationModel))]
+     [JsonSerializable(typeof(backend.Controllers.PaymentResponseModel))]
+     [JsonSerializable(typeof(backend.Controllers.PaymentUrlResponse))]
++    [JsonSerializable(typeof(backend.Controllers.UploadTrackRequest))]
++    [JsonSerializable(typeof(backend.Controllers.UploadTrackResponse))]
+     [JsonSerializable(typeof(ValidationProblemDetails))]
+     
+     public partial class JsonContext : JsonSerializerContext
+Index: ../backend/backend/obj/Debug/net8.0/rpswa.dswa.cache.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\"GlobalPropertiesHash\":\"XiSOM07A2emP/57/yQVwRSE2aKCdTamuQVXxyPZSPBs=\",\"FingerprintPatternsHash\":\"gq3WsqcKBUGTSNle7RKKyXRIwh7M8ccEqOqYvIzoM04=\",\"PropertyOverridesHash\":\"8ZRc1sGeVrPBx4lD717BgRaQekyh78QKV9SKsdt638U=\",\"InputHashes\":[\"hjbbw/9BHvaAkjT\\u002BFCrqfJIKDmGEUqYkci94hqKq4iU=\",\"Y9jrWjD9equMsTFMn4/EYa8zq1qtytIxSnu3IjoWUW4=\"],\"CachedAssets\":{},\"CachedCopyCandidates\":{}}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../backend/backend/obj/Debug/net8.0/rpswa.dswa.cache.json b/../backend/backend/obj/Debug/net8.0/rpswa.dswa.cache.json
+--- a/../backend/backend/obj/Debug/net8.0/rpswa.dswa.cache.json	(revision aeb6be960cb4cbaa0c67d1e206d909392b79e0ae)
++++ b/../backend/backend/obj/Debug/net8.0/rpswa.dswa.cache.json	(date 1749735393069)
+@@ -1,1 +1,1 @@
+-{"GlobalPropertiesHash":"XiSOM07A2emP/57/yQVwRSE2aKCdTamuQVXxyPZSPBs=","FingerprintPatternsHash":"gq3WsqcKBUGTSNle7RKKyXRIwh7M8ccEqOqYvIzoM04=","PropertyOverridesHash":"8ZRc1sGeVrPBx4lD717BgRaQekyh78QKV9SKsdt638U=","InputHashes":["hjbbw/9BHvaAkjT\u002BFCrqfJIKDmGEUqYkci94hqKq4iU=","Y9jrWjD9equMsTFMn4/EYa8zq1qtytIxSnu3IjoWUW4="],"CachedAssets":{},"CachedCopyCandidates":{}}
+\ No newline at end of file
++{"GlobalPropertiesHash":"XiSOM07A2emP/57/yQVwRSE2aKCdTamuQVXxyPZSPBs=","FingerprintPatternsHash":"gq3WsqcKBUGTSNle7RKKyXRIwh7M8ccEqOqYvIzoM04=","PropertyOverridesHash":"8ZRc1sGeVrPBx4lD717BgRaQekyh78QKV9SKsdt638U=","InputHashes":["hjbbw/9BHvaAkjT\u002BFCrqfJIKDmGEUqYkci94hqKq4iU=","TCL9yqA737bSbruSstHdaZ5\u002BPHyRFGlK1Ei/2etarLk="],"CachedAssets":{},"CachedCopyCandidates":{}}
+\ No newline at end of file
+Index: ../backend/.vs/backend/v17/DocumentLayout.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\r\n  \"Version\": 1,\r\n  \"WorkspaceRootPath\": \"C:\\\\Users\\\\anly1\\\\Desktop\\\\music-website\\\\backend\\\\\",\r\n  \"Documents\": [\r\n    {\r\n      \"AbsoluteMoniker\": \"D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\\\backend.csproj|c:\\\\users\\\\anly1\\\\desktop\\\\music-website\\\\backend\\\\backend\\\\controllers\\\\profilecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}\",\r\n      \"RelativeMoniker\": \"D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\\\backend.csproj|solutionrelative:backend\\\\controllers\\\\profilecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}\"\r\n    },\r\n    {\r\n      \"AbsoluteMoniker\": \"D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\\\backend.csproj|c:\\\\users\\\\anly1\\\\desktop\\\\music-website\\\\backend\\\\backend\\\\controllers\\\\vnpaycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}\",\r\n      \"RelativeMoniker\": \"D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\\\backend.csproj|solutionrelative:backend\\\\controllers\\\\vnpaycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}\"\r\n    },\r\n    {\r\n      \"AbsoluteMoniker\": \"D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\\\backend.csproj|c:\\\\users\\\\anly1\\\\desktop\\\\music-website\\\\backend\\\\backend\\\\controllers\\\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}\",\r\n      \"RelativeMoniker\": \"D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\\\backend.csproj|solutionrelative:backend\\\\controllers\\\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}\"\r\n    },\r\n    {\r\n      \"AbsoluteMoniker\": \"D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\\\backend.csproj|c:\\\\users\\\\anly1\\\\desktop\\\\music-website\\\\backend\\\\backend\\\\services\\\\usersservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}\",\r\n      \"RelativeMoniker\": \"D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\\\backend.csproj|solutionrelative:backend\\\\services\\\\usersservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}\"\r\n    }\r\n  ],\r\n  \"DocumentGroupContainers\": [\r\n    {\r\n      \"Orientation\": 0,\r\n      \"VerticalTabListWidth\": 256,\r\n      \"DocumentGroups\": [\r\n        {\r\n          \"DockedWidth\": 202,\r\n          \"SelectedChildIndex\": 2,\r\n          \"Children\": [\r\n            {\r\n              \"$type\": \"Bookmark\",\r\n              \"Name\": \"ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}\"\r\n            },\r\n            {\r\n              \"$type\": \"Document\",\r\n              \"DocumentIndex\": 1,\r\n              \"Title\": \"VnPayController.cs\",\r\n              \"DocumentMoniker\": \"C:\\\\Users\\\\anly1\\\\Desktop\\\\music-website\\\\backend\\\\backend\\\\Controllers\\\\VnPayController.cs\",\r\n              \"RelativeDocumentMoniker\": \"backend\\\\Controllers\\\\VnPayController.cs\",\r\n              \"ToolTip\": \"C:\\\\Users\\\\anly1\\\\Desktop\\\\music-website\\\\backend\\\\backend\\\\Controllers\\\\VnPayController.cs\",\r\n              \"RelativeToolTip\": \"backend\\\\Controllers\\\\VnPayController.cs\",\r\n              \"ViewState\": \"AgIAACMAAAAAAAAAAAAwwAAAAAAAAAAAAAAAAA==\",\r\n              \"Icon\": \"ae27a6b0-e345-4288-96df-5eaf394ee369.000738|\",\r\n              \"WhenOpened\": \"2025-06-12T04:34:15.133Z\"\r\n            },\r\n            {\r\n              \"$type\": \"Document\",\r\n              \"DocumentIndex\": 0,\r\n              \"Title\": \"ProfileController.cs\",\r\n              \"DocumentMoniker\": \"C:\\\\Users\\\\anly1\\\\Desktop\\\\music-website\\\\backend\\\\backend\\\\Controllers\\\\ProfileController.cs\",\r\n              \"RelativeDocumentMoniker\": \"backend\\\\Controllers\\\\ProfileController.cs\",\r\n              \"ToolTip\": \"C:\\\\Users\\\\anly1\\\\Desktop\\\\music-website\\\\backend\\\\backend\\\\Controllers\\\\ProfileController.cs\",\r\n              \"RelativeToolTip\": \"backend\\\\Controllers\\\\ProfileController.cs\",\r\n              \"ViewState\": \"AgIAAB4AAAAAAAAAAAAowDgAAAAvAAAAAAAAAA==\",\r\n              \"Icon\": \"ae27a6b0-e345-4288-96df-5eaf394ee369.000738|\",\r\n              \"WhenOpened\": \"2025-06-12T04:28:57.881Z\",\r\n              \"EditorCaption\": \"\"\r\n            },\r\n            {\r\n              \"$type\": \"Document\",\r\n              \"DocumentIndex\": 2,\r\n              \"Title\": \"AuthController.cs\",\r\n              \"DocumentMoniker\": \"C:\\\\Users\\\\anly1\\\\Desktop\\\\music-website\\\\backend\\\\backend\\\\Controllers\\\\AuthController.cs\",\r\n              \"RelativeDocumentMoniker\": \"backend\\\\Controllers\\\\AuthController.cs\",\r\n              \"ToolTip\": \"C:\\\\Users\\\\anly1\\\\Desktop\\\\music-website\\\\backend\\\\backend\\\\Controllers\\\\AuthController.cs\",\r\n              \"RelativeToolTip\": \"backend\\\\Controllers\\\\AuthController.cs\",\r\n              \"ViewState\": \"AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==\",\r\n              \"Icon\": \"ae27a6b0-e345-4288-96df-5eaf394ee369.000738|\",\r\n              \"WhenOpened\": \"2025-06-12T04:28:56.725Z\"\r\n            },\r\n            {\r\n              \"$type\": \"Document\",\r\n              \"DocumentIndex\": 3,\r\n              \"Title\": \"UsersService.cs\",\r\n              \"DocumentMoniker\": \"C:\\\\Users\\\\anly1\\\\Desktop\\\\music-website\\\\backend\\\\backend\\\\Services\\\\UsersService.cs\",\r\n              \"RelativeDocumentMoniker\": \"backend\\\\Services\\\\UsersService.cs\",\r\n              \"ToolTip\": \"C:\\\\Users\\\\anly1\\\\Desktop\\\\music-website\\\\backend\\\\backend\\\\Services\\\\UsersService.cs\",\r\n              \"RelativeToolTip\": \"backend\\\\Services\\\\UsersService.cs\",\r\n              \"ViewState\": \"AgIAALAAAAAAAAAAAAAUwMYAAAA7AAAAAAAAAA==\",\r\n              \"Icon\": \"ae27a6b0-e345-4288-96df-5eaf394ee369.000738|\",\r\n              \"WhenOpened\": \"2025-06-12T02:00:23.742Z\"\r\n            }\r\n          ]\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../backend/.vs/backend/v17/DocumentLayout.json b/../backend/.vs/backend/v17/DocumentLayout.json
+--- a/../backend/.vs/backend/v17/DocumentLayout.json	(revision aeb6be960cb4cbaa0c67d1e206d909392b79e0ae)
++++ b/../backend/.vs/backend/v17/DocumentLayout.json	(date 1749735429491)
+@@ -3,20 +3,36 @@
+   "WorkspaceRootPath": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\",
+   "Documents": [
+     {
+-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\controllers\\profilecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+-      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\controllers\\profilecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
++      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\jsoncontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
++      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\jsoncontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
++    },
++    {
++      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\controllers\\trackscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
++      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\controllers\\trackscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
++    },
++    {
++      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\services\\tracksservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
++      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\services\\tracksservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
++    },
++    {
++      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\interfaces\\itracksservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
++      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\interfaces\\itracksservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
++    },
++    {
++      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
++      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+     },
+     {
+-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\controllers\\vnpaycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+-      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\controllers\\vnpaycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
++      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\repositories\\tracksrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
++      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\repositories\\tracksrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+     },
+     {
+-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+-      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
++      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\interfaces\\itracksrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
++      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\interfaces\\itracksrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+     },
+     {
+-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\services\\usersservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+-      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\services\\usersservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
++      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\models\\users.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
++      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\models\\users.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+     }
+   ],
+   "DocumentGroupContainers": [
+@@ -26,7 +42,7 @@
+       "DocumentGroups": [
+         {
+           "DockedWidth": 202,
+-          "SelectedChildIndex": 2,
++          "SelectedChildIndex": 1,
+           "Children": [
+             {
+               "$type": "Bookmark",
+@@ -34,52 +50,107 @@
+             },
+             {
+               "$type": "Document",
+-              "DocumentIndex": 1,
+-              "Title": "VnPayController.cs",
+-              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\VnPayController.cs",
+-              "RelativeDocumentMoniker": "backend\\Controllers\\VnPayController.cs",
+-              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\VnPayController.cs",
+-              "RelativeToolTip": "backend\\Controllers\\VnPayController.cs",
+-              "ViewState": "AgIAACMAAAAAAAAAAAAwwAAAAAAAAAAAAAAAAA==",
++              "DocumentIndex": 0,
++              "Title": "JsonContext.cs",
++              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\JsonContext.cs",
++              "RelativeDocumentMoniker": "backend\\JsonContext.cs",
++              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\JsonContext.cs",
++              "RelativeToolTip": "backend\\JsonContext.cs",
++              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAABEAAAAAAAAAA==",
+               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+-              "WhenOpened": "2025-06-12T04:34:15.133Z"
++              "WhenOpened": "2025-06-12T13:21:52.545Z",
++              "EditorCaption": ""
+             },
+             {
+               "$type": "Document",
+-              "DocumentIndex": 0,
+-              "Title": "ProfileController.cs",
+-              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\ProfileController.cs",
+-              "RelativeDocumentMoniker": "backend\\Controllers\\ProfileController.cs",
+-              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\ProfileController.cs",
+-              "RelativeToolTip": "backend\\Controllers\\ProfileController.cs",
+-              "ViewState": "AgIAAB4AAAAAAAAAAAAowDgAAAAvAAAAAAAAAA==",
++              "DocumentIndex": 1,
++              "Title": "TracksController.cs",
++              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\TracksController.cs",
++              "RelativeDocumentMoniker": "backend\\Controllers\\TracksController.cs",
++              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\TracksController.cs",
++              "RelativeToolTip": "backend\\Controllers\\TracksController.cs",
++              "ViewState": "AgIAACoAAAAAAAAAAAAowDYAAAAJAAAAAAAAAA==",
+               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+-              "WhenOpened": "2025-06-12T04:28:57.881Z",
++              "WhenOpened": "2025-06-12T13:02:52.175Z",
+               "EditorCaption": ""
+             },
+             {
+               "$type": "Document",
+               "DocumentIndex": 2,
+-              "Title": "AuthController.cs",
+-              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\AuthController.cs",
+-              "RelativeDocumentMoniker": "backend\\Controllers\\AuthController.cs",
+-              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\AuthController.cs",
+-              "RelativeToolTip": "backend\\Controllers\\AuthController.cs",
+-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
++              "Title": "TracksService.cs",
++              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\TracksService.cs",
++              "RelativeDocumentMoniker": "backend\\Services\\TracksService.cs",
++              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\TracksService.cs",
++              "RelativeToolTip": "backend\\Services\\TracksService.cs",
++              "ViewState": "AgIAAAEAAAAAAAAAAAAkwDkAAAAJAAAAAAAAAA==",
+               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+-              "WhenOpened": "2025-06-12T04:28:56.725Z"
++              "WhenOpened": "2025-06-12T12:57:56.263Z",
++              "EditorCaption": ""
+             },
+             {
+               "$type": "Document",
+               "DocumentIndex": 3,
+-              "Title": "UsersService.cs",
+-              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\UsersService.cs",
+-              "RelativeDocumentMoniker": "backend\\Services\\UsersService.cs",
+-              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\UsersService.cs",
+-              "RelativeToolTip": "backend\\Services\\UsersService.cs",
+-              "ViewState": "AgIAALAAAAAAAAAAAAAUwMYAAAA7AAAAAAAAAA==",
++              "Title": "ITracksService.cs",
++              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Interfaces\\ITracksService.cs",
++              "RelativeDocumentMoniker": "backend\\Interfaces\\ITracksService.cs",
++              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Interfaces\\ITracksService.cs",
++              "RelativeToolTip": "backend\\Interfaces\\ITracksService.cs",
++              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAKAAAAAAAAAA==",
+               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+-              "WhenOpened": "2025-06-12T02:00:23.742Z"
++              "WhenOpened": "2025-06-12T12:57:35.566Z",
++              "EditorCaption": ""
++            },
++            {
++              "$type": "Document",
++              "DocumentIndex": 4,
++              "Title": "Program.cs",
++              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Program.cs",
++              "RelativeDocumentMoniker": "backend\\Program.cs",
++              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Program.cs",
++              "RelativeToolTip": "backend\\Program.cs",
++              "ViewState": "AgIAADgAAAAAAAAAAAASwFIAAAARAAAAAAAAAA==",
++              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
++              "WhenOpened": "2025-06-12T12:54:16.377Z",
++              "EditorCaption": ""
++            },
++            {
++              "$type": "Document",
++              "DocumentIndex": 5,
++              "Title": "TracksRepository.cs",
++              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Repositories\\TracksRepository.cs",
++              "RelativeDocumentMoniker": "backend\\Repositories\\TracksRepository.cs",
++              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Repositories\\TracksRepository.cs",
++              "RelativeToolTip": "backend\\Repositories\\TracksRepository.cs",
++              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
++              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
++              "WhenOpened": "2025-06-12T12:49:25.004Z",
++              "EditorCaption": ""
++            },
++            {
++              "$type": "Document",
++              "DocumentIndex": 6,
++              "Title": "ITracksRepository.cs",
++              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Interfaces\\ITracksRepository.cs",
++              "RelativeDocumentMoniker": "backend\\Interfaces\\ITracksRepository.cs",
++              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Interfaces\\ITracksRepository.cs",
++              "RelativeToolTip": "backend\\Interfaces\\ITracksRepository.cs",
++              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAcAAAAAAAAAA==",
++              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
++              "WhenOpened": "2025-06-12T12:49:01.491Z",
++              "EditorCaption": ""
++            },
++            {
++              "$type": "Document",
++              "DocumentIndex": 7,
++              "Title": "Users.cs",
++              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Models\\Users.cs",
++              "RelativeDocumentMoniker": "backend\\Models\\Users.cs",
++              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Models\\Users.cs",
++              "RelativeToolTip": "backend\\Models\\Users.cs",
++              "ViewState": "AgIAADQAAAAAAAAAAAAcwFQAAAAAAAAAAAAAAA==",
++              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
++              "WhenOpened": "2025-06-12T12:40:42.824Z",
++              "EditorCaption": ""
+             }
+           ]
+         }
+Index: ../backend/.vs/backend/v17/DocumentLayout.backup.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\r\n  \"Version\": 1,\r\n  \"WorkspaceRootPath\": \"C:\\\\Users\\\\anly1\\\\Desktop\\\\music-website\\\\backend\\\\\",\r\n  \"Documents\": [\r\n    {\r\n      \"AbsoluteMoniker\": \"D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\\\backend.csproj|c:\\\\users\\\\anly1\\\\desktop\\\\music-website\\\\backend\\\\backend\\\\controllers\\\\profilecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}\",\r\n      \"RelativeMoniker\": \"D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\\\backend.csproj|solutionrelative:backend\\\\controllers\\\\profilecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}\"\r\n    },\r\n    {\r\n      \"AbsoluteMoniker\": \"D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\\\backend.csproj|c:\\\\users\\\\anly1\\\\desktop\\\\music-website\\\\backend\\\\backend\\\\controllers\\\\vnpaycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}\",\r\n      \"RelativeMoniker\": \"D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\\\backend.csproj|solutionrelative:backend\\\\controllers\\\\vnpaycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}\"\r\n    },\r\n    {\r\n      \"AbsoluteMoniker\": \"D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\\\backend.csproj|c:\\\\users\\\\anly1\\\\desktop\\\\music-website\\\\backend\\\\backend\\\\controllers\\\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}\",\r\n      \"RelativeMoniker\": \"D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\\\backend.csproj|solutionrelative:backend\\\\controllers\\\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}\"\r\n    },\r\n    {\r\n      \"AbsoluteMoniker\": \"D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\\\backend.csproj|c:\\\\users\\\\anly1\\\\desktop\\\\music-website\\\\backend\\\\backend\\\\services\\\\usersservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}\",\r\n      \"RelativeMoniker\": \"D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\\\backend.csproj|solutionrelative:backend\\\\services\\\\usersservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}\"\r\n    }\r\n  ],\r\n  \"DocumentGroupContainers\": [\r\n    {\r\n      \"Orientation\": 0,\r\n      \"VerticalTabListWidth\": 256,\r\n      \"DocumentGroups\": [\r\n        {\r\n          \"DockedWidth\": 202,\r\n          \"SelectedChildIndex\": 2,\r\n          \"Children\": [\r\n            {\r\n              \"$type\": \"Bookmark\",\r\n              \"Name\": \"ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}\"\r\n            },\r\n            {\r\n              \"$type\": \"Document\",\r\n              \"DocumentIndex\": 1,\r\n              \"Title\": \"VnPayController.cs\",\r\n              \"DocumentMoniker\": \"C:\\\\Users\\\\anly1\\\\Desktop\\\\music-website\\\\backend\\\\backend\\\\Controllers\\\\VnPayController.cs\",\r\n              \"RelativeDocumentMoniker\": \"backend\\\\Controllers\\\\VnPayController.cs\",\r\n              \"ToolTip\": \"C:\\\\Users\\\\anly1\\\\Desktop\\\\music-website\\\\backend\\\\backend\\\\Controllers\\\\VnPayController.cs\",\r\n              \"RelativeToolTip\": \"backend\\\\Controllers\\\\VnPayController.cs\",\r\n              \"ViewState\": \"AgIAACMAAAAAAAAAAAAwwAAAAAAAAAAAAAAAAA==\",\r\n              \"Icon\": \"ae27a6b0-e345-4288-96df-5eaf394ee369.000738|\",\r\n              \"WhenOpened\": \"2025-06-12T04:34:15.133Z\"\r\n            },\r\n            {\r\n              \"$type\": \"Document\",\r\n              \"DocumentIndex\": 0,\r\n              \"Title\": \"ProfileController.cs\",\r\n              \"DocumentMoniker\": \"C:\\\\Users\\\\anly1\\\\Desktop\\\\music-website\\\\backend\\\\backend\\\\Controllers\\\\ProfileController.cs\",\r\n              \"RelativeDocumentMoniker\": \"backend\\\\Controllers\\\\ProfileController.cs\",\r\n              \"ToolTip\": \"C:\\\\Users\\\\anly1\\\\Desktop\\\\music-website\\\\backend\\\\backend\\\\Controllers\\\\ProfileController.cs\",\r\n              \"RelativeToolTip\": \"backend\\\\Controllers\\\\ProfileController.cs\",\r\n              \"ViewState\": \"AgIAAB4AAAAAAAAAAAAowDgAAAAvAAAAAAAAAA==\",\r\n              \"Icon\": \"ae27a6b0-e345-4288-96df-5eaf394ee369.000738|\",\r\n              \"WhenOpened\": \"2025-06-12T04:28:57.881Z\",\r\n              \"EditorCaption\": \"\"\r\n            },\r\n            {\r\n              \"$type\": \"Document\",\r\n              \"DocumentIndex\": 2,\r\n              \"Title\": \"AuthController.cs\",\r\n              \"DocumentMoniker\": \"C:\\\\Users\\\\anly1\\\\Desktop\\\\music-website\\\\backend\\\\backend\\\\Controllers\\\\AuthController.cs\",\r\n              \"RelativeDocumentMoniker\": \"backend\\\\Controllers\\\\AuthController.cs\",\r\n              \"ToolTip\": \"C:\\\\Users\\\\anly1\\\\Desktop\\\\music-website\\\\backend\\\\backend\\\\Controllers\\\\AuthController.cs\",\r\n              \"RelativeToolTip\": \"backend\\\\Controllers\\\\AuthController.cs\",\r\n              \"ViewState\": \"AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==\",\r\n              \"Icon\": \"ae27a6b0-e345-4288-96df-5eaf394ee369.000738|\",\r\n              \"WhenOpened\": \"2025-06-12T04:28:56.725Z\"\r\n            },\r\n            {\r\n              \"$type\": \"Document\",\r\n              \"DocumentIndex\": 3,\r\n              \"Title\": \"UsersService.cs\",\r\n              \"DocumentMoniker\": \"C:\\\\Users\\\\anly1\\\\Desktop\\\\music-website\\\\backend\\\\backend\\\\Services\\\\UsersService.cs\",\r\n              \"RelativeDocumentMoniker\": \"backend\\\\Services\\\\UsersService.cs\",\r\n              \"ToolTip\": \"C:\\\\Users\\\\anly1\\\\Desktop\\\\music-website\\\\backend\\\\backend\\\\Services\\\\UsersService.cs\",\r\n              \"RelativeToolTip\": \"backend\\\\Services\\\\UsersService.cs\",\r\n              \"ViewState\": \"AgIAALAAAAAAAAAAAAAUwMYAAAA7AAAAAAAAAA==\",\r\n              \"Icon\": \"ae27a6b0-e345-4288-96df-5eaf394ee369.000738|\",\r\n              \"WhenOpened\": \"2025-06-12T02:00:23.742Z\"\r\n            }\r\n          ]\r\n        }\r\n      ]\r\n    }\r\n  ]\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../backend/.vs/backend/v17/DocumentLayout.backup.json b/../backend/.vs/backend/v17/DocumentLayout.backup.json
+--- a/../backend/.vs/backend/v17/DocumentLayout.backup.json	(revision aeb6be960cb4cbaa0c67d1e206d909392b79e0ae)
++++ b/../backend/.vs/backend/v17/DocumentLayout.backup.json	(date 1749735405966)
+@@ -3,20 +3,36 @@
+   "WorkspaceRootPath": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\",
+   "Documents": [
+     {
+-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\controllers\\profilecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+-      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\controllers\\profilecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
++      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
++      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
++    },
++    {
++      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\repositories\\tracksrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
++      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\repositories\\tracksrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
++    },
++    {
++      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\interfaces\\itracksrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
++      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\interfaces\\itracksrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
++    },
++    {
++      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\controllers\\trackscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
++      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\controllers\\trackscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
++    },
++    {
++      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\services\\tracksservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
++      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\services\\tracksservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+     },
+     {
+-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\controllers\\vnpaycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+-      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\controllers\\vnpaycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
++      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\interfaces\\itracksservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
++      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\interfaces\\itracksservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+     },
+     {
+-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+-      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
++      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\models\\tracks.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
++      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\models\\tracks.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+     },
+     {
+-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\services\\usersservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+-      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\services\\usersservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
++      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\models\\users.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
++      "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\models\\users.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+     }
+   ],
+   "DocumentGroupContainers": [
+@@ -26,7 +42,7 @@
+       "DocumentGroups": [
+         {
+           "DockedWidth": 202,
+-          "SelectedChildIndex": 2,
++          "SelectedChildIndex": 4,
+           "Children": [
+             {
+               "$type": "Bookmark",
+@@ -34,52 +50,107 @@
+             },
+             {
+               "$type": "Document",
+-              "DocumentIndex": 1,
+-              "Title": "VnPayController.cs",
+-              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\VnPayController.cs",
+-              "RelativeDocumentMoniker": "backend\\Controllers\\VnPayController.cs",
+-              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\VnPayController.cs",
+-              "RelativeToolTip": "backend\\Controllers\\VnPayController.cs",
+-              "ViewState": "AgIAACMAAAAAAAAAAAAwwAAAAAAAAAAAAAAAAA==",
++              "DocumentIndex": 3,
++              "Title": "TracksController.cs",
++              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\TracksController.cs",
++              "RelativeDocumentMoniker": "backend\\Controllers\\TracksController.cs",
++              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\TracksController.cs",
++              "RelativeToolTip": "backend\\Controllers\\TracksController.cs",
++              "ViewState": "AgIAAAIAAAAAAAAAAAAUwA8AAAApAAAAAAAAAA==",
++              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
++              "WhenOpened": "2025-06-12T13:02:52.175Z",
++              "EditorCaption": ""
++            },
++            {
++              "$type": "Document",
++              "DocumentIndex": 4,
++              "Title": "TracksService.cs",
++              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\TracksService.cs",
++              "RelativeDocumentMoniker": "backend\\Services\\TracksService.cs",
++              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\TracksService.cs",
++              "RelativeToolTip": "backend\\Services\\TracksService.cs",
++              "ViewState": "AgIAACQAAAAAAAAAAAAiwDkAAAAJAAAAAAAAAA==",
+               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+-              "WhenOpened": "2025-06-12T04:34:15.133Z"
++              "WhenOpened": "2025-06-12T12:57:56.263Z",
++              "EditorCaption": ""
++            },
++            {
++              "$type": "Document",
++              "DocumentIndex": 5,
++              "Title": "ITracksService.cs",
++              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Interfaces\\ITracksService.cs",
++              "RelativeDocumentMoniker": "backend\\Interfaces\\ITracksService.cs",
++              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Interfaces\\ITracksService.cs",
++              "RelativeToolTip": "backend\\Interfaces\\ITracksService.cs",
++              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAcAAAAAAAAAA==",
++              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
++              "WhenOpened": "2025-06-12T12:57:35.566Z",
++              "EditorCaption": ""
+             },
+             {
+               "$type": "Document",
+               "DocumentIndex": 0,
+-              "Title": "ProfileController.cs",
+-              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\ProfileController.cs",
+-              "RelativeDocumentMoniker": "backend\\Controllers\\ProfileController.cs",
+-              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\ProfileController.cs",
+-              "RelativeToolTip": "backend\\Controllers\\ProfileController.cs",
+-              "ViewState": "AgIAAB4AAAAAAAAAAAAowDgAAAAvAAAAAAAAAA==",
++              "Title": "Program.cs",
++              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Program.cs",
++              "RelativeDocumentMoniker": "backend\\Program.cs",
++              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Program.cs",
++              "RelativeToolTip": "backend\\Program.cs",
++              "ViewState": "AgIAADgAAAAAAAAAAAASwFIAAAARAAAAAAAAAA==",
+               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+-              "WhenOpened": "2025-06-12T04:28:57.881Z",
++              "WhenOpened": "2025-06-12T12:54:16.377Z",
++              "EditorCaption": ""
++            },
++            {
++              "$type": "Document",
++              "DocumentIndex": 1,
++              "Title": "TracksRepository.cs",
++              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Repositories\\TracksRepository.cs",
++              "RelativeDocumentMoniker": "backend\\Repositories\\TracksRepository.cs",
++              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Repositories\\TracksRepository.cs",
++              "RelativeToolTip": "backend\\Repositories\\TracksRepository.cs",
++              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
++              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
++              "WhenOpened": "2025-06-12T12:49:25.004Z",
+               "EditorCaption": ""
+             },
+             {
+               "$type": "Document",
+               "DocumentIndex": 2,
+-              "Title": "AuthController.cs",
+-              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\AuthController.cs",
+-              "RelativeDocumentMoniker": "backend\\Controllers\\AuthController.cs",
+-              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\AuthController.cs",
+-              "RelativeToolTip": "backend\\Controllers\\AuthController.cs",
+-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
++              "Title": "ITracksRepository.cs",
++              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Interfaces\\ITracksRepository.cs",
++              "RelativeDocumentMoniker": "backend\\Interfaces\\ITracksRepository.cs",
++              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Interfaces\\ITracksRepository.cs",
++              "RelativeToolTip": "backend\\Interfaces\\ITracksRepository.cs",
++              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAcAAAAAAAAAA==",
+               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+-              "WhenOpened": "2025-06-12T04:28:56.725Z"
++              "WhenOpened": "2025-06-12T12:49:01.491Z",
++              "EditorCaption": ""
+             },
+             {
+               "$type": "Document",
+-              "DocumentIndex": 3,
+-              "Title": "UsersService.cs",
+-              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\UsersService.cs",
+-              "RelativeDocumentMoniker": "backend\\Services\\UsersService.cs",
+-              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\UsersService.cs",
+-              "RelativeToolTip": "backend\\Services\\UsersService.cs",
+-              "ViewState": "AgIAALAAAAAAAAAAAAAUwMYAAAA7AAAAAAAAAA==",
++              "DocumentIndex": 7,
++              "Title": "Users.cs",
++              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Models\\Users.cs",
++              "RelativeDocumentMoniker": "backend\\Models\\Users.cs",
++              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Models\\Users.cs",
++              "RelativeToolTip": "backend\\Models\\Users.cs",
++              "ViewState": "AgIAADQAAAAAAAAAAAAcwFQAAAAAAAAAAAAAAA==",
++              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
++              "WhenOpened": "2025-06-12T12:40:42.824Z",
++              "EditorCaption": ""
++            },
++            {
++              "$type": "Document",
++              "DocumentIndex": 6,
++              "Title": "Tracks.cs",
++              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Models\\Tracks.cs",
++              "RelativeDocumentMoniker": "backend\\Models\\Tracks.cs",
++              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Models\\Tracks.cs",
++              "RelativeToolTip": "backend\\Models\\Tracks.cs",
++              "ViewState": "AgIAAAEAAAAAAAAAAAAAABQAAAAfAAAAAAAAAA==",
+               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+-              "WhenOpened": "2025-06-12T02:00:23.742Z"
++              "WhenOpened": "2025-06-12T12:40:25.227Z",
++              "EditorCaption": ""
+             }
+           ]
+         }
+Index: ../backend/backend/obj/Debug/net8.0/backend.sourcelink.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\"documents\":{\"C:\\\\Users\\\\anly1\\\\Desktop\\\\music-website\\\\*\":\"https://raw.githubusercontent.com/aresu-1704/music-website/cd7da3dcae6cfb87f541edb1e380fb673bc6399d/*\"}}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../backend/backend/obj/Debug/net8.0/backend.sourcelink.json b/../backend/backend/obj/Debug/net8.0/backend.sourcelink.json
+--- a/../backend/backend/obj/Debug/net8.0/backend.sourcelink.json	(revision aeb6be960cb4cbaa0c67d1e206d909392b79e0ae)
++++ b/../backend/backend/obj/Debug/net8.0/backend.sourcelink.json	(date 1749735406069)
+@@ -1,1 +1,1 @@
+-{"documents":{"C:\\Users\\anly1\\Desktop\\music-website\\*":"https://raw.githubusercontent.com/aresu-1704/music-website/cd7da3dcae6cfb87f541edb1e380fb673bc6399d/*"}}
+\ No newline at end of file
++{"documents":{"C:\\Users\\anly1\\Desktop\\music-website\\*":"https://raw.githubusercontent.com/aresu-1704/music-website/aeb6be960cb4cbaa0c67d1e206d909392b79e0ae/*"}}
+\ No newline at end of file
+Index: ../backend/backend/obj/Debug/net8.0/rjsmrazor.dswa.cache.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\"GlobalPropertiesHash\":\"5tC4yYznfwftnVPHi7LYCf60eBa8eBTaNfQDP+aOB3A=\",\"FingerprintPatternsHash\":\"8ZRc1sGeVrPBx4lD717BgRaQekyh78QKV9SKsdt638U=\",\"PropertyOverridesHash\":\"8ZRc1sGeVrPBx4lD717BgRaQekyh78QKV9SKsdt638U=\",\"InputHashes\":[\"hjbbw/9BHvaAkjT\\u002BFCrqfJIKDmGEUqYkci94hqKq4iU=\",\"Y9jrWjD9equMsTFMn4/EYa8zq1qtytIxSnu3IjoWUW4=\",\"QgtJGT06nB/0Rvy\\u002B\\u002BMQuqgITxglsC3pdi2CjMSc4IUM=\",\"QdZmXOmdDKsG3pdNn7sxmVFIDmTb4Z/DviVI7frwRrc=\",\"O17DD98VLm5jmNQ2\\u002B1pDYvAWURiaAUzu7ZvL\\u002B15Amdk=\",\"ljhGDvjrIH4DMw5mh0b7Ihp4UOzytdgdfydoBG/a7hg=\",\"dATj/mSnDstwt8QCtanYtFUzagfdROqiRCYfo9zLXhU=\",\"mRR8UrZ5MweHfsIEOupyzJUZ7y/\\u002B/wlOeoR9lKqhruQ=\"],\"CachedAssets\":{},\"CachedCopyCandidates\":{}}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../backend/backend/obj/Debug/net8.0/rjsmrazor.dswa.cache.json b/../backend/backend/obj/Debug/net8.0/rjsmrazor.dswa.cache.json
+--- a/../backend/backend/obj/Debug/net8.0/rjsmrazor.dswa.cache.json	(revision aeb6be960cb4cbaa0c67d1e206d909392b79e0ae)
++++ b/../backend/backend/obj/Debug/net8.0/rjsmrazor.dswa.cache.json	(date 1749735406075)
+@@ -1,1 +1,1 @@
+-{"GlobalPropertiesHash":"5tC4yYznfwftnVPHi7LYCf60eBa8eBTaNfQDP+aOB3A=","FingerprintPatternsHash":"8ZRc1sGeVrPBx4lD717BgRaQekyh78QKV9SKsdt638U=","PropertyOverridesHash":"8ZRc1sGeVrPBx4lD717BgRaQekyh78QKV9SKsdt638U=","InputHashes":["hjbbw/9BHvaAkjT\u002BFCrqfJIKDmGEUqYkci94hqKq4iU=","Y9jrWjD9equMsTFMn4/EYa8zq1qtytIxSnu3IjoWUW4=","QgtJGT06nB/0Rvy\u002B\u002BMQuqgITxglsC3pdi2CjMSc4IUM=","QdZmXOmdDKsG3pdNn7sxmVFIDmTb4Z/DviVI7frwRrc=","O17DD98VLm5jmNQ2\u002B1pDYvAWURiaAUzu7ZvL\u002B15Amdk=","ljhGDvjrIH4DMw5mh0b7Ihp4UOzytdgdfydoBG/a7hg=","dATj/mSnDstwt8QCtanYtFUzagfdROqiRCYfo9zLXhU=","mRR8UrZ5MweHfsIEOupyzJUZ7y/\u002B/wlOeoR9lKqhruQ="],"CachedAssets":{},"CachedCopyCandidates":{}}
+\ No newline at end of file
++{"GlobalPropertiesHash":"5tC4yYznfwftnVPHi7LYCf60eBa8eBTaNfQDP+aOB3A=","FingerprintPatternsHash":"8ZRc1sGeVrPBx4lD717BgRaQekyh78QKV9SKsdt638U=","PropertyOverridesHash":"8ZRc1sGeVrPBx4lD717BgRaQekyh78QKV9SKsdt638U=","InputHashes":["hjbbw/9BHvaAkjT\u002BFCrqfJIKDmGEUqYkci94hqKq4iU=","TCL9yqA737bSbruSstHdaZ5\u002BPHyRFGlK1Ei/2etarLk=","QgtJGT06nB/0Rvy\u002B\u002BMQuqgITxglsC3pdi2CjMSc4IUM=","QdZmXOmdDKsG3pdNn7sxmVFIDmTb4Z/DviVI7frwRrc=","O17DD98VLm5jmNQ2\u002B1pDYvAWURiaAUzu7ZvL\u002B15Amdk=","zhe3CPTTMV/YdTv1X7Ux7pvSIbFKk7\u002Bxn3odIcCPlvc=","dATj/mSnDstwt8QCtanYtFUzagfdROqiRCYfo9zLXhU=","4AWpWX9StcOhQE1EwOB1gU/UBsCHDU1U0/UnypfPUWw="],"CachedAssets":{},"CachedCopyCandidates":{}}
+\ No newline at end of file
+Index: ../backend/backend/obj/Debug/net8.0/rjsmcshtml.dswa.cache.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\"GlobalPropertiesHash\":\"WtzMjt888UFQue/Tld4comV0JdYPr3OXcdaRz6pmwhU=\",\"FingerprintPatternsHash\":\"8ZRc1sGeVrPBx4lD717BgRaQekyh78QKV9SKsdt638U=\",\"PropertyOverridesHash\":\"8ZRc1sGeVrPBx4lD717BgRaQekyh78QKV9SKsdt638U=\",\"InputHashes\":[\"hjbbw/9BHvaAkjT\\u002BFCrqfJIKDmGEUqYkci94hqKq4iU=\",\"Y9jrWjD9equMsTFMn4/EYa8zq1qtytIxSnu3IjoWUW4=\",\"QgtJGT06nB/0Rvy\\u002B\\u002BMQuqgITxglsC3pdi2CjMSc4IUM=\",\"QdZmXOmdDKsG3pdNn7sxmVFIDmTb4Z/DviVI7frwRrc=\",\"O17DD98VLm5jmNQ2\\u002B1pDYvAWURiaAUzu7ZvL\\u002B15Amdk=\",\"ljhGDvjrIH4DMw5mh0b7Ihp4UOzytdgdfydoBG/a7hg=\",\"dATj/mSnDstwt8QCtanYtFUzagfdROqiRCYfo9zLXhU=\",\"mRR8UrZ5MweHfsIEOupyzJUZ7y/\\u002B/wlOeoR9lKqhruQ=\"],\"CachedAssets\":{},\"CachedCopyCandidates\":{}}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../backend/backend/obj/Debug/net8.0/rjsmcshtml.dswa.cache.json b/../backend/backend/obj/Debug/net8.0/rjsmcshtml.dswa.cache.json
+--- a/../backend/backend/obj/Debug/net8.0/rjsmcshtml.dswa.cache.json	(revision aeb6be960cb4cbaa0c67d1e206d909392b79e0ae)
++++ b/../backend/backend/obj/Debug/net8.0/rjsmcshtml.dswa.cache.json	(date 1749735406108)
+@@ -1,1 +1,1 @@
+-{"GlobalPropertiesHash":"WtzMjt888UFQue/Tld4comV0JdYPr3OXcdaRz6pmwhU=","FingerprintPatternsHash":"8ZRc1sGeVrPBx4lD717BgRaQekyh78QKV9SKsdt638U=","PropertyOverridesHash":"8ZRc1sGeVrPBx4lD717BgRaQekyh78QKV9SKsdt638U=","InputHashes":["hjbbw/9BHvaAkjT\u002BFCrqfJIKDmGEUqYkci94hqKq4iU=","Y9jrWjD9equMsTFMn4/EYa8zq1qtytIxSnu3IjoWUW4=","QgtJGT06nB/0Rvy\u002B\u002BMQuqgITxglsC3pdi2CjMSc4IUM=","QdZmXOmdDKsG3pdNn7sxmVFIDmTb4Z/DviVI7frwRrc=","O17DD98VLm5jmNQ2\u002B1pDYvAWURiaAUzu7ZvL\u002B15Amdk=","ljhGDvjrIH4DMw5mh0b7Ihp4UOzytdgdfydoBG/a7hg=","dATj/mSnDstwt8QCtanYtFUzagfdROqiRCYfo9zLXhU=","mRR8UrZ5MweHfsIEOupyzJUZ7y/\u002B/wlOeoR9lKqhruQ="],"CachedAssets":{},"CachedCopyCandidates":{}}
+\ No newline at end of file
++{"GlobalPropertiesHash":"WtzMjt888UFQue/Tld4comV0JdYPr3OXcdaRz6pmwhU=","FingerprintPatternsHash":"8ZRc1sGeVrPBx4lD717BgRaQekyh78QKV9SKsdt638U=","PropertyOverridesHash":"8ZRc1sGeVrPBx4lD717BgRaQekyh78QKV9SKsdt638U=","InputHashes":["hjbbw/9BHvaAkjT\u002BFCrqfJIKDmGEUqYkci94hqKq4iU=","TCL9yqA737bSbruSstHdaZ5\u002BPHyRFGlK1Ei/2etarLk=","QgtJGT06nB/0Rvy\u002B\u002BMQuqgITxglsC3pdi2CjMSc4IUM=","QdZmXOmdDKsG3pdNn7sxmVFIDmTb4Z/DviVI7frwRrc=","O17DD98VLm5jmNQ2\u002B1pDYvAWURiaAUzu7ZvL\u002B15Amdk=","zhe3CPTTMV/YdTv1X7Ux7pvSIbFKk7\u002Bxn3odIcCPlvc=","dATj/mSnDstwt8QCtanYtFUzagfdROqiRCYfo9zLXhU=","4AWpWX9StcOhQE1EwOB1gU/UBsCHDU1U0/UnypfPUWw="],"CachedAssets":{},"CachedCopyCandidates":{}}
+\ No newline at end of file
+Index: ../backend/backend/obj/Debug/net8.0/backend.AssemblyInfo.cs
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>//------------------------------------------------------------------------------\r\n// <auto-generated>\r\n//     This code was generated by a tool.\r\n//     Runtime Version:4.0.30319.42000\r\n//\r\n//     Changes to this file may cause incorrect behavior and will be lost if\r\n//     the code is regenerated.\r\n// </auto-generated>\r\n//------------------------------------------------------------------------------\r\n\r\nusing System;\r\nusing System.Reflection;\r\n\r\n[assembly: System.Reflection.AssemblyCompanyAttribute(\"backend\")]\r\n[assembly: System.Reflection.AssemblyConfigurationAttribute(\"Debug\")]\r\n[assembly: System.Reflection.AssemblyFileVersionAttribute(\"1.0.0.0\")]\r\n[assembly: System.Reflection.AssemblyInformationalVersionAttribute(\"1.0.0+cd7da3dcae6cfb87f541edb1e380fb673bc6399d\")]\r\n[assembly: System.Reflection.AssemblyProductAttribute(\"backend\")]\r\n[assembly: System.Reflection.AssemblyTitleAttribute(\"backend\")]\r\n[assembly: System.Reflection.AssemblyVersionAttribute(\"1.0.0.0\")]\r\n\r\n// Generated by the MSBuild WriteCodeFragment class.\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/../backend/backend/obj/Debug/net8.0/backend.AssemblyInfo.cs b/../backend/backend/obj/Debug/net8.0/backend.AssemblyInfo.cs
+--- a/../backend/backend/obj/Debug/net8.0/backend.AssemblyInfo.cs	(revision aeb6be960cb4cbaa0c67d1e206d909392b79e0ae)
++++ b/../backend/backend/obj/Debug/net8.0/backend.AssemblyInfo.cs	(date 1749735393051)
+@@ -14,7 +14,7 @@
+ [assembly: System.Reflection.AssemblyCompanyAttribute("backend")]
+ [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+ [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
+-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cd7da3dcae6cfb87f541edb1e380fb673bc6399d")]
++[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aeb6be960cb4cbaa0c67d1e206d909392b79e0ae")]
+ [assembly: System.Reflection.AssemblyProductAttribute("backend")]
+ [assembly: System.Reflection.AssemblyTitleAttribute("backend")]
+ [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

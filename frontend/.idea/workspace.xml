@@ -4,17 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0c8aaf66-e18d-4868-96f6-1c067c9507e5" name="Changes" comment="Trang chủ của Huy">
-      <change beforePath="$PROJECT_DIR$/../backend/.vs/ProjectEvaluation/backend.metadata.v9.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/.vs/ProjectEvaluation/backend.projects.v9.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/.vs/ProjectEvaluation/backend.strings.v9.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/.vs/backend/FileContentIndex/5b41f1fa-654f-4c7f-987d-11d935082518.vsidx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/.vs/backend/FileContentIndex/6f972d76-2372-4069-b21b-8183397e18e4.vsidx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/.vs/backend/FileContentIndex/71770aef-1c5c-473d-bb55-f2d72933a3eb.vsidx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/.vs/backend/FileContentIndex/a3fc5266-f0e2-4fca-b840-ce19da4bd411.vsidx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/SignInForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/SignInForm.jsx" afterDir="false" />
-    </list>
+    <list default="true" id="0c8aaf66-e18d-4868-96f6-1c067c9507e5" name="Changes" comment="Trang chủ của Huy" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -172,7 +162,7 @@
       <workItem from="1750170993623" duration="6018000" />
       <workItem from="1750180238128" duration="615000" />
       <workItem from="1750181114229" duration="377000" />
-      <workItem from="1750181820750" duration="88000" />
+      <workItem from="1750181820750" duration="418000" />
     </task>
     <task id="LOCAL-00001">
       <option name="closed" value="true" />

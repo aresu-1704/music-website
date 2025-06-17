@@ -71,6 +71,11 @@ function NewPassword() {
             if (otpInputRefs.current[nextFocusIndex]) {
                 otpInputRefs.current[nextFocusIndex].focus();
             }
+            // Auto verify if all 6 digits are filled
+            if (newOtpValues.every(val => val !== '')) {
+                const fullOtp = newOtpValues.join('');
+                verifyOtp(fullOtp);
+            }
         } else if (value.match(/[^0-9]/)) {
             // Prevent non-digit input
             newOtpValues[index] = '';
@@ -86,46 +91,17 @@ function NewPassword() {
                 // Move focus to previous input on backspace if current is empty
                 otpInputRefs.current[index - 1].focus();
             }
-        }
-    };
 
-    const handlePasteOtp = (e) => {
-        e.preventDefault();
-        const pastedData = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, 6);
-        if (pastedData.length > 0) {
-            const newOtpValues = [...otpValues];
-            pastedData.split('').forEach((char, i) => {
-                if (i < 6) {
-                    newOtpValues[i] = char;
-                }
-            });
-            setOtpValues(newOtpValues);
-            // Focus the next empty input or the last input
-            const nextEmptyIndex = newOtpValues.findIndex(val => val === '');
-            const focusIndex = nextEmptyIndex === -1 ? 5 : nextEmptyIndex;
-            if (otpInputRefs.current[focusIndex]) {
-                otpInputRefs.current[focusIndex].focus();
+            // Auto verify if all 6 digits are filled
+            if (newOtpValues.every(val => val !== '')) {
+                const fullOtp = newOtpValues.join('');
+                verifyOtp(fullOtp);
             }
         }
     };
 
-    const handleKeyDown = (e, index) => {
-        if (e.key === 'Backspace' && otpValues[index] === '' && index > 0) {
-            otpInputRefs.current[index - 1].focus();
-        }
-    };
-
-    const handleVerifyOtp = async (values, { setSubmitting, resetForm }) => {
+    const verifyOtp = async (fullOtp) => {
         setIsLoading(true);
-        const fullOtp = otpValues.join('');
-
-        if (fullOtp.length !== 6) {
-            toast.error('Vui lòng nhập đủ 6 chữ số OTP.', { position: "top-center", autoClose: 2000, pauseOnHover: false });
-            setIsLoading(false);
-            setSubmitting(false);
-            return;
-        }
-
         try {
             const requestBody = {
                 email: email,
@@ -158,12 +134,12 @@ function NewPassword() {
             setVerifiedOtp(fullOtp);
             setIsOtpVerified(true);
             setOtpValues(['', '', '', '', '', '']); // Clear OTP fields after successful verification
-            resetForm(); // Reset Formik form state
             toast.success('Xác thực OTP thành công.', {
                 position: "top-center",
                 autoClose: 2000,
                 pauseOnHover: false
             });
+
         } catch (err) {
             toast.error(err.message || 'Xác thực OTP thất-bại.', {
                 position: "top-center",
@@ -171,9 +147,14 @@ function NewPassword() {
                 pauseOnHover: false
             });
         } finally {
-            setSubmitting(false);
             setIsLoading(false);
         }
+    };
+
+    const handleVerifyOtp = async (values, { setSubmitting, resetForm }) => {
+        const fullOtp = otpValues.join('');
+        await verifyOtp(fullOtp);
+        setSubmitting(false);
     };
 
     const handleResetPassword = async (values, { setSubmitting, resetForm }) => {
@@ -286,6 +267,31 @@ function NewPassword() {
         }
     };
 
+    const handlePasteOtp = (e) => {
+        e.preventDefault();
+        const pastedData = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, 6);
+        if (pastedData.length > 0) {
+            const newOtpValues = [...otpValues];
+            pastedData.split('').forEach((char, i) => {
+                if (i < 6) {
+                    newOtpValues[i] = char;
+                }
+            });
+            setOtpValues(newOtpValues);
+            
+            // Auto verify if all 6 digits are pasted
+            if (pastedData.length === 6) {
+                verifyOtp(pastedData);
+            }
+        }
+    };
+
+    const handleKeyDown = (e, index) => {
+        if (e.key === 'Backspace' && otpValues[index] === '' && index > 0) {
+            otpInputRefs.current[index - 1].focus();
+        }
+    };
+
     return (
         <div className="d-flex justify-content-center align-items-center pt-5">
             <div className="card p-4 shadow" style={{ width: 500, backgroundColor: 'rgba(0,0,0,0.7)', color: 'white', borderRadius: '0.5rem' }}>
@@ -359,18 +365,6 @@ function NewPassword() {
                                         </div>
                                         <ErrorMessage name="reset_password_otp" component="div" className="text-danger" />
                                     </div>
-
-                                    <button
-                                        type="submit"
-                                        className="btn btn-danger w-100 mb-3"
-                                        disabled={isSubmitting || isLoading}
-                                    >
-                                        {isSubmitting || isLoading ? (
-                                            <Spinner animation="border" size="sm" />
-                                        ) : (
-                                            'Xác thực OTP'
-                                        )}
-                                    </button>
 
                                     <button
                                         type="button"

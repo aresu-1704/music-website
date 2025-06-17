@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Google, Facebook, Apple } from 'react-bootstrap-icons';
 import { toast, ToastContainer } from "react-toastify";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/authContext";
 import { useNavigate, Link } from "react-router-dom";
 import { Spinner } from 'react-bootstrap';
 import { Formik, Form, Field, ErrorMessage } from 'formik';

@@ -45,5 +45,15 @@ namespace backend.Repositories
         {
             await _usersCollection.DeleteOneAsync(u => u.Id == id);
         }
+
+        public async Task<List<Users>> SearchByUsernameOrNameAsync(string keyword)
+        {
+            var lowerKeyword = keyword.ToLower();
+            var filter = Builders<Users>.Filter.Or(
+                Builders<Users>.Filter.Regex(u => u.Username, new MongoDB.Bson.BsonRegularExpression(lowerKeyword, "i")),
+                Builders<Users>.Filter.Regex(u => u.Name, new MongoDB.Bson.BsonRegularExpression(lowerKeyword, "i"))
+            );
+            return await _usersCollection.Find(filter).ToListAsync();
+        }
     }
 }

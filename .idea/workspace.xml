@@ -6,8 +6,29 @@
   <component name="ChangeListManager">
     <list default="true" id="7fcf1a4e-08d2-4244-ab25-c37e69d2fb59" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.vs/ProjectEvaluation/backend.metadata.v9.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.vs/ProjectEvaluation/backend.projects.v9.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.vs/ProjectEvaluation/backend.strings.v9.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.vs/backend/DesignTimeBuild/.dtbcache.v2" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.vs/backend/DesignTimeBuild/.dtbcache.v2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.vs/backend/FileContentIndex/4babe826-b330-4c79-b6e8-7ab9285351c5.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.vs/backend/FileContentIndex/851f48e7-dffb-4ff6-889d-777a7cd1870c.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.vs/backend/FileContentIndex/96efc147-8565-4848-86f4-26efac697177.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.vs/backend/FileContentIndex/b7f6a65e-d6a3-44ca-ab0a-09bc7c838906.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.vs/backend/FileContentIndex/b9892122-bb17-4698-9342-ae5013467efa.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.vs/backend/v17/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.vs/backend/v17/.suo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.vs/backend/v17/DocumentLayout.backup.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.vs/backend/v17/DocumentLayout.backup.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/.vs/backend/v17/DocumentLayout.json" beforeDir="false" afterPath="$PROJECT_DIR$/backend/.vs/backend/v17/DocumentLayout.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/Interfaces/ITrackRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/Interfaces/ITrackRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/Interfaces/IUsersRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/Interfaces/IUsersRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/JsonContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/JsonContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/Repositories/TrackRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/Repositories/TrackRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/Repositories/UserRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/Repositories/UserRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/bin/Debug/net8.0/backend.dll" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/bin/Debug/net8.0/backend.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/bin/Debug/net8.0/backend.exe" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/bin/Debug/net8.0/backend.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/backend/bin/Debug/net8.0/backend.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/bin/Debug/net8.0/backend.pdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/HomeForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/HomeForm.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/DiscoverForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/DiscoverForm.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,12 +49,12 @@
     &quot;assignee&quot;: &quot;huytn593&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/aresu-1704/music-website.git",
-    "accountId": "077e68b1-9ab1-4475-abaf-ffe41c1301ab"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/aresu-1704/music-website.git&quot;,
+    &quot;accountId&quot;: &quot;077e68b1-9ab1-4475-abaf-ffe41c1301ab&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 8
@@ -49,7 +70,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "Policy",
+    "git-widget-placeholder": "SearchForm",
     "ignore.virus.scanning.warn.message": "true",
     "junie.onboarding.icon.badge.shown": "true",
     "node.js.detected.package.eslint": "true",
@@ -87,6 +108,7 @@
       <updated>1749564765160</updated>
       <workItem from="1749564768008" duration="9262000" />
       <workItem from="1750046882133" duration="1558000" />
+      <workItem from="1750176278650" duration="4839000" />
     </task>
     <servers />
   </component>

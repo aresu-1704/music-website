@@ -12,5 +12,6 @@ namespace backend.Interfaces
         Task CreateAsync(Users user);
         Task UpdateAsync(string id, Users user);
         Task DeleteAsync(string id);
+        Task<List<Users>> SearchByUsernameOrNameAsync(string keyword);
     }
 }

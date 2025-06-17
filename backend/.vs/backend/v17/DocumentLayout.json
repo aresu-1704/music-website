@@ -1,33 +1,33 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\",
+  "WorkspaceRootPath": "C:\\Users\\ADMIN\\Documents\\GitHub\\music-website\\backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\repositories\\historyrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\admin\\documents\\github\\music-website\\backend\\backend\\repositories\\historyrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\repositories\\historyrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\services\\historyservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\admin\\documents\\github\\music-website\\backend\\backend\\services\\historyservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\services\\historyservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\services\\usersservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\admin\\documents\\github\\music-website\\backend\\backend\\services\\usersservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\services\\usersservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\models\\histories.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\admin\\documents\\github\\music-website\\backend\\backend\\models\\histories.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\models\\histories.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\services\\favoritesservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\admin\\documents\\github\\music-website\\backend\\backend\\services\\favoritesservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\services\\favoritesservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\controllers\\historycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\admin\\documents\\github\\music-website\\backend\\backend\\controllers\\historycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\controllers\\historycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\anly1\\desktop\\music-website\\backend\\backend\\models\\favorites.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|c:\\users\\admin\\documents\\github\\music-website\\backend\\backend\\models\\favorites.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{147AC4A2-9E1B-430E-B790-B15231DCC9E8}|backend\\backend.csproj|solutionrelative:backend\\models\\favorites.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -38,32 +38,27 @@
       "DocumentGroups": [
         {
           "DockedWidth": 202,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 3,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 2,
               "Title": "UsersService.cs",
-              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\UsersService.cs",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Documents\\GitHub\\music-website\\backend\\backend\\Services\\UsersService.cs",
               "RelativeDocumentMoniker": "backend\\Services\\UsersService.cs",
-              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\UsersService.cs",
+              "ToolTip": "C:\\Users\\ADMIN\\Documents\\GitHub\\music-website\\backend\\backend\\Services\\UsersService.cs",
               "RelativeToolTip": "backend\\Services\\UsersService.cs",
               "ViewState": "AgIAAEUAAAAAAAAAAAAowGMAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-17T08:04:29.646Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-17T08:04:29.646Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
               "Title": "HistoryController.cs",
-              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\HistoryController.cs",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Documents\\GitHub\\music-website\\backend\\backend\\Controllers\\HistoryController.cs",
               "RelativeDocumentMoniker": "backend\\Controllers\\HistoryController.cs",
-              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Controllers\\HistoryController.cs",
+              "ToolTip": "C:\\Users\\ADMIN\\Documents\\GitHub\\music-website\\backend\\backend\\Controllers\\HistoryController.cs",
               "RelativeToolTip": "backend\\Controllers\\HistoryController.cs",
               "ViewState": "AgIAAAYAAAAAAAAAAAAswB8AAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -73,24 +68,23 @@
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "HistoryService.cs",
-              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\HistoryService.cs",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Documents\\GitHub\\music-website\\backend\\backend\\Services\\HistoryService.cs",
               "RelativeDocumentMoniker": "backend\\Services\\HistoryService.cs",
-              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\HistoryService.cs",
+              "ToolTip": "C:\\Users\\ADMIN\\Documents\\GitHub\\music-website\\backend\\backend\\Services\\HistoryService.cs",
               "RelativeToolTip": "backend\\Services\\HistoryService.cs",
               "ViewState": "AgIAAA0AAAAAAAAAAAA1wCYAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-17T02:55:47.643Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-17T02:55:47.643Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "HistoryRepository.cs",
-              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Repositories\\HistoryRepository.cs",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Documents\\GitHub\\music-website\\backend\\backend\\Repositories\\HistoryRepository.cs",
               "RelativeDocumentMoniker": "backend\\Repositories\\HistoryRepository.cs",
-              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Repositories\\HistoryRepository.cs",
+              "ToolTip": "C:\\Users\\ADMIN\\Documents\\GitHub\\music-website\\backend\\backend\\Repositories\\HistoryRepository.cs",
               "RelativeToolTip": "backend\\Repositories\\HistoryRepository.cs",
-              "ViewState": "AgIAABsAAAAAAAAAAAAowCsAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAACAAAAAAAAAAAAAmwC4AAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-06-17T02:52:03.19Z",
               "EditorCaption": ""
@@ -99,9 +93,9 @@
               "$type": "Document",
               "DocumentIndex": 6,
               "Title": "Favorites.cs",
-              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Models\\Favorites.cs",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Documents\\GitHub\\music-website\\backend\\backend\\Models\\Favorites.cs",
               "RelativeDocumentMoniker": "backend\\Models\\Favorites.cs",
-              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Models\\Favorites.cs",
+              "ToolTip": "C:\\Users\\ADMIN\\Documents\\GitHub\\music-website\\backend\\backend\\Models\\Favorites.cs",
               "RelativeToolTip": "backend\\Models\\Favorites.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
@@ -111,22 +105,21 @@
               "$type": "Document",
               "DocumentIndex": 3,
               "Title": "Histories.cs",
-              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Models\\Histories.cs",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Documents\\GitHub\\music-website\\backend\\backend\\Models\\Histories.cs",
               "RelativeDocumentMoniker": "backend\\Models\\Histories.cs",
-              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Models\\Histories.cs",
+              "ToolTip": "C:\\Users\\ADMIN\\Documents\\GitHub\\music-website\\backend\\backend\\Models\\Histories.cs",
               "RelativeToolTip": "backend\\Models\\Histories.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-06-17T02:42:37.258Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-06-17T02:42:37.258Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
               "Title": "FavoritesService.cs",
-              "DocumentMoniker": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\FavoritesService.cs",
+              "DocumentMoniker": "C:\\Users\\ADMIN\\Documents\\GitHub\\music-website\\backend\\backend\\Services\\FavoritesService.cs",
               "RelativeDocumentMoniker": "backend\\Services\\FavoritesService.cs",
-              "ToolTip": "C:\\Users\\anly1\\Desktop\\music-website\\backend\\backend\\Services\\FavoritesService.cs",
+              "ToolTip": "C:\\Users\\ADMIN\\Documents\\GitHub\\music-website\\backend\\backend\\Services\\FavoritesService.cs",
               "RelativeToolTip": "backend\\Services\\FavoritesService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABoAAABHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",

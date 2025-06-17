@@ -164,5 +164,3 @@ const DiscoverForm = () => {
         </>
     );
 };
-
-export default DiscoverForm;

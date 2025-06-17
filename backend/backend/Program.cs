@@ -15,6 +15,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Diagnostics;
+using Microsoft.Extensions.FileProviders;
 
 void StartRedisIfNotRunning()
 {
@@ -167,6 +168,16 @@ builder.Services.AddAuthentication("Bearer")
             }
         };
     });
+    builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000") // domain frontend
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
 
 // Cái này tao cũng không biết cấu hình cái gì đừng hỏi tao
 builder.Services.AddCors(options =>
@@ -195,7 +206,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors("AllowFrontend");
 app.UseCors("AllowAll");
 
 app.UseAuthentication();
@@ -203,5 +214,12 @@ app.UseAuthorization();
 
 // Map route cho controller
 app.MapControllers();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "storage", "cover_images")),
+    RequestPath = "/cover_images"
+});
 
 app.Run();

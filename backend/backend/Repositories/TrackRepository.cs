@@ -85,5 +85,15 @@ namespace backend.Repositories
             var update = Builders<Track>.Update.Inc(t => t.LikeCount, -1);
             await _tracks.UpdateOneAsync(filter, update);
         }
+
+        public async Task<List<Track>> SearchByTitleOrArtistAsync(string keyword)
+        {
+            var lowerKeyword = keyword.ToLower();
+            var filter = Builders<Track>.Filter.Or(
+                Builders<Track>.Filter.Regex(t => t.Title, new MongoDB.Bson.BsonRegularExpression(lowerKeyword, "i")),
+                Builders<Track>.Filter.Regex(t => t.ArtistId, new MongoDB.Bson.BsonRegularExpression(lowerKeyword, "i"))
+            );
+            return await _tracks.Find(filter).ToListAsync();
+        }
     }
 }

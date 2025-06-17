@@ -15,7 +15,7 @@ import DiscoverForm from './pages/DiscoverForm';
 import UpgradeAccount from "./pages/UpgradeAccountForm";
 import PaymentResultForm from "./pages/PaymentResultForm";
 import {MusicPlayerProvider} from "./context/musicPlayerContext";
-
+import SearchForm from './pages/SearchForm';
 import PolicyForm from "./pages/PolicyForm";
 
 const queryClient = new QueryClient();
@@ -35,7 +35,7 @@ const App = () => (
                             <Route path="/profile/:userId" element={<ProfileForm />} />
                             <Route path="/upgrade/:userId" element={<UpgradeAccount />} />
                             <Route path="/payment-result" element={<PaymentResultForm />} />
-
+                            <Route path="/search" element={<SearchForm />} /> 
                             <Route path="/policy" element={<PolicyForm />} />
                         </Routes>
                         <ToastContainer />

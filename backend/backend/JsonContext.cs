@@ -22,6 +22,8 @@ namespace backend
     [JsonSerializable(typeof(FavoriteCheckResponse))]
     [JsonSerializable(typeof(FavoriteToggleResponse))]
     [JsonSerializable(typeof(FavoriteTrackIdsResponse))]
+    [JsonSerializable(typeof(backend.Models.SearchResultDto))]
+    [JsonSerializable(typeof(backend.Models.TrackSearchDto))]
 
     public partial class JsonContext : JsonSerializerContext
     {

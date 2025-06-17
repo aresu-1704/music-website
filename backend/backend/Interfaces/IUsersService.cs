@@ -12,6 +12,7 @@ namespace backend.Interfaces
         Task<string> UpdatePersonalData(string userID, string fullname, int gender, DateTime dateOfBirth, string avtUrl = null);
         Task<string> UpgradeTier(string userID, string tier);
         Task<bool> SendOtpAsync(string email);
+        Task<bool> VerifyOnlyOtpAsync(string email, string otp);
         Task<bool> VerifyOtpAsync(string email, string otp, string newPassword);
         //Task UpdateAsync(string id, Users user);
         //Task DeleteAsync(string id);

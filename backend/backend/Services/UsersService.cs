@@ -223,9 +223,16 @@ namespace backend.Services
 
         public async Task<bool> SendOtpAsync(string email)
         {
+            Console.WriteLine($"SendOtpAsync called for email: {email}");
             var db = _redis.GetDatabase();
             var user = await _usersRepository.GetByEmailAsync(email);
-            if (user == null) return false;
+
+            if (user == null)
+            {
+                Console.WriteLine($"User not found for email: {email}");
+                return false;
+            }
+            Console.WriteLine($"User found for email: {email}, user ID: {user.Id}");
 
             // Check spam limit
             if (await db.StringGetAsync($"otp-limit:{email}") != RedisValue.Null)
@@ -259,24 +266,46 @@ namespace backend.Services
             return true;
         }
 
-        public async Task<bool> VerifyOtpAsync(string email, string otp, string newPassword)
+        public async Task<bool> VerifyOnlyOtpAsync(string email, string otp)
         {
             var db = _redis.GetDatabase();
             var savedOtp = await db.StringGetAsync($"otp:{email}");
-            if (savedOtp.IsNullOrEmpty || savedOtp != otp) return false;
+            return !savedOtp.IsNullOrEmpty && savedOtp == otp;
+        }
 
-            var user = await _usersRepository.GetByEmailAsync(email);
-            if (user == null) return false;
+        public async Task<bool> VerifyOtpAsync(string email, string otp, string newPassword)
+        {
+            try
+            {
+                if (!await VerifyOnlyOtpAsync(email, otp))
+                {
+                    return false;
+                }
 
-            var newSalt = HashingUtil.GenerateSalt();
-            var newHash = HashingUtil.HashPassword(newPassword, newSalt);
-            user.Password = newHash;
-            user.Salt = newSalt;
+                var user = await _usersRepository.GetByEmailAsync(email);
+                if (user == null)
+                {
+                    return false;
+                }
 
-            await _usersRepository.UpdateAsync(user.Id, user);
+                var newSalt = HashingUtil.GenerateSalt();
+                var newHash = HashingUtil.HashPassword(newPassword, newSalt);
+                user.Password = newHash;
+                user.Salt = newSalt;
 
-            await db.KeyDeleteAsync($"otp:{email}");
-            return true;
+                await _usersRepository.UpdateAsync(user.Id, user);
+
+                var db = _redis.GetDatabase();
+                await db.KeyDeleteAsync($"otp:{email}");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Keep this catch block for general error handling, but remove specific debug logs
+                Console.WriteLine($"VerifyOtpAsync: An unexpected error occurred: {ex.ToString()}");
+                return false; // Return false on any unhandled exception
+            }
         }
     }
 }

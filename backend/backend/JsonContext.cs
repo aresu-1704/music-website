@@ -19,6 +19,7 @@ namespace backend
     [JsonSerializable(typeof(backend.Controllers.TrackDetail))]
     [JsonSerializable(typeof(backend.Controllers.SendOtpRequest))]
     [JsonSerializable(typeof(backend.Controllers.VerifyOtpRequest))]
+    [JsonSerializable(typeof(backend.Controllers.ResetPasswordRequest))]
     [JsonSerializable(typeof(Dictionary<string, string>))]
     [JsonSerializable(typeof(List<TrackThumbnail>))]
     [JsonSerializable(typeof(ProblemDetails))]

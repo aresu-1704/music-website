@@ -74,7 +74,7 @@ export default function SignInForm() {
                 <div className="d-flex justify-content-center align-items-center pt-5">
                     <div className="card p-4 shadow" style={{ width: 500, backgroundColor: 'rgba(0,0,0,0.7)', color: 'white', borderRadius: '0.5rem' }}>
                         <div className="d-flex flex-column align-items-center">
-                            <img src="/images/icon.png" alt="Logo" width="500" height="500" />
+                            <img src="/images/icon.png" alt="Logo" width="120" height="120" />
                             <h2 className="mb-4 text-center" style={{ color: '#ff4d4f' }}>Đăng nhập</h2>
                         </div>
 

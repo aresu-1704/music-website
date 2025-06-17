@@ -18,20 +18,8 @@ function ForgotPassword() {
   const handleSubmit = async (values, { setSubmitting }) => {
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:5270/api/Auth/send-otp', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: values.email }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Gửi OTP thất bại.');
-      }
-
-      toast.success('OTP đã được gửi tới email của bạn.', {
+      // No longer sending OTP automatically here. OTP will be sent on NewPassword page.
+      toast.success('Vui lòng xác thực OTP trên trang tiếp theo.', {
         position: 'top-center',
         autoClose: 2000,
         pauseOnHover: false,
@@ -41,7 +29,8 @@ function ForgotPassword() {
         navigate('/new-password', { state: { email: values.email } });
       }, 1500);
     } catch (err) {
-      toast.error(err.message || 'Gửi OTP thất bại.', {
+      // This catch block is mostly for client-side errors now, as API call is moved
+      toast.error(err.message || 'Đã xảy ra lỗi.', {
         position: 'top-center',
         autoClose: 2000,
         pauseOnHover: false,
@@ -64,7 +53,7 @@ function ForgotPassword() {
         }}
       >
         <div className="d-flex flex-column align-items-center">
-          <img src="/images/icon.png" alt="Logo" width="500" height="500" />
+          <img src="/images/icon.png" alt="Logo" width="120" height="120" />
           <h2 className="mb-4 text-center" style={{ color: '#ff4d4f' }}>
             Quên mật khẩu
           </h2>
@@ -103,7 +92,7 @@ function ForgotPassword() {
                 {isSubmitting || isLoading ? (
                   <Spinner animation="border" size="sm" />
                 ) : (
-                  'Gửi OTP'
+                  'Tiếp tục'
                 )}
               </button>
             </Form>

@@ -29,22 +29,45 @@ function NewPassword() {
     const [verifiedOtp, setVerifiedOtp] = useState('');
     const [isOtpSentInitially, setIsOtpSentInitially] = useState(false);
     const email = location.state?.email;
+    const initialCountdown = location.state?.countdown || 0;
     const setFieldValueRef = useRef(null);
 
     const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
     const otpInputRefs = useRef([]);
 
+    // Initialize countdown when component mounts
     useEffect(() => {
         if (!email) {
+            toast.error('Vui lòng nhập email để đặt lại mật khẩu', {
+                position: "top-center",
+                autoClose: 2000,
+                pauseOnHover: false
+            });
             navigate('/forgot-password');
             return;
         }
 
-        if (countdown > 0) {
-            const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
-            return () => clearTimeout(timer);
+        // Set initial countdown from previous page
+        if (initialCountdown > 0) {
+            setCountdown(initialCountdown);
+            setIsOtpSentInitially(true);
         }
-    }, [countdown, email, navigate]);
+    }, [email, navigate, initialCountdown]);
+
+    // Handle countdown timer
+    useEffect(() => {
+        let timer;
+        if (countdown > 0) {
+            timer = setInterval(() => {
+                setCountdown(prev => prev - 1);
+            }, 1000);
+        }
+        return () => {
+            if (timer) {
+                clearInterval(timer);
+            }
+        };
+    }, [countdown]);
 
     // Update form value whenever otpValues changes
     useEffect(() => {
@@ -159,6 +182,14 @@ function NewPassword() {
 
     const handleResetPassword = async (values, { setSubmitting, resetForm }) => {
         setIsLoading(true);
+        
+        // Optimistic update - show success message immediately
+        toast.info('Đang xử lý yêu cầu đổi mật khẩu...', {
+            position: "top-center",
+            autoClose: false,
+            pauseOnHover: false
+        });
+
         try {
             const response = await fetch('http://localhost:5270/api/Auth/reset-password', {
                 method: 'POST',
@@ -187,20 +218,31 @@ function NewPassword() {
                 throw new Error(data.message || 'Đặt lại mật khẩu thất bại.');
             }
 
-            resetForm(); // Reset password form
-            toast.success('Mật khẩu đã được đặt lại thành công.', {
+            // Clear all session data immediately
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // Dismiss the loading toast
+            toast.dismiss();
+            
+            // Show success message
+            toast.success('Mật khẩu đã được đặt lại thành công!', {
                 position: "top-center",
                 autoClose: 2000,
                 pauseOnHover: false
             });
 
-            setTimeout(() => {
-                navigate('/signin');
-            }, 1500);
+            // Reset form and navigate
+            resetForm();
+            navigate('/signin');
+            
         } catch (err) {
+            // Dismiss the loading toast
+            toast.dismiss();
+            
             toast.error(err.message || 'Đặt lại mật khẩu thất bại.', {
                 position: "top-center",
-                autoClose: 2000,
+                autoClose: 3000,
                 pauseOnHover: false
             });
         } finally {
@@ -214,17 +256,6 @@ function NewPassword() {
 
         setIsLoading(true);
         try {
-            // Kiểm tra email trước khi gửi OTP
-            // const checkEmailResponse = await fetch('http://localhost:5270/api/Auth/check-email', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ email }),
-            // });
-
-            // if (!checkEmailResponse.ok) {
-            //     throw new Error('Email không tồn tại trong hệ thống.');
-            // }
-
             const response = await fetch('http://localhost:5270/api/Auth/send-otp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

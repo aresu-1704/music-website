@@ -129,12 +129,18 @@ namespace backend.Services
                 Users user = await _usersRepository.GetByIdAsync(id);
                 if (user != null)
                 {
+                    // Update last login time
                     user.LastLogin = DateTime.UtcNow;
                     await _usersRepository.UpdateAsync(id, user);
 
+                    // Add token to blacklist
                     var expires = jwtToken.ValidTo;
-
                     await _tokenBlacklistService.AddToBlacklistAsync(id, expires);
+
+                    // Clear any existing OTP and limit keys for this user
+                    var db = _redis.GetDatabase();
+                    await db.KeyDeleteAsync($"otp:{user.Email}");
+                    await db.KeyDeleteAsync($"otp-limit:{user.Email}");
 
                     return true;
                 }
@@ -223,47 +229,111 @@ namespace backend.Services
 
         public async Task<bool> SendOtpAsync(string email)
         {
-            Console.WriteLine($"SendOtpAsync called for email: {email}");
-            var db = _redis.GetDatabase();
-            var user = await _usersRepository.GetByEmailAsync(email);
-
-            if (user == null)
+            try
             {
-                Console.WriteLine($"User not found for email: {email}");
+                Console.WriteLine($"SendOtpAsync called for email: {email}");
+                var db = _redis.GetDatabase();
+                var user = await _usersRepository.GetByEmailAsync(email);
+
+                if (user == null)
+                {
+                    Console.WriteLine($"User not found for email: {email}");
+                    return false;
+                }
+                Console.WriteLine($"User found for email: {email}, user ID: {user.Id}");
+
+                // Check if Redis is connected
+                if (!_redis.IsConnected)
+                {
+                    Console.WriteLine("Redis is not connected. Attempting to reconnect...");
+                    try
+                    {
+                        await _redis.GetDatabase().PingAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Failed to connect to Redis: {ex.Message}");
+                        return false;
+                    }
+                }
+
+                // Check spam limit with retry
+                var retryCount = 0;
+                var maxRetries = 3;
+                while (retryCount < maxRetries)
+                {
+                    try
+                    {
+                        var limitKey = $"otp-limit:{email}";
+                        var existingLimit = await db.StringGetAsync(limitKey);
+                        
+                        if (existingLimit != RedisValue.Null)
+                        {
+                            Console.WriteLine($"OTP limit exists for email: {email}, waiting for it to expire...");
+                            // Force delete the limit key if it exists
+                            await db.KeyDeleteAsync(limitKey);
+                            Console.WriteLine($"Force deleted limit key for email: {email}");
+                        }
+
+                        // Gen OTP
+                        var otp = new Random().Next(100000, 999999).ToString();
+                        
+                        // Set OTP and limit atomically
+                        var otpKey = $"otp:{email}";
+                        var transaction = db.CreateTransaction();
+                        transaction.StringSetAsync(otpKey, otp, TimeSpan.FromMinutes(5));
+                        transaction.StringSetAsync(limitKey, "1", TimeSpan.FromSeconds(60));
+                        
+                        if (await transaction.ExecuteAsync())
+                        {
+                            // Send mail
+                            var smtpUser = _config["Gmail:Username"];
+                            var smtpPass = _config["Gmail:AppPassword"];
+
+                            using var client = new System.Net.Mail.SmtpClient("smtp.gmail.com")
+                            {
+                                Port = 587,
+                                Credentials = new System.Net.NetworkCredential(smtpUser, smtpPass),
+                                EnableSsl = true,
+                            };
+
+                            var mailMessage = new System.Net.Mail.MailMessage
+                            {
+                                From = new System.Net.Mail.MailAddress(smtpUser),
+                                Subject = "Mã xác thực OTP",
+                                Body = $"Mã OTP của bạn là: {otp}. Mã này có hiệu lực trong 5 phút.",
+                                IsBodyHtml = false,
+                            };
+                            mailMessage.To.Add(email);
+
+                            await client.SendMailAsync(mailMessage);
+                            Console.WriteLine($"OTP sent successfully to {email}");
+                            return true;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Failed to set OTP in Redis transaction");
+                            retryCount++;
+                            await Task.Delay(100); // Wait before retry
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error in SendOtpAsync retry {retryCount}: {ex.Message}");
+                        retryCount++;
+                        if (retryCount == maxRetries)
+                            throw;
+                        await Task.Delay(100); // Wait before retry
+                    }
+                }
+
                 return false;
             }
-            Console.WriteLine($"User found for email: {email}, user ID: {user.Id}");
-
-            // Check spam limit
-            if (await db.StringGetAsync($"otp-limit:{email}") != RedisValue.Null)
-                return false;
-
-            // Gen OTP
-            var otp = new Random().Next(100000, 999999).ToString();
-            await db.StringSetAsync($"otp:{email}", otp, TimeSpan.FromMinutes(5));
-            await db.StringSetAsync($"otp-limit:{email}", "1", TimeSpan.FromSeconds(60));
-
-            // Send mail
-            var smtpUser = _config["Gmail:Username"];
-            var smtpPass = _config["Gmail:AppPassword"];
-
-            using var client = new System.Net.Mail.SmtpClient("smtp.gmail.com")
+            catch (Exception ex)
             {
-                Port = 587,
-                Credentials = new System.Net.NetworkCredential(smtpUser, smtpPass),
-                EnableSsl = true,
-            };
-
-            await client.SendMailAsync(
-                new System.Net.Mail.MailMessage(
-                    from: smtpUser,
-                    to: email,
-                    subject: "Your OTP Code",
-                    body: $"Your OTP is: {otp}"
-                )
-            );
-
-            return true;
+                Console.WriteLine($"Error in SendOtpAsync: {ex.Message}");
+                return false;
+            }
         }
 
         public async Task<bool> VerifyOnlyOtpAsync(string email, string otp)
@@ -296,15 +366,16 @@ namespace backend.Services
                 await _usersRepository.UpdateAsync(user.Id, user);
 
                 var db = _redis.GetDatabase();
+                // Delete both OTP and limit keys
                 await db.KeyDeleteAsync($"otp:{email}");
+                await db.KeyDeleteAsync($"otp-limit:{email}");
 
                 return true;
             }
             catch (Exception ex)
             {
-                // Keep this catch block for general error handling, but remove specific debug logs
                 Console.WriteLine($"VerifyOtpAsync: An unexpected error occurred: {ex.ToString()}");
-                return false; // Return false on any unhandled exception
+                return false;
             }
         }
     }

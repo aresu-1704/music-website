@@ -13,15 +13,18 @@ namespace backend.Services
     public class TrackService : ITrackService
     {
         private readonly ITrackRepository _trackRepository;
+        private readonly IUserRepository _userRepository;
+
         private readonly string _storagePath = Path.Combine(Directory.GetCurrentDirectory(), "storage", "tracks");
         private readonly IWebHostEnvironment _env;
 
-        public TrackService(ITrackRepository tracksRepository, IWebHostEnvironment env)
+        public TrackService(ITrackRepository tracksRepository, IWebHostEnvironment env, IUserRepository userRepository)
         {
             if (!Directory.Exists(_storagePath))
                 Directory.CreateDirectory(_storagePath);
 
             _trackRepository = tracksRepository;
+            _userRepository = userRepository;
             _env = env;
         }
 
@@ -103,7 +106,7 @@ namespace backend.Services
                 {
                     Id = track.Id,
                     Title = track.Title,
-
+                    IsPublic = track.IsPublic,
                     ImageBase64 = base64Image
                 });
             }
@@ -191,6 +194,56 @@ namespace backend.Services
             catch (Exception ex)
             {
                 return "Failed";
+            }
+        }
+
+        public async Task<TrackInfo> GetTrackInfo(string id)
+        {
+            try
+            {
+                var track = await _trackRepository.GetByIdAsync(id);
+                if (track != null)
+                {
+                    string? base64Image = null;
+                    if (track.Cover != null)
+                    {
+                        var coverPath = Path.Combine(Directory.GetCurrentDirectory(), "storage", "cover_images", track.Cover);
+                        if (File.Exists(coverPath))
+                        {
+                            var imageBytes = await File.ReadAllBytesAsync(coverPath);
+                            var extension = Path.GetExtension(track.Cover).ToLower().TrimStart('.');
+                            var mimeType = extension switch
+                            {
+                                "jpg" or "jpeg" => "image/jpeg",
+                                "png" => "image/png",
+                                "webp" => "image/webp",
+                                _ => "application/octet-stream"
+                            };
+
+                            base64Image = $"data:{mimeType};base64,{Convert.ToBase64String(imageBytes)}";
+                        }
+                    }
+                    var uploader = await _userRepository.GetByIdAsync(track.ArtistId);
+                    return new TrackInfo
+                    {
+                        TrackId = track.Id,
+                        Title = track.Title,
+                        UploaderId = uploader != null ? uploader.Id : null,
+                        UploaderName = uploader != null ? uploader.Name : null,
+                        Genres = track.Genres,
+                        IsPublic = track.IsPublic,
+                        ImageBase64 = base64Image,
+                        lastUpdate = track.UpdatedAt != null ? track.UpdatedAt : track.CreatedAt,
+                    };
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
             }
         }
     }

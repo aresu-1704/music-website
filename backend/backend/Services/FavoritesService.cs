@@ -1,4 +1,5 @@
-﻿using backend.Interfaces;
+﻿using backend.Controllers;
+using backend.Interfaces;
 using backend.Models;
 using System;
 using System.Collections.Generic;
@@ -41,9 +42,21 @@ namespace backend.Services
             }
         }
 
-        public async Task<List<string>> GetFavoriteTrackIdsByUserAsync(string userId)
+        public async Task<List<FavoriteTracksResponse>> GetFavoriteTrackByUserAsync(string userId)
         {
-            return await _favoritesRepository.GetFavoriteTrackIdsByUserAsync(userId);
+            var tracksId = await _favoritesRepository.GetFavoriteTrackIdsByUserAsync(userId);
+            List<FavoriteTracksResponse> tracks = new List<FavoriteTracksResponse>();
+            foreach (var trackId in tracksId)
+            {
+                var track = await _trackRepository.GetByIdAsync(trackId);
+                tracks.Add(new FavoriteTracksResponse
+                {
+                    trackId = track.Id,
+                    title = track.Title,
+                    isPublic = track.IsPublic,
+                });
+            }
+            return tracks;                
         }
 
         public async Task<bool> IsTrackFavoritedAsync(string userId, string trackId)

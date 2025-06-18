@@ -7,6 +7,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using backend.Models;
+using backend.Services;
+using System.ComponentModel.DataAnnotations;
 
 namespace backend.Controllers
 {
@@ -85,7 +88,7 @@ namespace backend.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            var token = Request.Headers["Authorization"].ToString().Replace("Bearer ", " ");
 
             if (string.IsNullOrEmpty(token))
                 return BadRequest("Token is missing");
@@ -99,6 +102,50 @@ namespace backend.Controllers
             {
                 return BadRequest("Invalid token");
             }
+        }
+
+        [HttpPost("send-otp")]
+        public async Task<IActionResult> SendOtp([FromBody] SendOtpRequest request)
+        {
+            var result = await _usersService.SendOtpAsync(request.Email);
+            if (!result)
+            {
+                return NotFound(ApiResponse.ErrorResponse("Email không tồn tại trong hệ thống."));
+            }
+            return Ok(ApiResponse.SuccessResponse("OTP đã được gửi."));
+        }
+
+        [HttpPost("verify-otp")]
+        public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage);
+                Console.WriteLine($"Validation errors: {string.Join(", ", errors)}");
+                return BadRequest(ApiResponse.ErrorResponse(string.Join(", ", errors)));
+            }
+
+            Console.WriteLine($"Received verify-otp request: Email={request.Email}, OTP={request.Otp}");
+            
+            var result = await _usersService.VerifyOnlyOtpAsync(request.Email, request.Otp);
+            if (!result)
+            {
+                return BadRequest(ApiResponse.ErrorResponse("OTP không hợp lệ hoặc đã hết hạn."));
+            }
+            return Ok(ApiResponse.SuccessResponse("OTP hợp lệ."));
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            var result = await _usersService.VerifyOtpAsync(request.Email, request.Otp, request.NewPassword);
+            if (!result)
+            {
+                return BadRequest(ApiResponse.ErrorResponse("OTP không hợp lệ hoặc đã hết hạn."));
+            }
+            return Ok(ApiResponse.SuccessResponse("Mật khẩu đã được đặt lại thành công."));
         }
     }
 
@@ -138,10 +185,31 @@ namespace backend.Controllers
     }
     #endregion
 
-    //#region Đăng xuất
-    //public class LogoutRequest
-    //{
-    //    public str
-    //}
-    //#endregion
+    #region Quên mật khẩu
+    public class SendOtpRequest
+    {
+        public string Email { get; set; }
+    }
+
+    public class VerifyOtpRequest
+    {
+        [Required(ErrorMessage = "Email không được để trống")]
+        public string Email { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "OTP không được để trống")]
+        public string Otp { get; set; } = string.Empty;
+    }
+
+    public class ResetPasswordRequest
+    {
+        [Required(ErrorMessage = "Email không được để trống")]
+        public string Email { get; set; }
+
+        [Required(ErrorMessage = "OTP không được để trống")]
+        public string Otp { get; set; }
+
+        [Required(ErrorMessage = "Mật khẩu mới không được để trống")]
+        public string NewPassword { get; set; }
+    }
+    #endregion
 }

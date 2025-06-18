@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Google, Facebook, Apple } from 'react-bootstrap-icons';
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../context/authContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Spinner } from 'react-bootstrap';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -24,7 +24,7 @@ export default function SignInForm() {
         if (user.isLoggedIn) {
             setTimeout(() => {
                 navigate('/');
-            }, 2000);
+            }, 500);
         }
     }, [user]);
 
@@ -34,8 +34,6 @@ export default function SignInForm() {
         const result = await loginUser(values);
 
         if (result.success) {
-            toast.success("Đăng nhập thành công", { position: "top-center", autoClose: 2000, pauseOnHover: false });
-
             setTimeout(() => {
                 const role = login(result.token, result.avatarBase64);
                 navigate(role === "admin" ? '/statistic' : '/');
@@ -64,13 +62,16 @@ export default function SignInForm() {
 
     return (
         <>
-            {(isLoading || user.isLoggedIn) && (
-                <div className="d-flex justify-content-center align-items-center vh-100">
-                    <Spinner animation="border" role="status" />
-                </div>
+            {(isLoading) && (
+                <>
+                    <div className="d-flex justify-content-center align-items-center vh-100">
+                        <Spinner animation="border" role="status" />
+                    </div>
+                    <ToastContainer />
+                </>
             )}
 
-            {(!isLoading || !user.isLoggedIn) && (
+            {(!isLoading && !user.isLoggedIn) && (
                 <div className="d-flex justify-content-center align-items-center pt-5">
                     <div className="card p-4 shadow" style={{ width: 500, backgroundColor: 'rgba(0,0,0,0.7)', color: 'white', borderRadius: '0.5rem' }}>
                         <div className="d-flex flex-column align-items-center">
@@ -95,6 +96,9 @@ export default function SignInForm() {
                                         <label htmlFor="password" className="form-label">Mật khẩu</label>
                                         <Field name="password" type="password" placeholder="Nhập mật khẩu" className="form-control" style={{ backgroundColor: 'white', color: 'black' }} />
                                         <ErrorMessage name="password" component="div" className="text-danger" />
+                                        <div className="text-end mt-1">
+                                            <Link to="/forgot-password" className="text-white text-decoration-none">Quên mật khẩu?</Link>
+                                        </div>
                                     </div>
 
                                     <button type="submit" className="btn btn-danger w-100 mb-3" disabled={isSubmitting}>
@@ -122,7 +126,6 @@ export default function SignInForm() {
                     </div>
                 </div>
             )}
-            <ToastContainer />
         </>
     );
 }

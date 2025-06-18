@@ -7,7 +7,12 @@ import { useMusicPlayer } from '../context/musicPlayerContext';
 
 const MusicCard = ({ id, title, artist, imageUrl, likeCount, playCount, onPlay }) => {
   const [hover, setHover] = useState(false);
-  const { playTrackList } = useMusicPlayer();
+  
+  const handlePlay = (e) => {
+    e.preventDefault();
+    onPlay();
+  };
+  
   return (
     <div
       className="music-card text-center text-white px-2"
@@ -28,26 +33,20 @@ const MusicCard = ({ id, title, artist, imageUrl, likeCount, playCount, onPlay }
           }}
         />
         <div className="music-icons-top d-flex gap-3">
-          <Heart size={22} />
-          <Info size={22} />
+          <Info size={22} color="white" />
         </div>
-        <div className="music-card-overlay">
-                <button className="play-button border-0 bg-transparent" onClick={onPlay}>
-                    <PlayCircle size={60} color="white" />
-                </button>
-            </div>
         {hover && (
           <div className="music-card-overlay">
-            <button className="play-button border-0 bg-transparent">
+            <button className="play-button border-0 bg-transparent" onClick={handlePlay}>
               <PlayCircle size={60} color="white" />
             </button>
           </div>
         )}
         <div className="mt-3">
-          <div className="fw-bold" style={{ fontSize: '16px' }}>{title}</div>
+          <div className="fw-bold" style={{ fontSize: '16px', color: '#fff' }}>{title}</div>
           <div style={{ fontSize: '13px', color: '#ccc' }}>{artist}</div>
           <div style={{ fontSize: '13px', color: '#ccc' }}>
-            {likeCount} <Heart size={14} style={{ verticalAlign: 'middle' }} /> | {playCount} plays
+            {playCount} plays
           </div>
         </div>
       </Link>
@@ -74,10 +73,29 @@ const SearchForm = () => {
       .finally(() => setLoading(false));
   }, [query]);
 
+  const handlePlayTrack = (track) => {
+    // Tạo playlist tạm thời từ kết quả tìm kiếm
+    const searchPlaylist = results.tracks.map(track => ({
+      id: track.id,
+      title: track.title,
+      subtitle: track.artistId || 'Unknown Artist',
+      imageUrl: track.imageBase64 || '/images/default-music.jpg',
+      url: track.audioUrl || ''
+    }));
+    
+    // Tìm index của track được chọn
+    const trackIndex = searchPlaylist.findIndex(t => t.id === track.id);
+    
+    // Phát nhạc với playlist tạm thời
+    if (trackIndex !== -1) {
+      playTrackList(searchPlaylist, trackIndex);
+    }
+  };
+
   return (
     <div className="bg-dark py-5" style={{ minHeight: '100vh' }}>
       <div className="container">
-        <h2 className="text-white mb-4">Search Results for "{query}"</h2>
+        <h2 className="text-white mb-4">Kết quả tìm kiếm cho "{query}"</h2>
         {loading && (
           <div className="d-flex justify-content-center align-items-center vh-100">
             <span className="text-white">Loading...</span>
@@ -89,7 +107,7 @@ const SearchForm = () => {
             {/* Tracks Section */}
             {results.tracks.length > 0 && (
               <>
-                <h4 className="text-white mb-4">🎵 Tracks</h4>
+                <h4 className="text-white mb-4">🎵 Bài hát</h4>
                 <div className="row">
                   {results.tracks.map((track) => (
                     <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" key={track.id}>
@@ -100,19 +118,7 @@ const SearchForm = () => {
                         imageUrl={track.imageBase64 || '/images/default-music.jpg'}
                         likeCount={track.likeCount}
                         playCount={track.playCount}
-                        onPlay={() => {
-                          const index = results.tracks.findIndex(t => t.id === track.id);
-                          playTrackList(
-                            results.tracks.map(t => ({
-                              id: t.id,
-                              title: t.title,
-                              artist: t.artistId,
-                              imageUrl: t.imageBase64 || '/images/default-music.jpg',
-                              url: t.audioUrl
-                            })),
-                            index
-                          );
-                        }}
+                        onPlay={() => handlePlayTrack(track)}
                       />
                     </div>
                   ))}
@@ -123,7 +129,7 @@ const SearchForm = () => {
             {/* Users Section */}
             {results.users.length > 0 && (
               <>
-                <h4 className="text-white mb-4">👤 Users</h4>
+                <h4 className="text-white mb-4">👤 Người dùng</h4>
                 <div className="row">
                   {results.users.map((user) => (
                     <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" key={user.id}>
@@ -148,7 +154,7 @@ const SearchForm = () => {
 
             {results.tracks.length === 0 && results.users.length === 0 && (
               <div className="text-center mt-4 text-white">
-                No results found
+                Không có kết quả
               </div>
             )}
           </>

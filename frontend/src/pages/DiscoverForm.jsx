@@ -165,4 +165,4 @@ const DiscoverForm = () => {
     );
 };
 
-export { DiscoverForm };
+export default DiscoverForm;

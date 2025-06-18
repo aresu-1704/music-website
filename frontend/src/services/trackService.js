@@ -56,3 +56,19 @@ export const updateTrackPlayCount = async (id) => {
     }
 }
 
+export const getTrackDetail = async (trackId) => {
+    const response = await fetch(`http://localhost:5270/api/Track/track-detail/${trackId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+    if (!response.ok) {
+        throw new Error(`Lỗi HTTP: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+};
+
+

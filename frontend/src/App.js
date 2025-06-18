@@ -20,6 +20,7 @@ import {MusicPlayerProvider} from "./context/musicPlayerContext";
 
 import PolicyForm from "./pages/PolicyForm";
 import NotFoundForm from "./pages/NotFoundForm";
+import TrackDetail from "./pages/TrackDetailForm";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
                             <Route path="/forgot-password" element={<ForgotPassword />} />
                             <Route path="/new-password" element={<NewPassword />} />
                             <Route path="/policy" element={<PolicyForm />} />
+                            <Route path="track/:trackId" element={<TrackDetail /> } />
 
                             <Route path="/*" element={<NotFoundForm />} />
                         </Routes>

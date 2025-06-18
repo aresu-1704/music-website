@@ -130,14 +130,7 @@ namespace backend.Services
 
                 Users user = await _usersRepository.GetByIdAsync(id);
                 if (user != null)
-<<<<<<< HEAD
                 {            
-=======
-                {
-                    // Update last login time
-                    user.LastLogin = DateTime.UtcNow;
-                    await _usersRepository.UpdateAsync(id, user);
->>>>>>> Mail
 
                     // Add token to blacklist
                     var expires = jwtToken.ValidTo;

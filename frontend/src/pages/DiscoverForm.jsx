@@ -164,3 +164,5 @@ const DiscoverForm = () => {
         </>
     );
 };
+
+export { DiscoverForm };

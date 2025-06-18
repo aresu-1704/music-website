@@ -38,7 +38,7 @@ namespace backend.Controllers
                 PlayCount = track.PlayCount,
                 ImageBase64 = !string.IsNullOrEmpty(track.Cover)
                     ? $"http://localhost:5270/cover_images/{track.Cover}"
-                    : null
+                    : null,
                 AudioUrl = $"http://localhost:5270/api/Track/audio/{track.Id}"
             }).ToList();
 

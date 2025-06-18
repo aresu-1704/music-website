@@ -11,7 +11,7 @@ import SignUpForm from './pages/SignUpForm'
 import HomeForm from './pages/HomeForm';
 import ProfileForm from './pages/ProfileForm';
 import AlbumsForm from './pages/AlbumsForm';
-import DiscoverForm from './pages/DiscoverForm';
+import { DiscoverForm } from './pages/DiscoverForm';
 import UpgradeAccount from "./pages/UpgradeAccountForm";
 import PaymentResultForm from "./pages/PaymentResultForm";
 import {MusicPlayerProvider} from "./context/musicPlayerContext";

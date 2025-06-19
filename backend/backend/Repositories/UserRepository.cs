@@ -60,5 +60,11 @@ namespace backend.Repositories
             );
             return await _usersCollection.Find(filter).ToListAsync();
         }
+
+        public async Task<List<Users>> GetManyByIdsAsync(IEnumerable<string> ids)
+        {
+            return await _usersCollection.Find(u => ids.Contains(u.Id)).ToListAsync();
+        }
+
     }
 }

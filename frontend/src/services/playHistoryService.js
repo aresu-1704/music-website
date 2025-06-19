@@ -1,5 +1,5 @@
 
-export const updateHistory = async (trackId, handleSessionOut) => {
+export const updateHistory = async (trackId) => {
     var res = await fetch(`http://localhost:5270/api/History/play/${trackId}`, {
         method: 'POST',
         headers: {
@@ -9,6 +9,6 @@ export const updateHistory = async (trackId, handleSessionOut) => {
     })
 
     if (res.status === 401 || res.status === 403) {
-        handleSessionOut()
+        return false;
     }
 }

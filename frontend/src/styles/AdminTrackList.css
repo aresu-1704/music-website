@@ -1,0 +1,32 @@
+/* Tổng thể */
+.admin-dark-bg {
+    background-color: #121212;
+    color: #e0e0e0;
+    font-size: 16px; /* Base tăng nhẹ từ 14px */
+    min-height: 100vh;
+}
+
+.track-card {
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    color: #fff;
+    font-size: 16px;
+}
+
+/* Tiêu đề nhạc */
+.track-card .card-title {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.dark-input {
+    background-color: #1f1f1f;
+    color: #f8f9fa;
+    border: 1px solid #444;
+}
+.dark-input::placeholder {
+    color: #aaa;
+}
+
+
+

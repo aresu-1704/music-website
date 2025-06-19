@@ -161,6 +161,27 @@ namespace backend.Controllers
                 return Ok(result);
             }
         }
+
+        [HttpGet("all-track")]
+        public async Task<IActionResult> GetAllTrack()
+        {
+            var result = await _trackService.GetAllTrack();
+            return Ok(result);
+        }
+
+        [HttpPut("approve/{id}")]
+        public async Task<IActionResult> ApproveTrack(string id)
+        {
+            await _trackService.ApproveTrack(id);
+            return Ok("Thành công");
+        }
+
+        [HttpPut("public/{id}")]
+        public async Task<IActionResult> PublicTrack(string id)
+        {
+            await _trackService.ChangePublicStatus(id);
+            return Ok("Thành công");
+        }
     }
 
     #region Úp load nhạc
@@ -229,6 +250,21 @@ namespace backend.Controllers
         public string ImageBase64 { get; set; }
         public DateTime lastUpdate { get; set; }
 
+    }
+    #endregion
+
+    #region Danh sách nhạc admin
+    public class TrackAdminView
+    {
+        public string TrackId { get; set; }
+        public string Title { get; set; }
+        public string UploaderName { get; set; }
+        public string UploaderId { get; set; }
+        public string[] Genres { get; set; }
+        public bool IsPublic { get; set; }
+        public bool isApproved { get; set; }
+        public DateTime lastUpdate { get; set; }
+        public string ImageBase64 { get; set; }
     }
     #endregion
 }

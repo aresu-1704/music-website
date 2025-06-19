@@ -1,4 +1,6 @@
-export const checkUserIsFavorites = async (trackId, handleSessionOut) => {
+
+export const checkUserIsFavorites = async (trackId) => {
+
     const res = await fetch(`http://localhost:5270/api/Favorites/check/${trackId}`, {
         method: 'GET',
         headers: {
@@ -12,7 +14,7 @@ export const checkUserIsFavorites = async (trackId, handleSessionOut) => {
     }
 
     else if (res.status === 401 ||  res.status === 403) {
-        handleSessionOut()
+        return false;
     }
 }
 

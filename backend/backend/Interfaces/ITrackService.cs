@@ -14,12 +14,14 @@ namespace backend.Interfaces
             string[]? genre,
             string? cover
         );
+        Task<List<TrackAdminView>> GetAllTrack();
         Task<Track?> GetByIdAsync(string id);
         Task<List<TrackThumbnail>> GetTopPlayedThumbnailsAsync(int limit = 20);
         Task<List<TrackThumbnail>> GetTopLikeThumbnailsAsync(int limit = 20);
         Task<TrackMusic> GetMusicByIdAsync(string id);
         Task<string> UpdatePlayCount(string id);
         Task<TrackInfo> GetTrackInfo(string id);
-
+        Task ApproveTrack(string id);
+        Task ChangePublicStatus(string id);
     }
 }

@@ -237,7 +237,7 @@ const Navbar = () => {
                                     <Link to="/artist-mn" className={`nav-link ${isActive("/artist-mn") ? "active text-danger fw-semibold" : "text-secondary"}`}>Quản lý nghệ sĩ</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link to="/albums-mn" className={`nav-link ${isActive("/albums-mn") ? "active text-danger fw-semibold" : "text-secondary"}`}>Albums</Link>
+                                    <Link to="/track-management" className={`nav-link ${isActive("/track-management") ? "active text-danger fw-semibold" : "text-secondary"}`}>Quản lý nhạc</Link>
                                 </li>
                                 <li className="nav-item">
                                     <Link to="/report-mn" className={`nav-link ${isActive("/report-mn") ? "active text-danger fw-semibold" : "text-secondary"}`}>Báo cáo vi phạm</Link>

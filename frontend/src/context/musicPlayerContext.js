@@ -11,14 +11,13 @@ export const MusicPlayerProvider = ({ children }) => {
 
     const currentTrack = playlist[currentTrackIndex] || null;
 
-    // ✅ Dùng khi người dùng click "Play"
     const playTrackList = (tracks, index = 0) => {
         setPlaylist(tracks);
         setCurrentTrackIndex(index);
         setIsPlaying(true);
     };
 
-    // 🧠 GỌI API để lấy AudioUrl thật
+
     useEffect(() => {
         const fetchAudioUrl = async () => {
             if (!currentTrack?.id) {

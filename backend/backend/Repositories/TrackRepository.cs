@@ -23,11 +23,11 @@ namespace backend.Repositories
             await _tracks.Find(t => t.Id == id).FirstOrDefaultAsync();
 
         public async Task<List<Track>> GetByArtistIdAsync(string artistId) =>
-            await _tracks.Find(t => t.ArtistId == artistId).ToListAsync();
+            await _tracks.Find(t => t.ArtistId == artistId && t.IsApproved == true).ToListAsync();
 
 
         public async Task<List<Track>> SearchByTitleAsync(string keyword) =>
-            await _tracks.Find(t => t.Title.ToLower().Contains(keyword.ToLower())).ToListAsync();
+            await _tracks.Find(t => t.Title.ToLower().Contains(keyword.ToLower()) && t.IsApproved == true).ToListAsync();
 
         public async Task CreateAsync(Track track) =>
             await _tracks.InsertOneAsync(track);

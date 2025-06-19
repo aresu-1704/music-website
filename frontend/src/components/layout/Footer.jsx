@@ -9,6 +9,7 @@ import {checkUserIsFavorites, toggleFavorites} from "../../services/favoritesSer
 import {useLoginSessionOut} from "../../services/loginSessionOut";
 import {Button, Modal} from "react-bootstrap";
 import {useNavigate} from "react-router-dom";
+import {updateHistory} from "../../services/playHistoryService";
 
 const Footer = () => {
     const audioRef = useRef(null);
@@ -61,7 +62,7 @@ const Footer = () => {
             if (currentTrack?.id && user.isLoggedIn) {
                 try {
                     const res = await checkUserIsFavorites(currentTrack.id, handleSessionOut);
-                    await updateTrackPlayCount(currentTrack.id, handleSessionOut);
+                    handleUpdateLastPlay(currentTrack.id);
                     setIsLiked(res.favorited);
                 } catch (err) {
                     console.error("Lỗi khi kiểm tra yêu thích:", err);
@@ -116,7 +117,6 @@ const Footer = () => {
         if (playlist.length === 0) return;
         const prevIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
         playTrackList(playlist, prevIndex);
-
     };
 
     const handleTimeUpdate = () => {
@@ -137,6 +137,10 @@ const Footer = () => {
             audioRef.current.currentTime = seekTime;
         }
     };
+
+    const handleUpdateLastPlay = async (trackId) => {
+        await updateHistory(trackId, handleSessionOut);
+    }
 
     const handleUpdateTrackPlayCount = async (id) => {
         try {
@@ -225,6 +229,7 @@ const Footer = () => {
                             if (isReplayRef.current) {
                                 if(currentTrack.id != null) {
                                     handleUpdateTrackPlayCount(currentTrack.id);
+                                    handleUpdateLastPlay(currentTrack.id);
                                 }
                                 audioRef.current.currentTime = 0;
                                 audioRef.current.play().catch(err => console.error("Không thể replay:", err));

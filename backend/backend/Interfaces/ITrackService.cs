@@ -19,6 +19,7 @@ namespace backend.Interfaces
         Task<List<TrackThumbnail>> GetTopLikeThumbnailsAsync(int limit = 20);
         Task<TrackMusic> GetMusicByIdAsync(string id);
         Task<string> UpdatePlayCount(string id);
+        Task<TrackInfo> GetTrackInfo(string id);
 
     }
 }

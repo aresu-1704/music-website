@@ -4,27 +4,24 @@ using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using backend.Controllers;
 
 namespace backend.Repositories
 {
     public class HistoryRepository : IHistoryRepository
     {
         private readonly IMongoCollection<Histories> _collection;
+        private readonly IMongoCollection<Track> _trackCollection;
 
         public HistoryRepository(IMongoDatabase database)
         {
             _collection = database.GetCollection<Histories>("histories");
+            _trackCollection = database.GetCollection<Track>("tracks");
         }
 
         public async Task<IEnumerable<Histories>> GetAllAsync()
         {
             return await _collection.Find(_ => true).ToListAsync();
-        }
-
-        public async Task<Histories> GetByIdAsync(string userId, string trackId)
-        {
-            var id = $"{userId}_{trackId}";
-            return await _collection.Find(h => h.Id == id).FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<Histories>> GetByUserIdAsync(string userId)
@@ -47,6 +44,11 @@ namespace backend.Repositories
         {
             var id = $"{userId}_{trackId}";
             await _collection.DeleteOneAsync(h => h.Id == id);
+        }
+
+        public async Task DeleteAllAsync(string userId)
+        {
+            await _collection.DeleteManyAsync(h => h.UserId == userId);
         }
     }
 }

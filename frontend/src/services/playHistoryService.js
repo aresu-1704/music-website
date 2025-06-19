@@ -8,7 +8,7 @@ export const updateHistory = async (trackId, handleSessionOut) => {
         }
     })
 
-    if (!res.status === 401) {
+    if (res.status === 401 || res.status === 403) {
         handleSessionOut()
     }
 }

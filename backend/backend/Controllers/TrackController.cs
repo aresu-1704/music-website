@@ -147,6 +147,20 @@ namespace backend.Controllers
                 return BadRequest(result);
             }            
         }
+
+        [HttpGet("track-detail/{id}")]
+        public async Task<IActionResult> GetTrackInfomation(string id)
+        {
+            var result = await _trackService.GetTrackInfo(id);
+            if (result == null)
+            {
+                return Ok("Không tìm thấy !");
+            }
+            else
+            {
+                return Ok(result);
+            }
+        }
     }
 
     #region Úp load nhạc
@@ -187,6 +201,8 @@ namespace backend.Controllers
     }
     #endregion
 
+    #region Phát nhạc
+
     public class TrackMusic
     {
         public string AudioUrl { get; set; }
@@ -199,4 +215,20 @@ namespace backend.Controllers
         public int PlayCount { get; set; }
         public bool IsPublic { get; set; }
     }
+    #endregion
+
+    #region Chi tiết nhạc
+    public class TrackInfo
+    {
+        public string TrackId { get; set; }
+        public string Title { get; set; }
+        public string UploaderName { get; set; }
+        public string UploaderId { get; set; }
+        public string[] Genres { get; set; }
+        public bool IsPublic { get; set ; }
+        public string ImageBase64 { get; set; }
+        public DateTime lastUpdate { get; set; }
+
+    }
+    #endregion
 }

@@ -5,6 +5,7 @@ using backend.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace backend.Services
 {
@@ -21,19 +22,43 @@ namespace backend.Services
 
         public async Task<IEnumerable<HistoryTrackResponse>> GetUserHistoriesAsync(string userId)
         {
-
             var historyList = await _historyRepository.GetByUserIdAsync(userId);
             List<HistoryTrackResponse> tracks = new List<HistoryTrackResponse>();
             foreach (var history in historyList)
             {
                 var track = await _trackRepository.GetByIdAsync(history.TrackId);
-                
+                string base64Image = null;
+                if (track != null && !string.IsNullOrEmpty(track.Cover))
+                {
+                    try
+                    {
+                        var coverPath = Path.Combine(Directory.GetCurrentDirectory(), "storage", "cover_images", track.Cover);
+                        if (File.Exists(coverPath))
+                        {
+                            var imageBytes = await File.ReadAllBytesAsync(coverPath);
+                            var extension = Path.GetExtension(track.Cover).ToLower().TrimStart('.');
+                            var mimeType = extension switch
+                            {
+                                "jpg" or "jpeg" => "image/jpeg",
+                                "png" => "image/png",
+                                "webp" => "image/webp",
+                                _ => "application/octet-stream"
+                            };
+                            base64Image = $"data:{mimeType};base64,{Convert.ToBase64String(imageBytes)}";
+                        }
+                    }
+                    catch
+                    {
+                        base64Image = null; // Nếu lỗi, trả về null
+                    }
+                }
                 tracks.Add(new HistoryTrackResponse
                 {
                     trackId = track.Id,
                     title = track.Title,
                     isPublic = track.IsPublic,
-                    lastPlay = history.LastPlay
+                    lastPlay = history.LastPlay,
+                    imageBase64 = base64Image
                 });
             }
             return tracks;

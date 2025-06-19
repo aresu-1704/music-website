@@ -5,16 +5,16 @@ import {getTopLikeTracks, getTopTracks} from "../services/trackService";
 import { useMusicPlayer } from '../context/musicPlayerContext';
 import '../styles/Discover.css'
 import {useNavigate} from "react-router-dom";
+import { useFavorite } from '../context/FavoriteContext';
 
-const MusicCard = ({ title, subtitle, imageUrl, isPublic, onPlay, onInfo }) => {
+const MusicCard = ({ id, title, subtitle, imageUrl, isPublic, onPlay, onInfo }) => {
     const [hover, setHover] = useState(false);
-
     return (
         <div
             className="music-card text-center text-white px-2"
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: 'pointer', position: 'relative' }}
         >
             <div>
                 <img
@@ -36,19 +36,16 @@ const MusicCard = ({ title, subtitle, imageUrl, isPublic, onPlay, onInfo }) => {
                     >
                         👑 VIP
                     </Badge>
-                    )}
+                )}
             </div>
-
-            <div className="music-icons-top d-flex gap-3">
-                <Info size={22} onClick={onInfo} />
+            <div className="music-icons-top d-flex gap-3 position-absolute top-0 start-0 m-3">
+                <Info size={22} onClick={onInfo} style={{ cursor: 'pointer' }} />
             </div>
-
             <div className="music-card-overlay">
                 <button className="play-button border-0 bg-transparent" onClick={onPlay}>
                     <PlayCircle size={60} color="white" />
                 </button>
             </div>
-
             <div className="mt-3">
                 <div className="fw-bold" style={{ fontSize: '16px' }}>{title}</div>
                 <div style={{ fontSize: '13px', color: '#ccc' }}>{subtitle}</div>

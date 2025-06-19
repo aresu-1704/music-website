@@ -10,5 +10,6 @@ namespace backend.Interfaces
         Task<List<FavoriteTracksResponse>> GetFavoriteTrackByUserAsync(string userId);
         Task<bool> IsTrackFavoritedAsync(string userId, string trackId);
         Task<int> GetTrackFavoriteCountAsync(string trackId);
+        Task DeleteAllFavoritesAsync(string userId);
     }
 }

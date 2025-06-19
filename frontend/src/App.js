@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { ToastContainer } from 'react-toastify/unstyled';
 import {AuthProvider} from "./context/authContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { FavoriteProvider } from './context/FavoriteContext';
 
 //Điều hướng
 import SignInForm from './pages/SignInForm'
@@ -21,8 +22,10 @@ import SearchForm from './pages/SearchForm';
 import PolicyForm from "./pages/PolicyForm";
 import NotFoundForm from "./pages/NotFoundForm";
 import TrackDetail from "./pages/TrackDetailForm";
+import FavoriteForm from './pages/FavoriteForm';
 import HistoryForm from './pages/HistoryForm';
 import AdminTrackList from "./pages/AdminTrackListForm";
+
 
 const queryClient = new QueryClient();
 
@@ -48,6 +51,7 @@ const App = () => (
                             <Route path="track/:trackId" element={<TrackDetail /> } />
                             <Route path="/histories" element={<HistoryForm />} />
                             <Route path="/track-management" element={<AdminTrackList /> } />
+                              <Route path="/likes" element={<FavoriteForm />} />
                             <Route path="/*" element={<NotFoundForm />} />
                         </Routes>
                         <ToastContainer />

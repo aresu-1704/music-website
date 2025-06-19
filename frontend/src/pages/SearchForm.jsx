@@ -5,10 +5,11 @@ import { fetchSearchResults } from '../services/searchService';
 import '../styles/Discover.css';
 import { useMusicPlayer } from '../context/musicPlayerContext';
 import {Spinner} from "react-bootstrap";
+import { useFavorite } from '../context/FavoriteContext';
 
 const MusicCard = ({ id, title, artist, imageUrl, likeCount, playCount, onPlay }) => {
   const [hover, setHover] = useState(false);
-  
+
   const handlePlay = (e) => {
     e.preventDefault();
     onPlay();
@@ -19,7 +20,7 @@ const MusicCard = ({ id, title, artist, imageUrl, likeCount, playCount, onPlay }
       className="music-card text-center text-white px-2"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      style={{ cursor: 'pointer' }}
+      style={{ cursor: 'pointer', position: 'relative' }}
     >
       <Link to={`/track/${id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
         <img
@@ -33,7 +34,7 @@ const MusicCard = ({ id, title, artist, imageUrl, likeCount, playCount, onPlay }
             boxShadow: '0 6px 15px rgba(0, 0, 0, 0.6)',
           }}
         />
-        <div className="music-icons-top d-flex gap-3">
+        <div className="music-icons-top d-flex gap-3 position-absolute top-0 start-0 m-3">
           <Info size={22} color="white" />
         </div>
         {hover && (

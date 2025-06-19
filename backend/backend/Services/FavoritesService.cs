@@ -4,6 +4,7 @@ using backend.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace backend.Services
 {
@@ -49,11 +50,25 @@ namespace backend.Services
             foreach (var trackId in tracksId)
             {
                 var track = await _trackRepository.GetByIdAsync(trackId);
+                string imageBase64 = null;
+                if (!string.IsNullOrEmpty(track.Cover))
+                {
+                    var coverPath = Path.Combine(Directory.GetCurrentDirectory(), "storage", "cover_images", track.Cover);
+                    if (File.Exists(coverPath))
+                    {
+                        var bytes = await File.ReadAllBytesAsync(coverPath);
+                        imageBase64 = "data:image/jpeg;base64," + Convert.ToBase64String(bytes);
+                    }
+                }
                 tracks.Add(new FavoriteTracksResponse
                 {
                     trackId = track.Id,
                     title = track.Title,
                     isPublic = track.IsPublic,
+                    cover = track.Cover,
+                    filename = track.Filename,
+                    artistId = track.ArtistId,
+                    imageBase64 = imageBase64,
                 });
             }
             return tracks;                
@@ -67,6 +82,16 @@ namespace backend.Services
         public async Task<int> GetTrackFavoriteCountAsync(string trackId)
         {
             return await _favoritesRepository.GetFavoriteCountByTrackAsync(trackId);
+        }
+
+        public async Task DeleteAllFavoritesAsync(string userId)
+        {
+            var trackIds = await _favoritesRepository.GetFavoriteTrackIdsByUserAsync(userId);
+            await _favoritesRepository.DeleteAllFavoritesByUserAsync(userId);
+            foreach (var trackId in trackIds)
+            {
+                await _trackRepository.DecreaseLikeCountAsync(trackId);
+            }
         }
     }
 }

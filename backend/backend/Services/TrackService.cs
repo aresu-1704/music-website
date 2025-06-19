@@ -5,6 +5,7 @@ using backend.Services;
 using Microsoft.AspNetCore.Http;
 using MongoDB.Driver;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -27,6 +28,67 @@ namespace backend.Services
             _userRepository = userRepository;
             _env = env;
         }
+
+        public async Task<List<TrackAdminView>> GetAllTrack()
+        {
+            var tracks = await _trackRepository.GetAllAsync();
+            var result = new List<TrackAdminView>();
+
+            // 1. Lấy danh sách artistId duy nhất
+            var artistIds = tracks.Select(t => t.ArtistId).Where(id => id != null).Distinct().ToList();
+
+            // 2. Truy vấn tất cả uploader một lần
+            var users = await _userRepository.GetManyByIdsAsync(artistIds); // Bạn cần thêm hàm này trong repo
+            var userDict = users.Where(u => u.Id != null)
+                                .ToDictionary(u => u.Id, u => u);
+
+
+            foreach (var track in tracks)
+            {
+                string? base64Image = null;
+                var cover = track.Cover;
+
+                if (!string.IsNullOrEmpty(cover))
+                {
+                    var coverPath = Path.Combine("storage", "cover_images", cover); // bỏ GetCurrentDirectory nếu app đã định cấu hình base path đúng
+                    if (File.Exists(coverPath))
+                    {
+                        var bytes = await File.ReadAllBytesAsync(coverPath);
+                        var ext = Path.GetExtension(cover).ToLower().TrimStart('.');
+                        var mimeType = ext switch
+                        {
+                            "jpg" or "jpeg" => "image/jpeg",
+                            "png" => "image/png",
+                            "webp" => "image/webp",
+                            _ => "application/octet-stream"
+                        };
+                        base64Image = $"data:{mimeType};base64,{Convert.ToBase64String(bytes)}";
+                    }
+                }
+
+                Users? uploader = null;
+                if (track.ArtistId != null)
+                {
+                    userDict.TryGetValue(track.ArtistId, out uploader);
+                }
+
+                result.Add(new TrackAdminView
+                {
+                    TrackId = track.Id,
+                    Title = track.Title,
+                    UploaderId = uploader?.Id,
+                    UploaderName = uploader?.Name,
+                    Genres = track.Genres,
+                    IsPublic = track.IsPublic,
+                    isApproved = track.IsApproved,
+                    lastUpdate = track.UpdatedAt == null ? track.CreatedAt : track.UpdatedAt,
+                    ImageBase64 = base64Image
+                });
+            }
+
+            return result;
+        }
+
 
         public async Task<Track> UploadTrackAsync(
             IFormFile file,
@@ -197,56 +259,83 @@ namespace backend.Services
             }
         }
 
-        public async Task<TrackInfo> GetTrackInfo(string id)
+        public async Task<TrackInfo?> GetTrackInfo(string id)
         {
             try
             {
                 var track = await _trackRepository.GetByIdAsync(id);
-                if (track != null)
-                {
-                    string? base64Image = null;
-                    if (track.Cover != null)
-                    {
-                        var coverPath = Path.Combine(Directory.GetCurrentDirectory(), "storage", "cover_images", track.Cover);
-                        if (File.Exists(coverPath))
-                        {
-                            var imageBytes = await File.ReadAllBytesAsync(coverPath);
-                            var extension = Path.GetExtension(track.Cover).ToLower().TrimStart('.');
-                            var mimeType = extension switch
-                            {
-                                "jpg" or "jpeg" => "image/jpeg",
-                                "png" => "image/png",
-                                "webp" => "image/webp",
-                                _ => "application/octet-stream"
-                            };
-
-                            base64Image = $"data:{mimeType};base64,{Convert.ToBase64String(imageBytes)}";
-                        }
-                    }
-                    var uploader = await _userRepository.GetByIdAsync(track.ArtistId);
-                    return new TrackInfo
-                    {
-                        TrackId = track.Id,
-                        Title = track.Title,
-                        UploaderId = uploader != null ? uploader.Id : null,
-                        UploaderName = uploader != null ? uploader.Name : null,
-                        Genres = track.Genres,
-                        IsPublic = track.IsPublic,
-                        ImageBase64 = base64Image,
-                        lastUpdate = track.UpdatedAt != null ? track.UpdatedAt : track.CreatedAt,
-                    };
-                }
-                else
+                if (track == null)
                 {
                     return null;
                 }
+
+                // Xử lý ảnh cover
+                string? base64Image = null;
+                if (!string.IsNullOrEmpty(track.Cover))
+                {
+                    var coverPath = Path.Combine("storage", "cover_images", track.Cover);
+                    if (File.Exists(coverPath))
+                    {
+                        var bytes = await File.ReadAllBytesAsync(coverPath);
+                        var ext = Path.GetExtension(track.Cover).ToLower().TrimStart('.');
+                        var mimeType = ext switch
+                        {
+                            "jpg" or "jpeg" => "image/jpeg",
+                            "png" => "image/png",
+                            "webp" => "image/webp",
+                            _ => "application/octet-stream"
+                        };
+                        base64Image = $"data:{mimeType};base64,{Convert.ToBase64String(bytes)}";
+                    }
+                }
+
+                // Lấy thông tin uploader nếu có
+                Users? uploader = null;
+                if (!string.IsNullOrEmpty(track.ArtistId))
+                {
+                    uploader = await _userRepository.GetByIdAsync(track.ArtistId);
+                }
+
+                return new TrackInfo
+                {
+                    TrackId = track.Id,
+                    Title = track.Title,
+                    UploaderId = uploader?.Id,
+                    UploaderName = uploader?.Name,
+                    Genres = track.Genres,
+                    IsPublic = track.IsPublic,
+                    ImageBase64 = base64Image,
+                    lastUpdate = track.UpdatedAt == null ? track.CreatedAt : track.UpdatedAt
+                };
             }
             catch (Exception ex)
             {
+                // Log lỗi nếu cần
+                //_logger.LogError(ex, "Error getting track info for ID: {TrackId}", id);
                 return null;
             }
         }
+
+        public async Task ApproveTrack(string id)
+        {
+            var track = await _trackRepository.GetByIdAsync(id);
+            if (track != null)
+            {
+                track.IsApproved = !track.IsApproved;
+                track.UpdatedAt = DateTime.Now;
+                await _trackRepository.UpdateAsync(id, track);
+            }
+        }
+
+        public async Task ChangePublicStatus(string id)
+        {
+            var track = await _trackRepository.GetByIdAsync(id);
+            if (track != null)
+            {
+                track.IsPublic = !track.IsPublic;
+                track.UpdatedAt = DateTime.Now;
+                await _trackRepository.UpdateAsync(id, track);
+            }
+        }
     }
-
-
 }

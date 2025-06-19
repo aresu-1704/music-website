@@ -14,7 +14,7 @@ import {updateHistory} from "../../services/playHistoryService";
 const Footer = () => {
     const audioRef = useRef(null);
     const progressRef = useRef(null);
-    const { user } = useAuth();
+    const { user, logout } = useAuth();
 
     const {
         playlist,
@@ -32,10 +32,13 @@ const Footer = () => {
     const [volume, setVolume] = useState(1);
     const [isReplay, setIsReplay] = useState(false);
     const [isLiked, setIsLiked] = useState(false);
+    const [listenedTime, setListenedTime] = useState(0);
     const [showConfirmSigninModal, setShowConfirmSigninModal] = useState(false);
+
     const isReplayRef = useRef(isReplay);
     const handleSessionOut = useLoginSessionOut();
     const navigate = useNavigate();
+    const hasShowVipToast = useRef(false);
 
     const handleConfirmSigninClick = () => setShowConfirmSigninModal(true);
     const handleSigninClose = () => setShowConfirmSigninModal(false);
@@ -48,7 +51,10 @@ const Footer = () => {
 
     useEffect(() => {
         if (!user.isLoggedIn) {
-            setIsLiked(false); // Reset lại khi logout
+            setIsLiked(false);
+            if (currentTrack?.isPublic === false) {
+                playNext()
+            }
         }
     }, [user.isLoggedIn]);
 
@@ -58,12 +64,46 @@ const Footer = () => {
     }, [isReplay]);
 
     useEffect(() => {
+        if (currentTrack?.isPublic === false) {
+            if(!user.isLoggedIn || user.role === "normal") {
+                if (!hasShowVipToast.current) {
+                    toast.info(`Để nghe ${currentTrack?.title} bạn cần nâng cấp tài khoản`, {
+                        position: "top-center",
+                        autoClose: 2000,
+                        pauseOnHover: false,
+                    });
+                }
+                hasShowVipToast.current = true;
+                playNext();
+            }
+        }
+        else {
+            hasShowVipToast.current = false;
+        }
         const fetchFavoriteStatus = async () => {
             if (currentTrack?.id && user.isLoggedIn) {
                 try {
-                    const res = await checkUserIsFavorites(currentTrack.id, handleSessionOut);
-                    handleUpdateLastPlay(currentTrack.id);
-                    setIsLiked(res.favorited);
+                    const res = await checkUserIsFavorites(currentTrack.id);
+                    const updateRes = handleUpdateLastPlay(currentTrack.id);
+
+                    if(updateRes && res) {
+                        setIsLiked(res.favorited);
+                    } else{
+                        toast.error("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại", {
+                            position: "top-center",
+                            autoClose: 2000,
+                            pauseOnHover: false,
+                        });
+
+                        setTimeout(() => {
+                            logout();
+                            navigate('/signin');
+                            setIsPlaying(false);
+                            playTrackList([], 0);
+                        }, 2500);
+                    }
+
+
                 } catch (err) {
                     console.error("Lỗi khi kiểm tra yêu thích:", err);
                 }
@@ -122,10 +162,18 @@ const Footer = () => {
     const handleTimeUpdate = () => {
         const current = audioRef.current?.currentTime || 0;
         const dur = audioRef.current?.duration || 1;
+
+        setListenedTime(prev => {
+            const delta = current - currentTime;
+            if (delta >= 0 && delta < 3) return prev + delta;
+            return prev;
+        });
+
         setCurrentTime(current);
         setDuration(dur);
         setProgress((current / dur) * 100);
     };
+
 
     const handleSeek = (e) => {
         if (!progressRef.current) return;
@@ -139,7 +187,7 @@ const Footer = () => {
     };
 
     const handleUpdateLastPlay = async (trackId) => {
-        await updateHistory(trackId, handleSessionOut);
+        return await updateHistory(trackId);
     }
 
     const handleUpdateTrackPlayCount = async (id) => {
@@ -226,11 +274,14 @@ const Footer = () => {
                         ref={audioRef}
                         preload="auto"
                         onEnded={() => {
+                            if (currentTrack.id && listenedTime >= 0.9 * duration) {
+                                handleUpdateTrackPlayCount(currentTrack.id);
+                                handleUpdateLastPlay(currentTrack.id);
+                            }
+
+                            setListenedTime(0);
+
                             if (isReplayRef.current) {
-                                if(currentTrack.id != null) {
-                                    handleUpdateTrackPlayCount(currentTrack.id);
-                                    handleUpdateLastPlay(currentTrack.id);
-                                }
                                 audioRef.current.currentTime = 0;
                                 audioRef.current.play().catch(err => console.error("Không thể replay:", err));
                             } else {

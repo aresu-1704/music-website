@@ -87,6 +87,8 @@ builder.Services.AddScoped<IHistoryRepository, HistoryRepository>();
 builder.Services.AddScoped<IHistoryService, HistoryService>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentService, CommentService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 
 //Redis cache
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
@@ -170,7 +172,8 @@ builder.Services.AddAuthentication("Bearer")
             }
         };
     });
-    builder.Services.AddCors(options =>
+
+builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         policy =>

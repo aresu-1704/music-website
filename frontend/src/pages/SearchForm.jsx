@@ -4,6 +4,7 @@ import { PlayCircle, Heart, Info } from 'lucide-react';
 import { fetchSearchResults } from '../services/searchService';
 import '../styles/Discover.css';
 import { useMusicPlayer } from '../context/musicPlayerContext';
+import {Spinner} from "react-bootstrap";
 
 const MusicCard = ({ id, title, artist, imageUrl, likeCount, playCount, onPlay }) => {
   const [hover, setHover] = useState(false);
@@ -20,7 +21,7 @@ const MusicCard = ({ id, title, artist, imageUrl, likeCount, playCount, onPlay }
       onMouseLeave={() => setHover(false)}
       style={{ cursor: 'pointer' }}
     >
-      <Link to={`/track/${id}`}>
+      <Link to={`/track/${id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
         <img
           src={imageUrl || '/images/default-music.jpg'}
           alt={title}
@@ -46,7 +47,7 @@ const MusicCard = ({ id, title, artist, imageUrl, likeCount, playCount, onPlay }
           <div className="fw-bold" style={{ fontSize: '16px', color: '#fff' }}>{title}</div>
           <div style={{ fontSize: '13px', color: '#ccc' }}>{artist}</div>
           <div style={{ fontSize: '13px', color: '#ccc' }}>
-            {playCount} plays
+            {likeCount} likes | {playCount} plays
           </div>
         </div>
       </Link>
@@ -97,9 +98,9 @@ const SearchForm = () => {
       <div className="container">
         <h2 className="text-white mb-4">Kết quả tìm kiếm cho "{query}"</h2>
         {loading && (
-          <div className="d-flex justify-content-center align-items-center vh-100">
-            <span className="text-white">Loading...</span>
-          </div>
+            <div className="d-flex justify-content-center align-items-center vh-100">
+              <Spinner animation="border" role="status" />
+            </div>
         )}
 
         {!loading && (

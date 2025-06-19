@@ -73,12 +73,6 @@ const Navbar = () => {
                                     <Link to="/discover" className={`nav-link ${isActive("/discover") ? "active text-danger fw-semibold" : "text-secondary"}`}>Khám phá</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link to="/artist" className={`nav-link ${isActive("/artist") ? "active text-danger fw-semibold" : "text-secondary"}`}>Nghệ sĩ</Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link to="/albums" className={`nav-link ${isActive("/albums") ? "active text-danger fw-semibold" : "text-secondary"}`}>Albums</Link>
-                                </li>
-                                <li className="nav-item">
                                     <form
                                         onSubmit={handleSearchSubmit}
                                         className="d-flex align-items-center"
@@ -102,7 +96,7 @@ const Navbar = () => {
                                         <input
                                             type="text"
                                             className="form-control"
-                                            placeholder="Tìm kiếm..."
+                                            placeholder="Nhập tên bài hát hoặc tên người dùng..."
                                             value={searchTerm}
                                             onChange={(e) => setSearchTerm(e.target.value)}
                                             style={{

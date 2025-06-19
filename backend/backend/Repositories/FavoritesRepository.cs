@@ -48,5 +48,11 @@ namespace backend.Repositories
             var filter = Builders<Favorites>.Filter.Eq(f => f.TrackId, trackId);
             return (int)await _favorites.CountDocumentsAsync(filter);
         }
+
+        public async Task DeleteAllFavoritesByUserAsync(string userId)
+        {
+            var filter = Builders<Favorites>.Filter.Eq(f => f.UserId, userId);
+            await _favorites.DeleteManyAsync(filter);
+        }
     }
 }

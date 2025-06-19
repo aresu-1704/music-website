@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { ToastContainer } from 'react-toastify/unstyled';
 import {AuthProvider} from "./context/authContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { FavoriteProvider } from './context/FavoriteContext';
 
 //Điều hướng
 import SignInForm from './pages/SignInForm'
@@ -21,6 +22,7 @@ import SearchForm from './pages/SearchForm';
 import PolicyForm from "./pages/PolicyForm";
 import NotFoundForm from "./pages/NotFoundForm";
 import TrackDetail from "./pages/TrackDetailForm";
+import FavoriteForm from './pages/FavoriteForm';
 
 const queryClient = new QueryClient();
 
@@ -29,26 +31,29 @@ const App = () => (
         <Router>
             <MusicPlayerProvider>
                 <AuthProvider>
-                    <MainLayout>
-                        <Routes>
-                            <Route path="/" element={<HomeForm />} />
-                            <Route path="/albums" element={<AlbumsForm />} />
-                            <Route path="/discover" element={<DiscoverForm />} />
-                            <Route path="/signin" element={<SignInForm />} />
-                            <Route path="/signup" element={<SignUpForm />} />
-                            <Route path="/profile/:userId" element={<ProfileForm />} />
-                            <Route path="/upgrade/:userId" element={<UpgradeAccount />} />
-                            <Route path="/payment-result" element={<PaymentResultForm />} />
-                            <Route path="/search" element={<SearchForm />} />
-                            <Route path="/forgot-password" element={<ForgotPassword />} />
-                            <Route path="/new-password" element={<NewPassword />} />
-                            <Route path="/policy" element={<PolicyForm />} />
-                            <Route path="track/:trackId" element={<TrackDetail /> } />
+                    <FavoriteProvider>
+                        <MainLayout>
+                            <Routes>
+                                <Route path="/" element={<HomeForm />} />
+                                <Route path="/albums" element={<AlbumsForm />} />
+                                <Route path="/discover" element={<DiscoverForm />} />
+                                <Route path="/signin" element={<SignInForm />} />
+                                <Route path="/signup" element={<SignUpForm />} />
+                                <Route path="/profile/:userId" element={<ProfileForm />} />
+                                <Route path="/upgrade/:userId" element={<UpgradeAccount />} />
+                                <Route path="/payment-result" element={<PaymentResultForm />} />
+                                <Route path="/search" element={<SearchForm />} />
+                                <Route path="/forgot-password" element={<ForgotPassword />} />
+                                <Route path="/new-password" element={<NewPassword />} />
+                                <Route path="/policy" element={<PolicyForm />} />
+                                <Route path="track/:trackId" element={<TrackDetail /> } />
+                                <Route path="/likes" element={<FavoriteForm />} />
 
-                            <Route path="/*" element={<NotFoundForm />} />
-                        </Routes>
-                        <ToastContainer />
-                    </MainLayout>
+                                <Route path="/*" element={<NotFoundForm />} />
+                            </Routes>
+                            <ToastContainer />
+                        </MainLayout>
+                    </FavoriteProvider>
                 </AuthProvider>
             </MusicPlayerProvider>
         </Router>

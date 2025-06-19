@@ -63,6 +63,15 @@ namespace backend.Controllers
 
             return Ok(response);
         }
+
+        [HttpDelete("delete-all")]
+        public async Task<IActionResult> DeleteAllFavorites()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
+            await _favoritesService.DeleteAllFavoritesAsync(userId);
+            return Ok("All favorites deleted");
+        }
     }
 
     public class FavoriteToggleResponse
@@ -81,5 +90,9 @@ namespace backend.Controllers
         public string trackId { get; set; }
         public string title { get; set; }
         public bool isPublic { get; set; }
+        public string cover { get; set; }
+        public string filename { get; set; }
+        public string artistId { get; set; }
+        public string imageBase64 { get; set; }
     }
 }

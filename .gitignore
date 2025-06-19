@@ -9,20 +9,19 @@ backend/backend/storage/
 backend/.vs
 
 
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
+See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+dependencies
 frontend/node_modules
 frontend/.pnp
 frontend/.pnp.js
 
-# testing
+testing
 frontend/coverage
 
-# production
+production
 frontend/build
 
-# misc
+misc
 frontend/.DS_Store
 frontend/.env.local
 frontend/.env.development.local

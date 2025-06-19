@@ -17,7 +17,7 @@ import PaymentResultForm from "./pages/PaymentResultForm";
 import ForgotPassword from "./pages/ForgotPassword";
 import NewPassword from "./pages/NewPassword";
 import {MusicPlayerProvider} from "./context/musicPlayerContext";
-
+import SearchForm from './pages/SearchForm';
 import PolicyForm from "./pages/PolicyForm";
 import NotFoundForm from "./pages/NotFoundForm";
 import TrackDetail from "./pages/TrackDetailForm";
@@ -39,6 +39,7 @@ const App = () => (
                             <Route path="/profile/:userId" element={<ProfileForm />} />
                             <Route path="/upgrade/:userId" element={<UpgradeAccount />} />
                             <Route path="/payment-result" element={<PaymentResultForm />} />
+                            <Route path="/search" element={<SearchForm />} />
                             <Route path="/forgot-password" element={<ForgotPassword />} />
                             <Route path="/new-password" element={<NewPassword />} />
                             <Route path="/policy" element={<PolicyForm />} />

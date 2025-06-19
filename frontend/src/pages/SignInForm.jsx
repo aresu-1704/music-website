@@ -7,6 +7,7 @@ import { Spinner } from 'react-bootstrap';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { loginUser } from '../services/authService';
+import '../styles/SignIn.css'
 
 const validationSchema = Yup.object().shape({
     username: Yup.string().required('Tên đăng nhập không được để trống'),
@@ -97,7 +98,9 @@ export default function SignInForm() {
                                         <Field name="password" type="password" placeholder="Nhập mật khẩu" className="form-control" style={{ backgroundColor: 'white', color: 'black' }} />
                                         <ErrorMessage name="password" component="div" className="text-danger" />
                                         <div className="text-end mt-1">
-                                            <Link to="/forgot-password" className="text-white text-decoration-none">Quên mật khẩu?</Link>
+                                            <Link to="/forgot-password" className="text-white text-decoration-none forgot-link">
+                                                Quên mật khẩu?
+                                            </Link>
                                         </div>
                                     </div>
 

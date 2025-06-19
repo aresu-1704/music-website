@@ -21,6 +21,7 @@ import SearchForm from './pages/SearchForm';
 import PolicyForm from "./pages/PolicyForm";
 import NotFoundForm from "./pages/NotFoundForm";
 import TrackDetail from "./pages/TrackDetailForm";
+import HistoryForm from './pages/HistoryForm';
 import AdminTrackList from "./pages/AdminTrackListForm";
 
 const queryClient = new QueryClient();
@@ -45,8 +46,8 @@ const App = () => (
                             <Route path="/new-password" element={<NewPassword />} />
                             <Route path="/policy" element={<PolicyForm />} />
                             <Route path="track/:trackId" element={<TrackDetail /> } />
+                            <Route path="/histories" element={<HistoryForm />} />
                             <Route path="/track-management" element={<AdminTrackList /> } />
-
                             <Route path="/*" element={<NotFoundForm />} />
                         </Routes>
                         <ToastContainer />

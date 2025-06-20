@@ -23,5 +23,6 @@ namespace backend.Interfaces
         Task<TrackInfo> GetTrackInfo(string id);
         Task ApproveTrack(string id);
         Task ChangePublicStatus(string id);
+        Task<bool> DeleteTrack(string trackId, string userId, string role);
     }
 }

@@ -112,3 +112,17 @@ export const changePublic = async (trackId) => {
         throw new Error("Cập nhật thất bại");
     }
 }
+
+export const deleteTrack = async (trackId, handleSessionOut) => {
+    const res = await fetch(`http://localhost:5270/api/Track/delete/${trackId}`, {
+        method: 'DELETE',
+    })
+
+    if (res.status === 401 || res.status === 403) {
+        handleSessionOut();
+    }
+
+    else if (!res.ok){
+        throw new Error("Không thể xóa !");
+    }
+}

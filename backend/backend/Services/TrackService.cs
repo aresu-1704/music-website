@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace backend.Services
@@ -355,6 +356,51 @@ namespace backend.Services
                 
                 await _trackRepository.UpdateAsync(id, track);
             }
+        }
+
+        public async Task<bool> DeleteTrack(string trackId, string userId, string userRole)
+        {
+            var track = await _trackRepository.GetByIdAsync(trackId);
+            if (userRole == "admin" || userId == track?.ArtistId)
+            {
+                await _trackRepository.DeleteAsync(trackId);
+
+                if (track != null)
+                {
+                    if (track?.ArtistId != null)
+                    {
+                        var coverPath = Path.Combine(Directory.GetCurrentDirectory(), "storages", "cover_images", track?.Cover ?? "");
+                        var trackPath = Path.Combine(Directory.GetCurrentDirectory(), "storages", "tracks", track?.Filename ?? "");
+
+                        await _trackRepository.DeleteAsync(trackId);
+
+                        if (File.Exists(coverPath))
+                        {
+                            File.Delete(coverPath);
+                        }
+
+                        if (File.Exists(trackPath))
+                        {
+                            File.Delete(trackPath);
+                        }
+
+                        var ids = new List<string>();
+                        ids.Add(track?.ArtistId);
+
+                        await _notificationService.SendNotification(
+                            ids,
+                            "Bài hát của bạn đã bị xóa",
+                            "Bài hát" + track?.Title + "của bạn đã bị xóa bởi hệ thống"
+                        );
+                    }
+                    return true;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

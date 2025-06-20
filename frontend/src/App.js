@@ -4,7 +4,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { ToastContainer } from 'react-toastify/unstyled';
 import {AuthProvider} from "./context/authContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { FavoriteProvider } from './context/favoriteContext';
 
 //Điều hướng
 import SignInForm from './pages/SignInForm'
@@ -34,7 +33,6 @@ const App = () => (
         <Router>
             <MusicPlayerProvider>
                 <AuthProvider>
-                    <FavoriteProvider>
                         <MainLayout>
                             <Routes>
                                 <Route path="/" element={<HomeForm />} />
@@ -57,7 +55,6 @@ const App = () => (
                             </Routes>
                             <ToastContainer />
                         </MainLayout>
-                    </FavoriteProvider>
                 </AuthProvider>
             </MusicPlayerProvider>
         </Router>

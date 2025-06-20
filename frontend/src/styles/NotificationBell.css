@@ -5,9 +5,10 @@
 }
 
 .custom-notify-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.1) !important; /* hoặc #444 */
+    color: white !important;
 }
 
 .custom-notify-item:hover .notify-title {
-    color: #ff4d4f; /* Đổi màu title sang đỏ khi hover toàn item */
+    color: white;
 }

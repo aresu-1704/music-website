@@ -7,6 +7,7 @@ namespace backend.Models
         public string ArtistName { get; set; }
         public int LikeCount { get; set; }
         public int PlayCount { get; set; }
+        public bool IsPublic { get; set; }
         public string? ImageBase64 { get; set; }
         public string? AudioUrl { get; set; } // Thêm dòng này
     }

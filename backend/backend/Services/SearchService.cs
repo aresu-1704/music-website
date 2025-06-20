@@ -19,24 +19,39 @@ namespace backend.Services
             var tracks = await _trackRepository.SearchByTitleOrArtistAsync(query);
             var users = await _userRepository.SearchByUsernameOrNameAsync(query);
 
-            // Lấy danh sách artistId duy nhất
-            var artistIds = tracks.Select(t => t.ArtistId).Distinct().ToList();
+            // Lấy danh sách artistId duy nhất, loại bỏ null
+            var artistIds = tracks
+                .Where(t => !string.IsNullOrEmpty(t.ArtistId))
+                .Select(t => t.ArtistId)
+                .Distinct()
+                .ToList();
 
             // Lấy thông tin user tương ứng với artistId
             var artists = await _userRepository.GetUsersByIdsAsync(artistIds);
             var artistDict = artists.ToDictionary(u => u.Id, u => u.Name);
 
-            var trackDtos = tracks.Select(track => new TrackSearchDto
+            var trackDtos = tracks.Select(track =>
             {
-                Id = track.Id,
-                Title = track.Title,
-                ArtistName = artistDict.ContainsKey(track.ArtistId) ? artistDict[track.ArtistId] : null,
-                LikeCount = track.LikeCount,
-                PlayCount = track.PlayCount,
-                ImageBase64 = !string.IsNullOrEmpty(track.Cover)
-                    ? $"http://localhost:5270/cover_images/{track.Cover}"
-                    : null,
-                AudioUrl = $"http://localhost:5270/api/Track/audio/{track.Id}"
+                string artistName = null;
+                if (!string.IsNullOrEmpty(track.ArtistId) &&
+                    artistDict.TryGetValue(track.ArtistId, out var name))
+                {
+                    artistName = name;
+                }
+
+                return new TrackSearchDto
+                {
+                    Id = track.Id,
+                    Title = track.Title,
+                    ArtistName = artistName,
+                    LikeCount = track.LikeCount,
+                    PlayCount = track.PlayCount,
+                    IsPublic = track.IsPublic,
+                    ImageBase64 = !string.IsNullOrEmpty(track.Cover)
+                        ? $"http://localhost:5270/cover_images/{track.Cover}"
+                        : null,
+                    AudioUrl = $"http://localhost:5270/api/Track/audio/{track.Id}"
+                };
             }).ToList();
 
             return new SearchResultDto
@@ -45,6 +60,7 @@ namespace backend.Services
                 Users = users
             };
         }
+
 
     }
 }

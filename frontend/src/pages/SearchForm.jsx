@@ -4,9 +4,9 @@ import { PlayCircle, Heart, Info } from 'lucide-react';
 import { fetchSearchResults } from '../services/searchService';
 import '../styles/Discover.css';
 import { useMusicPlayer } from '../context/musicPlayerContext';
-import {Spinner} from "react-bootstrap";
+import {Badge, Spinner} from "react-bootstrap";
 
-const MusicCard = ({ id, title, artist, imageUrl, likeCount, playCount, onPlay }) => {
+const MusicCard = ({ id, title, artist, imageUrl, likeCount, playCount, isPublic, onPlay }) => {
   const [hover, setHover] = useState(false);
 
   const handlePlay = (e) => {
@@ -33,6 +33,15 @@ const MusicCard = ({ id, title, artist, imageUrl, likeCount, playCount, onPlay }
             boxShadow: '0 6px 15px rgba(0, 0, 0, 0.6)',
           }}
         />
+        {!isPublic && (
+            <Badge
+                bg="warning"
+                text="dark"
+                className="position-absolute top-0 end-0 m-3"
+            >
+              👑 VIP
+            </Badge>
+        )}
         <div className="music-icons-top d-flex gap-3 position-absolute top-0 start-0 m-3">
           <Info size={22} color="white" />
         </div>
@@ -80,6 +89,7 @@ const SearchForm = () => {
       id: track.id,
       title: track.title,
       subtitle: track.artistName || 'Musicresu',
+      isPublic: track.isPublic,
       imageUrl: track.imageBase64 || '/images/default-music.jpg',
       url: track.audioUrl || ''
     }));
@@ -119,6 +129,7 @@ const SearchForm = () => {
                         imageUrl={track.imageBase64 || '/images/default-music.jpg'}
                         likeCount={track.likeCount}
                         playCount={track.playCount}
+                        isPublic={track.isPublic}
                         onPlay={() => handlePlayTrack(track)}
                       />
                     </div>

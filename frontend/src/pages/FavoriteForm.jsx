@@ -6,7 +6,7 @@ import { useMusicPlayer } from '../context/musicPlayerContext';
 import { useAuth } from '../context/authContext';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Discover.css';
-import { useFavorite } from '../context/FavoriteContext';
+import { useFavorite } from '../context/favoriteContext';
 import '../styles/Favorite.css';
 
 const MusicCard = ({ track, isFavorite, onToggleFavorite, onPlay, onInfo }) => {
@@ -25,7 +25,7 @@ const MusicCard = ({ track, isFavorite, onToggleFavorite, onPlay, onInfo }) => {
                     alt={track.title}
                     style={{
                         width: '100%',
-                        height: '340px',
+                        height: '440px',
                         objectFit: 'cover',
                         borderRadius: '16px',
                         boxShadow: '0 6px 15px rgba(0, 0, 0, 0.6)',

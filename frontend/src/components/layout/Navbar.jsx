@@ -5,6 +5,7 @@ import { Modal, Button, Dropdown } from "react-bootstrap";
 import { FaUser, FaShieldAlt, FaSignOutAlt, FaCogs, FaHeart, FaEye } from 'react-icons/fa';
 import '../../styles/Navbar.css'
 import { useQueryClient } from "@tanstack/react-query";
+import NotificationBell from "../NotificationBell";
 
 const Navbar = () => {
     const location = useLocation();
@@ -71,6 +72,9 @@ const Navbar = () => {
                                 </li>
                                 <li className="nav-item">
                                     <Link to="/discover" className={`nav-link ${isActive("/discover") ? "active text-danger fw-semibold" : "text-secondary"}`}>Khám phá</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link to="/create-songs" className={`nav-link ${isActive("/create-songs") ? "active text-danger fw-semibold" : "text-secondary"}`}>Sinh nhạc bằng AI</Link>
                                 </li>
                                 <li className="nav-item">
                                     <form
@@ -171,56 +175,64 @@ const Navbar = () => {
                                 {/* Nếu đã đăng nhập */}
                                 {/* Dropdown cho người dùng đã đăng nhập */}
                                 {user?.isLoggedIn && (
-                                    <li className="nav-item dropdown">
-                                        <Dropdown align="end">
-                                            <Dropdown.Toggle variant="link" id="dropdown-user" className="nav-link text-danger d-flex align-items-center gap-2">
-                                                <div
-                                                    style={{
-                                                        width: "32px",
-                                                        height: "32px",
-                                                        borderRadius: "50%",
-                                                        overflow: "hidden",
-                                                        backgroundColor: "#ccc",
-                                                        flexShrink: 0
-                                                    }}
-                                                >
-                                                    <img
-                                                        src={user.avatar ? user.avatar : "/images/default-avatar.png"}
-                                                        alt="Avatar"
+                                    <>
+                                        <li className="nav-item">
+                                            <Link to="/my-tracks" className={`nav-link ${isActive("/my-tracks") ? "active text-danger fw-semibold" : "text-secondary"}`}>Nhạc của tôi</Link>
+                                        </li>
+                                        <li className="nav-item dropdown">
+                                            <Dropdown align="end">
+                                                <Dropdown.Toggle variant="link" id="dropdown-user" className="nav-link text-danger d-flex align-items-center gap-2">
+                                                    <div
                                                         style={{
-                                                            width: "100%",
-                                                            height: "100%",
-                                                            objectFit: "cover",
-                                                            display: "block"
+                                                            width: "32px",
+                                                            height: "32px",
+                                                            borderRadius: "50%",
+                                                            overflow: "hidden",
+                                                            backgroundColor: "#ccc",
+                                                            flexShrink: 0
                                                         }}
-                                                    />
-                                                </div>
-                                                Xin chào, {user.fullname}
-                                            </Dropdown.Toggle>
+                                                    >
+                                                        <img
+                                                            src={user.avatar ? user.avatar : "/images/default-avatar.png"}
+                                                            alt="Avatar"
+                                                            style={{
+                                                                width: "100%",
+                                                                height: "100%",
+                                                                objectFit: "cover",
+                                                                display: "block"
+                                                            }}
+                                                        />
+                                                    </div>
+                                                    Xin chào, {user.fullname}
+                                                </Dropdown.Toggle>
 
-                                            <Dropdown.Menu className="custom-dropdown-menu">
-                                                <Dropdown.Item as={Link} to={`/profile/${user.id}`}>
-                                                    <FaUser className="me-2" /> Thông tin cá nhân
-                                                </Dropdown.Item>
-                                                <Dropdown.Item as={Link} to={`/upgrade/${user.id}}`}>
-                                                    <FaCogs className="me-2" /> Nâng cấp tài khoản
-                                                </Dropdown.Item>
-                                                <Dropdown.Item as={Link} to="/likes">
-                                                    <FaHeart className="me-2" /> Đã thích
-                                                </Dropdown.Item>
-                                                <Dropdown.Item as={Link} to="/follow">
-                                                    <FaEye className="me-2" /> Đang theo dõi
-                                                </Dropdown.Item>
-                                                <Dropdown.Item as={Link} to="/policy">
-                                                    <FaShieldAlt className="me-2" /> Chính sách
-                                                </Dropdown.Item>
-                                                <Dropdown.Divider />
-                                                <Dropdown.Item onClick={handleLogoutClick}>
-                                                    <FaSignOutAlt className="me-2" /> Đăng xuất
-                                                </Dropdown.Item>
-                                            </Dropdown.Menu>
-                                        </Dropdown>
-                                    </li>
+                                                <Dropdown.Menu className="custom-dropdown-menu">
+                                                    <Dropdown.Item as={Link} to={`/profile/${user.id}`}>
+                                                        <FaUser className="me-2" /> Thông tin cá nhân
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item as={Link} to={`/upgrade/${user.id}}`}>
+                                                        <FaCogs className="me-2" /> Nâng cấp tài khoản
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item as={Link} to="/likes">
+                                                        <FaHeart className="me-2" /> Đã thích
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item as={Link} to="/follow">
+                                                        <FaEye className="me-2" /> Đang theo dõi
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item as={Link} to="/policy">
+                                                        <FaShieldAlt className="me-2" /> Chính sách
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Divider />
+                                                    <Dropdown.Item onClick={handleLogoutClick}>
+                                                        <FaSignOutAlt className="me-2" /> Đăng xuất
+                                                    </Dropdown.Item>
+                                                </Dropdown.Menu>
+                                            </Dropdown>
+                                        </li>
+                                    </>
+                                )}
+                                {user.role !== "admin" && (
+                                    <NotificationBell />
                                 )}
                             </ul>
                         </div>

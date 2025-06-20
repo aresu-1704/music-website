@@ -60,64 +60,6 @@ const MusicCard = ({ title, subtitle, imageUrl, isPublic, onPlay, onInfo, onDele
     );
 };
 
-const ScrollableSection = ({ title, items, onPlay, onInfo, onDelete }) => {
-    const visibleCount = 5;
-    const [startIndex, setStartIndex] = useState(0);
-    const maxStartIndex = Math.max(0, items.length - visibleCount);
-
-    const handlePrev = () => setStartIndex((prev) => Math.max(prev - visibleCount, 0));
-    const handleNext = () => setStartIndex((prev) => Math.min(prev + visibleCount, maxStartIndex));
-
-    useEffect(() => setStartIndex(0), [items]);
-
-    const visibleItems = items.slice(startIndex, startIndex + visibleCount);
-
-    return (
-        <div className="mb-5">
-            <h4 className="text-white mb-4">{title}</h4>
-
-            <div className="position-relative" style={{ height: '400px' }}>
-                <div className="d-flex overflow-hidden flex-nowrap w-100 h-100" style={{ padding: '0 60px' }}>
-                    {visibleItems.map((item) => (
-                        <div
-                            key={item.trackId}
-                            style={{ flex: `0 0 calc(100% / ${visibleCount})`, padding: '0 8px' }}
-                        >
-                            <MusicCard 
-                                title={item.title}
-                                subtitle={timeAgo(item.lastPlay)}
-                                imageUrl={item.imageUrl}
-                                isPublic={item.isPublic}
-                                onPlay={() => onPlay(item)}
-                                onInfo={() => onInfo(item)}
-                                onDelete={() => onDelete(item)}
-                            />
-                        </div>
-                    ))}
-                </div>
-                <Button variant="dark" onClick={handlePrev} disabled={startIndex === 0} style={navBtnStyle('left')}>
-                    <ChevronLeft size={24} />
-                </Button>
-                <Button variant="dark" onClick={handleNext} disabled={startIndex >= maxStartIndex} style={navBtnStyle('right')}>
-                    <ChevronRight size={24} />
-                </Button>
-            </div>
-        </div>
-    );
-};
-
-const navBtnStyle = (side) => ({
-    position: 'absolute',
-    top: '44%',
-    [side]: '10px',
-    transform: 'translateY(-50%)',
-    zIndex: 10,
-    height: '48px',
-    width: '48px',
-    borderRadius: '50%',
-    boxShadow: '0 0 8px rgba(0,0,0,0.5)',
-});
-
 function timeAgo(date) {
     const now = new Date();
     const past = new Date(date);

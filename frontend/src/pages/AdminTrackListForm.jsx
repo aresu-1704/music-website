@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Card, Button, Form, Row, Col, InputGroup, Spinner, Container
+    Card, Button, Form, Row, Col, InputGroup, Spinner, Container, Modal
 } from 'react-bootstrap';
 import {
     PlayFill, LockFill, CheckCircle, Trash
 } from 'react-bootstrap-icons';
 import { useNavigate } from 'react-router-dom';
-import {changeApprove, changePublic, getAllTracks} from '../services/trackService';
+import {changeApprove, changePublic, deleteTrack, getAllTracks} from '../services/trackService';
 import { useAuth } from "../context/authContext";
 import '../styles/AdminTrackList.css';
-import {useMusicPlayer} from "../context/musicPlayerContext"; // nhớ tạo file này
+import {useMusicPlayer} from "../context/musicPlayerContext";
+import {useLoginSessionOut} from "../services/loginSessionOut";
+import {deleteAllFavorites} from "../services/favoritesService"; // nhớ tạo file này
 
 const AdminTrackList = () => {
     const { user } = useAuth();
@@ -19,6 +21,34 @@ const AdminTrackList = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(true);
     const { playTrackList } = useMusicPlayer();
+    const handleSessionOut = useLoginSessionOut()
+
+    const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
+    const [trackIdToDelete, setTrackIdToDelete] = useState(null);
+
+    const handleDelete = (trackId) => {
+        setTrackIdToDelete(trackId);
+        setShowConfirmDeleteModal(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!trackIdToDelete) return;
+
+        try {
+            await deleteTrack(trackIdToDelete, handleSessionOut);
+            setTracks(prev => prev.filter(t => t.trackId !== trackIdToDelete));
+        } catch (err) {
+            console.error("Lỗi khi xóa track:", err);
+        } finally {
+            setShowConfirmDeleteModal(false);
+            setTrackIdToDelete(null);
+        }
+    };
+
+    const handleCancelDelete = () => {
+        setShowConfirmDeleteModal(false);
+        setTrackIdToDelete(null);
+    };
 
     useEffect(() => {
         if (!(user?.isLoggedIn && user?.role === 'admin')) {
@@ -48,9 +78,6 @@ const AdminTrackList = () => {
             )
         );
     };
-
-
-    const handleDelete = async (id) => { /* TODO */ };
 
     const handleTogglePublic = async (trackId) => {
         await changePublic(trackId);
@@ -246,6 +273,24 @@ const AdminTrackList = () => {
                     </>
                 )}
             </div>
+            <Modal
+                show={showConfirmDeleteModal}
+                onHide={handleCancelDelete}
+                centered
+                dialogClassName="custom-modal-overlay"
+                backdrop={true}
+            >
+                <Modal.Header closeButton className="bg-dark text-white">
+                    <Modal.Title className="text-white">Xác nhận xóa bài nhạc</Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="bg-dark text-white">
+                    Bạn có chắc chắn muốn xóa bài nhạc này?
+                </Modal.Body>
+                <Modal.Footer className="bg-dark">
+                    <Button variant="secondary" onClick={handleCancelDelete}>Không</Button>
+                    <Button variant="danger" onClick={handleConfirmDelete}>Có</Button>
+                </Modal.Footer>
+            </Modal>
         </Container>
     );
 };

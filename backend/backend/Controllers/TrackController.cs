@@ -1,10 +1,12 @@
 ﻿using backend.Interfaces;
 using backend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.StaticFiles;
 using SharpCompress.Common;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
 
 namespace backend.Controllers
 {
@@ -181,6 +183,23 @@ namespace backend.Controllers
         {
             await _trackService.ChangePublicStatus(id);
             return Ok("Thành công");
+        }
+
+        [Authorize]
+        [HttpDelete("delete/{trackId}")]
+        public async Task<IActionResult> DeleteTrack(string trackId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
+            var result = await _trackService.DeleteTrack(trackId, userId, userRole);
+            if (result)
+            {
+                return Ok("Đã xóa");
+            }
+            else
+            {
+                return Unauthorized();
+            }
         }
     }
 

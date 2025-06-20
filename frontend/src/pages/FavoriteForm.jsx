@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Container, Spinner, Badge, Modal, Button } from 'react-bootstrap';
-import { PlayCircle, Info } from 'lucide-react';
-import { getMyFavoriteTracks, toggleFavorites, checkUserIsFavorites, deleteAllFavorites } from '../services/favoritesService';
+import { PlayCircle, Info, Heart, HeartOff } from 'lucide-react';
+import {
+    getMyFavoriteTracks,
+    toggleFavorites,
+    deleteAllFavorites
+} from '../services/favoritesService';
 import { useMusicPlayer } from '../context/musicPlayerContext';
-import { useAuth } from '../context/authContext';
 import { useNavigate } from 'react-router-dom';
-import '../styles/Discover.css';
-import { useFavorite } from '../context/favoriteContext';
-import '../styles/Favorite.css';
 
 const MusicCard = ({ track, isFavorite, onToggleFavorite, onPlay, onInfo }) => {
     const [hover, setHover] = useState(false);
@@ -17,7 +17,7 @@ const MusicCard = ({ track, isFavorite, onToggleFavorite, onPlay, onInfo }) => {
             className="music-card text-center text-white px-2"
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
-            style={{ cursor: 'pointer', position: 'relative' }}
+            style={{ cursor: 'pointer' }}
         >
             <div>
                 <img
@@ -25,7 +25,7 @@ const MusicCard = ({ track, isFavorite, onToggleFavorite, onPlay, onInfo }) => {
                     alt={track.title}
                     style={{
                         width: '100%',
-                        height: '440px',
+                        height: '340px',
                         objectFit: 'cover',
                         borderRadius: '16px',
                         boxShadow: '0 6px 15px rgba(0, 0, 0, 0.6)',
@@ -42,7 +42,24 @@ const MusicCard = ({ track, isFavorite, onToggleFavorite, onPlay, onInfo }) => {
                 )}
             </div>
             <div className="music-icons-top d-flex gap-3 position-absolute top-0 start-0 m-3">
-                <Info size={22} color="white" onClick={() => onInfo(track)} style={{ cursor: 'pointer' }} />
+                <Info size={22} color="white" onClick={() => onInfo(track)} />
+                {isFavorite !== undefined && (
+                    isFavorite ? (
+                        <HeartOff
+                            size={22}
+                            color="white"
+                            onClick={() => onToggleFavorite(track)}
+                            style={{ cursor: 'pointer' }}
+                        />
+                    ) : (
+                        <Heart
+                            size={22}
+                            color="white"
+                            onClick={() => onToggleFavorite(track)}
+                            style={{ cursor: 'pointer' }}
+                        />
+                    )
+                )}
             </div>
             {hover && (
                 <div className="music-card-overlay">
@@ -60,24 +77,38 @@ const MusicCard = ({ track, isFavorite, onToggleFavorite, onPlay, onInfo }) => {
 };
 
 const FavoriteForm = () => {
-    const { favoriteTracks, isFavorite, toggleFavorite, loading } = useFavorite();
+    const [favoriteTracks, setFavoriteTracks] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
     const { playTrackList } = useMusicPlayer();
     const navigate = useNavigate();
-    const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
 
-    // Chuẩn hóa danh sách phát nhạc giống DiscoverForm
-    const playlist = favoriteTracks.map(track => ({
-        id: track.id || track.trackId,
-        title: track.title,
-        subtitle: track.artistId || '',
-        imageUrl: track.imageBase64
-            || (track.cover ? `/backend/storage/cover_images/${track.cover}` : null)
-            || '/images/default-music.jpg',
-        url: track.filename || '',
-        isPublic: track.isPublic,
-    }));
+    const fetchFavorites = useCallback(async () => {
+        setLoading(true);
+        const data = await getMyFavoriteTracks(() => {});
+        setFavoriteTracks(data || []);
+        setLoading(false);
+    }, []);
+
+    useEffect(() => {
+        fetchFavorites();
+
+        const handleUpdate = () => fetchFavorites();
+        window.addEventListener('favorite-updated', handleUpdate);
+
+        return () => window.removeEventListener('favorite-updated', handleUpdate);
+    }, [fetchFavorites]);
 
     const handlePlay = (track) => {
+        const playlist = favoriteTracks.map(t => ({
+            id: t.id || t.trackId,
+            title: t.title,
+            subtitle: t.artistId || '',
+            imageUrl: t.imageBase64 || (t.cover ? `/backend/storage/cover_images/${t.cover}` : null) || '/images/default-music.jpg',
+            url: t.filename || '',
+            isPublic: t.isPublic,
+        }));
+
         const index = playlist.findIndex(t => t.id === (track.id || track.trackId));
         playTrackList(playlist, index);
     };
@@ -86,15 +117,27 @@ const FavoriteForm = () => {
         navigate(`/track/${track.id || track.trackId}`);
     };
 
-    const handleDeleteAll = async () => {
+    const handleToggleFavorite = async (track) => {
+        const trackId = track.id || track.trackId;
+        await toggleFavorites(trackId, () => {});
+        setFavoriteTracks(prev => prev.filter(t => (t.id || t.trackId) !== trackId));
+    };
+
+
+    const isFavorite = (trackId) => {
+        return favoriteTracks.some(t => (t.id || t.trackId) === trackId);
+    };
+
+    const handleDeleteAll = () => {
         setShowConfirmDeleteModal(true);
     };
 
     const handleConfirmDelete = async () => {
         await deleteAllFavorites(() => {});
-        window.dispatchEvent(new Event('favorite-updated'));
+        setFavoriteTracks([]); // clear toàn bộ luôn
         setShowConfirmDeleteModal(false);
     };
+
 
     const handleCancelDelete = () => {
         setShowConfirmDeleteModal(false);
@@ -113,9 +156,10 @@ const FavoriteForm = () => {
                     </button>
                 )}
             </h2>
-            <Modal show={showConfirmDeleteModal} onHide={handleCancelDelete} centered dialogClassName="custom-modal-overlay" backdrop={true}>
+
+            <Modal show={showConfirmDeleteModal} onHide={handleCancelDelete} centered>
                 <Modal.Header closeButton className="bg-dark text-white">
-                    <Modal.Title className="text-white">Xác nhận xóa tất cả</Modal.Title>
+                    <Modal.Title>Xác nhận xóa tất cả</Modal.Title>
                 </Modal.Header>
                 <Modal.Body className="bg-dark text-white">Bạn có chắc chắn muốn xóa tất cả nhạc yêu thích?</Modal.Body>
                 <Modal.Footer className="bg-dark">
@@ -123,6 +167,7 @@ const FavoriteForm = () => {
                     <Button variant="danger" onClick={handleConfirmDelete}>Có</Button>
                 </Modal.Footer>
             </Modal>
+
             {loading ? (
                 <div className="d-flex justify-content-center align-items-center vh-100">
                     <Spinner animation="border" role="status" />
@@ -138,13 +183,11 @@ const FavoriteForm = () => {
                                     id: track.id || track.trackId,
                                     title: track.title,
                                     subtitle: track.artistId || '',
-                                    imageUrl: track.imageBase64
-                                        || (track.cover ? `/backend/storage/cover_images/${track.cover}` : null)
-                                        || '/images/default-music.jpg',
+                                    imageUrl: track.imageBase64 || (track.cover ? `/backend/storage/cover_images/${track.cover}` : null) || '/images/default-music.jpg',
                                     isPublic: track.isPublic,
                                 }}
                                 isFavorite={isFavorite(track.id || track.trackId)}
-                                onToggleFavorite={toggleFavorite}
+                                onToggleFavorite={handleToggleFavorite}
                                 onPlay={handlePlay}
                                 onInfo={handleInfo}
                             />
@@ -156,4 +199,4 @@ const FavoriteForm = () => {
     );
 };
 
-export default FavoriteForm; 
+export default FavoriteForm;

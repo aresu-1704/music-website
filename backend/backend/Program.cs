@@ -129,7 +129,8 @@ builder.Services.AddAuthentication("Bearer")
             ValidAudience = configuration["JWT:Audience"],             // Đối tượng sử dụng token
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(configuration["JWT:Key"])),  // Khóa bí mật để xác thực token
-            NameClaimType = JwtRegisteredClaimNames.Sub
+            NameClaimType = JwtRegisteredClaimNames.Sub,
+            RoleClaimType = "role"
         };
 
         options.Events = new JwtBearerEvents

@@ -29,8 +29,7 @@ export const MusicPlayerProvider = ({ children }) => {
                 const data = await getTrackById(currentTrack.id);
                 setAudioUrl(data.audioUrl);
             } catch (error) {
-                console.error("Không lấy được AudioUrl:", error);
-                setAudioUrl('');
+                setCurrentTrackIndex(currentTrackIndex + 1 % playlist.length);
             }
         };
 

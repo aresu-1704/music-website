@@ -35,10 +35,10 @@ namespace backend.Repositories
         public async Task UpdateAsync(string id, Track track) =>
             await _tracks.ReplaceOneAsync(t => t.Id == id, track);
 
-        public async Task<bool> DeleteAsync(string id)
+        public async Task DeleteAsync(string id)
         {
-            var result = await _tracks.DeleteOneAsync(t => t.Id == id);
-            return result.DeletedCount > 0;
+            await _tracks.DeleteOneAsync(t => t.Id == id);
+
         }
 
         public async Task IncrementPlayCountAsync(string id)
@@ -90,11 +90,17 @@ namespace backend.Repositories
         public async Task<List<Track>> SearchByTitleOrArtistAsync(string keyword)
         {
             var lowerKeyword = keyword.ToLower();
-            var filter = Builders<Track>.Filter.Or(
+
+            var textFilter = Builders<Track>.Filter.Or(
                 Builders<Track>.Filter.Regex(t => t.Title, new MongoDB.Bson.BsonRegularExpression(lowerKeyword, "i")),
                 Builders<Track>.Filter.Regex(t => t.ArtistId, new MongoDB.Bson.BsonRegularExpression(lowerKeyword, "i"))
             );
-            return await _tracks.Find(filter).ToListAsync();
+
+            var approvalFilter = Builders<Track>.Filter.Eq(t => t.IsApproved, true);
+
+            var finalFilter = Builders<Track>.Filter.And(textFilter, approvalFilter);
+
+            return await _tracks.Find(finalFilter).ToListAsync();
         }
     }
 }

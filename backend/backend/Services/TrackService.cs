@@ -334,8 +334,6 @@ namespace backend.Services
             }
             catch (Exception ex)
             {
-                // Log lỗi nếu cần
-                //_logger.LogError(ex, "Error getting track info for ID: {TrackId}", id);
                 return null;
             }
         }

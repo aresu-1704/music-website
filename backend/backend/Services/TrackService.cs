@@ -16,10 +16,12 @@ namespace backend.Services
         private readonly ITrackRepository _trackRepository;
         private readonly IUserRepository _userRepository;
 
+        private readonly INotificationService _notificationService;
+
         private readonly string _storagePath = Path.Combine(Directory.GetCurrentDirectory(), "storage", "tracks");
         private readonly IWebHostEnvironment _env;
 
-        public TrackService(ITrackRepository tracksRepository, IWebHostEnvironment env, IUserRepository userRepository)
+        public TrackService(ITrackRepository tracksRepository, IWebHostEnvironment env, IUserRepository userRepository, INotificationService notificationService)
         {
             if (!Directory.Exists(_storagePath))
                 Directory.CreateDirectory(_storagePath);
@@ -27,6 +29,7 @@ namespace backend.Services
             _trackRepository = tracksRepository;
             _userRepository = userRepository;
             _env = env;
+            _notificationService = notificationService;
         }
 
         public async Task<List<TrackAdminView>> GetAllTrack()
@@ -323,6 +326,19 @@ namespace backend.Services
             {
                 track.IsApproved = !track.IsApproved;
                 track.UpdatedAt = DateTime.Now;
+
+                if (track.ArtistId != null)
+                {
+                    var ids = new List<string>();
+                    ids.Add(track.ArtistId);
+
+                    await _notificationService.SendNotification(
+                        ids,
+                        "Cập nhật tình trạng nhạc của bạn",
+                        track.IsApproved ? "Bài hát " + track.Title + " của bạn đã được duyệt" : "Bài hát " + track.Title + " của bạn đã tạm khóa"
+                    );
+                }
+
                 await _trackRepository.UpdateAsync(id, track);
             }
         }
@@ -330,10 +346,13 @@ namespace backend.Services
         public async Task ChangePublicStatus(string id)
         {
             var track = await _trackRepository.GetByIdAsync(id);
+            
+            
             if (track != null)
             {
                 track.IsPublic = !track.IsPublic;
-                track.UpdatedAt = DateTime.Now;
+                track.UpdatedAt = DateTime.Now;               
+                
                 await _trackRepository.UpdateAsync(id, track);
             }
         }

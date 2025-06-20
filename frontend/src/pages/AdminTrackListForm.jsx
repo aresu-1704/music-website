@@ -153,7 +153,7 @@ const AdminTrackList = () => {
                                                         <Card.Title>{track.title}</Card.Title>
                                                         <Card.Text>
                                                             <strong>Thể loại:</strong> {track.genres?.join(', ') || 'Không rõ'}<br />
-                                                            <strong>Nghệ sĩ:</strong>{' '}
+                                                            <strong>Người đăng:</strong>{' '}
                                                             {track.uploaderId ? (
                                                                 <a
                                                                     href={`/personal-profile/${track.uploaderId}`}
@@ -168,12 +168,17 @@ const AdminTrackList = () => {
                                                             {track.lastUpdate
                                                                 ? new Date(track.lastUpdate).toLocaleDateString()
                                                                 : 'Không rõ'}<br />
-                                                            <strong>Tình trạng:</strong>{' '}
-                                                            {track.isApproved ? (
-                                                                <span className="text-success">Đã duyệt</span>
-                                                            ) : (
-                                                                <span className="text-danger">Chưa duyệt</span>
-                                                            )}<br />
+                                                            {track.uploaderId !== null && (
+                                                                <>
+                                                                    <strong>Tình trạng:</strong>{' '}
+                                                                    {track.isApproved ? (
+                                                                        <span className="text-success">Đã duyệt</span>
+                                                                        ) : (
+                                                                        <span className="text-danger">Chưa duyệt</span>
+                                                                        )}<br />
+                                                                </>
+                                                            )}
+
                                                             <strong>Hiển thị:</strong>{' '}
                                                             {track.isPublic ? (
                                                                 <span className="text-primary">Công khai</span>
@@ -198,14 +203,16 @@ const AdminTrackList = () => {
 
                                                 {/* Các nút còn lại ở dưới */}
                                                 <div className="d-flex justify-content-end gap-2 mt-3 flex-wrap">
-                                                    <Button
-                                                        variant={track.isPublic ? 'secondary' : 'info'}
-                                                        onClick={() => handleTogglePublic(track.trackId)}
-                                                    >
-                                                        {track.isPublic
-                                                            ? 'Chuyển sang nhạc VIP'
-                                                            : 'Chuyển sang nhạc thường'}
-                                                    </Button>
+                                                    {track.uploaderId == null && (
+                                                        <Button
+                                                            variant={track.isPublic ? 'secondary' : 'info'}
+                                                            onClick={() => handleTogglePublic(track.trackId)}
+                                                        >
+                                                            {track.isPublic
+                                                                ? 'Chuyển sang nhạc VIP'
+                                                                : 'Chuyển sang nhạc thường'}
+                                                        </Button>
+                                                    )}
 
                                                     {!track.isApproved ? (
                                                         <Button

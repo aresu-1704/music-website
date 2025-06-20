@@ -5,7 +5,7 @@ import { fetchSearchResults } from '../services/searchService';
 import '../styles/Discover.css';
 import { useMusicPlayer } from '../context/musicPlayerContext';
 import {Spinner} from "react-bootstrap";
-import { useFavorite } from '../context/FavoriteContext';
+import { useFavorite } from '../context/favoriteContext';
 
 const MusicCard = ({ id, title, artist, imageUrl, likeCount, playCount, onPlay }) => {
   const [hover, setHover] = useState(false);

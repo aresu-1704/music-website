@@ -5,7 +5,7 @@ import {getTopLikeTracks, getTopTracks} from "../services/trackService";
 import { useMusicPlayer } from '../context/musicPlayerContext';
 import '../styles/Discover.css'
 import {useNavigate} from "react-router-dom";
-import { useFavorite } from '../context/FavoriteContext';
+import { useFavorite } from '../context/favoriteContext';
 
 const MusicCard = ({ id, title, subtitle, imageUrl, isPublic, onPlay, onInfo }) => {
     const [hover, setHover] = useState(false);

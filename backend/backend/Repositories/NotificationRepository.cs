@@ -32,9 +32,9 @@ namespace backend.Repositories
             return await _notificationCollection.Find(n => n.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task CreateAsync(Notifications notification)
+        public async Task CreateAsync(List<Notifications> notifications)
         {
-            await _notificationCollection.InsertOneAsync(notification);
+            await _notificationCollection.InsertManyAsync(notifications);
         }
 
         public async Task UpdateAsync(string id, Notifications updatedNotification)

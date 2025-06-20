@@ -1,4 +1,5 @@
-﻿using backend.Interfaces;
+﻿using backend.Controllers;
+using backend.Interfaces;
 using backend.Models;
 
 namespace backend.Services
@@ -12,24 +13,35 @@ namespace backend.Services
             _repository = repository;
         }
 
-        public async Task SendNotification(string receiverId, string title, string content)
+        public async Task SendNotification(List<string> receiverIds, string title, string content)
         {
-            var notification = new Notifications
+            var notifications = receiverIds.Select(id => new Notifications
             {
-                ReceiverId = receiverId,
+                ReceiverId = id,
                 Title = title,
                 Content = content,
                 IsViewed = false,
                 CreateAt = DateTime.UtcNow
-            };
+            }).ToList();
 
-            await _repository.CreateAsync(notification);
+            await _repository.CreateAsync(notifications);
         }
 
-        public async Task<List<Notifications>> GetByReceiverId(string receiverId)
+        public async Task<List<NotificationDto>> GetByReceiverId(string receiverId)
         {
-            return await _repository.GetByReceiverIdAsync(receiverId);
+            var list = await _repository.GetByReceiverIdAsync(receiverId);
+
+            return list.Select(n => new NotificationDto
+            {
+                Id = n.Id.ToString(),
+                ReceiverId = n.ReceiverId,
+                Title = n.Title,
+                Content = n.Content,
+                IsViewed = n.IsViewed,
+                CreateAt = n.CreateAt
+            }).ToList();
         }
+
 
         public async Task MarkAsViewed(string id)
         {

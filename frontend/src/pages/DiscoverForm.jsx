@@ -127,7 +127,7 @@ const DiscoverForm = () => {
             const topFavoritesSongs = likeLists.map((track, index) => ({
                 id: track.id || index,
                 title: track.title || `Bài hát ${index + 1}`,
-                subtitle: 'Top Trending',
+                subtitle: 'Được yêu thích nhất',
                 imageUrl: track.imageBase64 || '/images/default-music.jpg',
                 isPublic: track.isPublic,
             }));

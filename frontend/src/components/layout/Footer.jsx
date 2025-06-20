@@ -322,7 +322,7 @@ const Footer = () => {
                 <Modal.Header closeButton>
                     <Modal.Title>Cần phải đăng nhập</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Bạn có muốn đăng nhập để nghe bài hát này không?</Modal.Body>
+                <Modal.Body>Bạn có muốn đăng nhập để nghe và yêu thích bài hát này không?</Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCloseModal}>Hủy</Button>
                     <Button variant="danger" onClick={() => {

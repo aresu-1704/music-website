@@ -103,7 +103,7 @@ const FavoriteForm = () => {
         const playlist = favoriteTracks.map(t => ({
             id: t.id || t.trackId,
             title: t.title,
-            subtitle: t.artistId || '',
+            subtitle: "Yêu thích",
             imageUrl: t.imageBase64 || (t.cover ? `/backend/storage/cover_images/${t.cover}` : null) || '/images/default-music.jpg',
             url: t.filename || '',
             isPublic: t.isPublic,
@@ -177,12 +177,11 @@ const FavoriteForm = () => {
             ) : (
                 <div className="row">
                     {favoriteTracks.map((track) => (
-                        <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" key={track.id || track.trackId}>
+                        <div className="col-6 col-md-3 col-lg-2 mb-4" key={track.id || track.trackId}>
                             <MusicCard
                                 track={{
                                     id: track.id || track.trackId,
                                     title: track.title,
-                                    subtitle: track.artistId || '',
                                     imageUrl: track.imageBase64 || (track.cover ? `/backend/storage/cover_images/${track.cover}` : null) || '/images/default-music.jpg',
                                     isPublic: track.isPublic,
                                 }}

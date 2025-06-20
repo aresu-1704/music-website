@@ -1,9 +1,7 @@
 using backend.Interfaces;
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace backend.Controllers
 {
@@ -11,13 +9,11 @@ namespace backend.Controllers
     [Route("api/[controller]")]
     public class SearchController : ControllerBase
     {
-        private readonly ITrackRepository _trackRepository;
-        private readonly IUserRepository _userRepository;
+        private readonly ISearchService _searchService;
 
-        public SearchController(ITrackRepository trackRepository, IUserRepository userRepository)
+        public SearchController(ISearchService searchService)
         {
-            _trackRepository = trackRepository;
-            _userRepository = userRepository;
+            _searchService = searchService;
         }
 
         [HttpGet]
@@ -26,29 +22,8 @@ namespace backend.Controllers
             if (string.IsNullOrWhiteSpace(query))
                 return BadRequest("Search query cannot be empty");
 
-            var tracks = await _trackRepository.SearchByTitleOrArtistAsync(query);
-            var users = await _userRepository.SearchByUsernameOrNameAsync(query);
-
-            var trackDtos = tracks.Select(track => new TrackSearchDto
-            {
-                Id = track.Id,
-                Title = track.Title,
-                ArtistId = track.ArtistId,
-                LikeCount = track.LikeCount,
-                PlayCount = track.PlayCount,
-                ImageBase64 = !string.IsNullOrEmpty(track.Cover)
-                    ? $"http://localhost:5270/cover_images/{track.Cover}"
-                    : null,
-                AudioUrl = $"http://localhost:5270/api/Track/audio/{track.Id}"
-            }).ToList();
-
-            var result = new SearchResultDto
-            {
-                Tracks = trackDtos,
-                Users = users
-            };
-
+            var result = await _searchService.SearchAsync(query);
             return Ok(result);
         }
     }
-} 
+}

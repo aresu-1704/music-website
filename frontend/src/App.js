@@ -24,6 +24,7 @@ import TrackDetail from "./pages/TrackDetailForm";
 import FavoriteForm from './pages/FavoriteForm';
 import HistoryForm from './pages/HistoryForm';
 import AdminTrackList from "./pages/AdminTrackListForm";
+import UploadTrackForm from "./pages/UploadTrackForm";
 
 
 const queryClient = new QueryClient();
@@ -33,28 +34,35 @@ const App = () => (
         <Router>
             <MusicPlayerProvider>
                 <AuthProvider>
-                        <MainLayout>
-                            <Routes>
-                                <Route path="/" element={<HomeForm />} />
-                                <Route path="/albums" element={<AlbumsForm />} />
-                                <Route path="/discover" element={<DiscoverForm />} />
-                                <Route path="/signin" element={<SignInForm />} />
-                                <Route path="/signup" element={<SignUpForm />} />
-                                <Route path="/profile/:userId" element={<ProfileForm />} />
-                                <Route path="/upgrade/:userId" element={<UpgradeAccount />} />
-                                <Route path="/payment-result" element={<PaymentResultForm />} />
-                                <Route path="/search" element={<SearchForm />} />
-                                <Route path="/forgot-password" element={<ForgotPassword />} />
-                                <Route path="/new-password" element={<NewPassword />} />
-                                <Route path="/policy" element={<PolicyForm />} />
-                                <Route path="track/:trackId" element={<TrackDetail /> } />
-                                <Route path="/histories" element={<HistoryForm />} />
-                                <Route path="/track-management" element={<AdminTrackList /> } />
-                                <Route path="/likes" element={<FavoriteForm />} />
-                                <Route path="/*" element={<NotFoundForm />} />
-                            </Routes>
-                            <ToastContainer />
-                        </MainLayout>
+                    <MainLayout>
+                        <Routes>
+                            <Route path="/" element={<HomeForm />} />
+                            <Route path="/albums" element={<AlbumsForm />} />
+                            <Route path="/discover" element={<DiscoverForm />} />
+                            <Route path="/signin" element={<SignInForm />} />
+                            <Route path="/signup" element={<SignUpForm />} />
+                            <Route path="/profile/:userId" element={<ProfileForm />} />
+                            <Route path="/upgrade/:userId" element={<UpgradeAccount />} />
+                            <Route path="/payment-result" element={<PaymentResultForm />} />
+                            <Route path="/search" element={<SearchForm />} />
+                            <Route path="/forgot-password" element={<ForgotPassword />} />
+                            <Route path="/new-password" element={<NewPassword />} />
+                            <Route path="/policy" element={<PolicyForm />} />
+                            <Route path="track/:trackId" element={<TrackDetail /> } />
+                            <Route path="/histories" element={<HistoryForm />} />
+                            <Route path="/track-management" element={<AdminTrackList /> } />
+                            <Route path="/likes" element={<FavoriteForm />} />
+                            <Route path={"/upload"} element={<UploadTrackForm />} />
+
+
+
+
+
+
+                            <Route path="/*" element={<NotFoundForm />} />
+                        </Routes>
+                    </MainLayout>
+                    <ToastContainer />
                 </AuthProvider>
             </MusicPlayerProvider>
         </Router>

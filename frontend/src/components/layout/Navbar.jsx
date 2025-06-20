@@ -74,7 +74,22 @@ const Navbar = () => {
                                     <Link to="/discover" className={`nav-link ${isActive("/discover") ? "active text-danger fw-semibold" : "text-secondary"}`}>Khám phá</Link>
                                 </li>
                                 <li className="nav-item">
-                                    <Link to="/create-songs" className={`nav-link ${isActive("/create-songs") ? "active text-danger fw-semibold" : "text-secondary"}`}>Sinh nhạc bằng AI</Link>
+                                    {user?.isLoggedIn ? (
+                                        <Link
+                                            to="/upload"
+                                            className={`nav-link ${isActive("/upload") ? "active text-danger fw-semibold" : "text-secondary"}`}
+                                        >
+                                            Tải lên
+                                        </Link>
+                                    ) : (
+                                        <span
+                                            className="nav-link text-secondary"
+                                            style={{ cursor: 'pointer' }}
+                                            onClick={handleConfirmSigninClick}
+                                        >
+                                            Tải lên
+                                        </span>
+                                    )}
                                 </li>
                                 <li className="nav-item">
                                     <form
@@ -130,8 +145,8 @@ const Navbar = () => {
                                             style={{ cursor: 'pointer' }}
                                             onClick={handleConfirmSigninClick}
                                         >
-                                    Thư viện
-                                </span>
+                                            Thư viện
+                                        </span>
                                     )}
                                 </li>
 
@@ -229,10 +244,10 @@ const Navbar = () => {
                                                 </Dropdown.Menu>
                                             </Dropdown>
                                         </li>
+                                        {user.role !== "admin" && (
+                                            <NotificationBell />
+                                        )}
                                     </>
-                                )}
-                                {user.role !== "admin" && (
-                                    <NotificationBell />
                                 )}
                             </ul>
                         </div>
@@ -253,6 +268,14 @@ const Navbar = () => {
                                 </li>
                                 <li className="nav-item">
                                     <Link to="/report-mn" className={`nav-link ${isActive("/report-mn") ? "active text-danger fw-semibold" : "text-secondary"}`}>Báo cáo vi phạm</Link>
+                                </li>
+                                <li className="nav-item">
+                                    <Link
+                                        to="/upload"
+                                        className={`nav-link ${isActive("/upload") ? "active text-danger fw-semibold" : "text-secondary"}`}
+                                    >
+                                        Tải lên nhạc mới
+                                    </Link>
                                 </li>
 
                                 <li className="nav-item dropdown">
@@ -285,12 +308,6 @@ const Navbar = () => {
                                         <Dropdown.Menu className="custom-dropdown-menu">
                                             <Dropdown.Item as={Link} to={`/profile/${user.id}`}>
                                                 <FaUser className="me-2" /> Thông tin cá nhân
-                                            </Dropdown.Item>
-                                            <Dropdown.Item as={Link} to="/likes">
-                                                <FaHeart className="me-2" /> Đã thích
-                                            </Dropdown.Item>
-                                            <Dropdown.Item as={Link} to="/follow">
-                                                <FaEye className="me-2" /> Đang theo dõi
                                             </Dropdown.Item>
                                             <Dropdown.Item as={Link} to="/policy">
                                                 <FaShieldAlt className="me-2" /> Chính sách

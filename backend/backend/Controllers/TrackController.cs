@@ -22,30 +22,25 @@ namespace backend.Controllers
         }
 
         // POST: api/tracks/upload
+        [Authorize]
         [HttpPost("upload")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> UploadTrack([FromForm] UploadTrackRequest request)
         {
             try
             {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var userRole = User.FindFirstValue(ClaimTypes.Role);
+
                 var inserted = await _trackService.UploadTrackAsync(
                     request.File,
                     request.Title,
-                    request.ArtistId,
+                    userRole == "admin" ? null : userId,
                     request.Genre,
                     request.Cover
                 );
 
-                var response = new UploadTrackResponse
-                {
-                    Id = inserted.Id,
-                    Filename = inserted.Filename,
-                    Title = inserted.Title,
-                    ArtistId = inserted.ArtistId,
-                    CreatedAt = inserted.CreatedAt
-                };
-
-                return Ok(response);
+                return Ok("Đã thêm");
             }
             catch (ArgumentException ex)
             {
@@ -191,6 +186,7 @@ namespace backend.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userRole = User.FindFirstValue(ClaimTypes.Role);
+
             var result = await _trackService.DeleteTrack(trackId, userId, userRole);
             if (result)
             {
@@ -198,7 +194,7 @@ namespace backend.Controllers
             }
             else
             {
-                return Unauthorized();
+                return Unauthorized("Không có quyền xóa nhạc này");
             }
         }
     }
@@ -268,6 +264,8 @@ namespace backend.Controllers
         public bool IsPublic { get; set ; }
         public string ImageBase64 { get; set; }
         public DateTime lastUpdate { get; set; }
+        public int PlaysCount { get; set; }
+        public int LikesCount { get; set; }
 
     }
     #endregion

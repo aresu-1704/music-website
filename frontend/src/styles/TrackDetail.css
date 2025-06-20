@@ -5,8 +5,8 @@
 }
 
 .track-image-container {
-    width: 250px;
-    height: 250px;
+    width: 275px;
+    height: 275px;
     overflow: hidden;
 }
 
@@ -25,4 +25,13 @@
 .uploader-link:hover {
     text-decoration: underline;
     color: #0dcaf0 !important;
+}
+
+.uploader-link {
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+}
+.uploader-link:hover {
+    text-decoration: underline;
 }

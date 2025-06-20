@@ -101,6 +101,8 @@ export default function TrackDetail() {
                                             </span>
                                         ) : "Musicresu"}</p>
                                         <p><strong>Cập nhật:</strong> {new Date().toLocaleDateString()}</p>
+                                        <p><strong>Lượt nghe:</strong> {track.playsCount || 0}</p>
+                                        <p><strong>Lượt thích:</strong> {track.likesCount || 0}</p>
                                     </div>
                                 </div>
                             </div>

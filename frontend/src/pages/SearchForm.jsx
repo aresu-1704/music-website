@@ -79,7 +79,7 @@ const SearchForm = () => {
     const searchPlaylist = results.tracks.map(track => ({
       id: track.id,
       title: track.title,
-      subtitle: track.artistId || 'Unknown Artist',
+      subtitle: track.artistName || 'Musicresu',
       imageUrl: track.imageBase64 || '/images/default-music.jpg',
       url: track.audioUrl || ''
     }));
@@ -115,7 +115,7 @@ const SearchForm = () => {
                       <MusicCard
                         id={track.id}
                         title={track.title}
-                        artist={track.artistId}
+                        artist={track.artistName}
                         imageUrl={track.imageBase64 || '/images/default-music.jpg'}
                         likeCount={track.likeCount}
                         playCount={track.playCount}

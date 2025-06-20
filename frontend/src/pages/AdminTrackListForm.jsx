@@ -11,7 +11,8 @@ import { useAuth } from "../context/authContext";
 import '../styles/AdminTrackList.css';
 import {useMusicPlayer} from "../context/musicPlayerContext";
 import {useLoginSessionOut} from "../services/loginSessionOut";
-import {deleteAllFavorites} from "../services/favoritesService"; // nhớ tạo file này
+import {deleteAllFavorites} from "../services/favoritesService";
+import {ToastContainer} from "react-toastify"; // nhớ tạo file này
 
 const AdminTrackList = () => {
     const { user } = useAuth();
@@ -270,6 +271,7 @@ const AdminTrackList = () => {
                                 </Card>
                             ))
                         )}
+                        <ToastContainer />
                     </>
                 )}
             </div>

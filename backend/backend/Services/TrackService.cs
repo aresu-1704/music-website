@@ -2,6 +2,7 @@
 using backend.Interfaces;
 using backend.Models;
 using backend.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using MongoDB.Driver;
 using System;
@@ -93,13 +94,7 @@ namespace backend.Services
             return result;
         }
 
-
-        public async Task<Track> UploadTrackAsync(
-            IFormFile file,
-            string title,
-            string? artistId,
-            string[]? genres,
-            string? cover)
+        public async Task<Track> UploadTrackAsync(IFormFile file, string title, string? artistId, string[]? genres, string? base64Cover)
         {
             if (file == null || file.Length == 0)
                 throw new ArgumentException("File không hợp lệ.");
@@ -108,15 +103,38 @@ namespace backend.Services
             if (extension != ".mp3")
                 throw new ArgumentException("Chỉ chấp nhận file .mp3");
 
-            var randomFileName = $"{Guid.NewGuid()}.mp3";
-            var relativePath = Path.Combine("storage", "tracks", randomFileName).Replace("\\", "/");
-            var fullPath = Path.Combine(Directory.GetCurrentDirectory(), relativePath);
+            // ==== 1. Lưu file nhạc ====
+            var mp3FileName = $"{Guid.NewGuid()}.mp3";
+            var mp3Folder = Path.Combine(Directory.GetCurrentDirectory(), "storage", "tracks");
+            var mp3FullPath = Path.Combine(mp3Folder, mp3FileName);
 
-            Directory.CreateDirectory(Path.GetDirectoryName(fullPath)!);
+            Directory.CreateDirectory(mp3Folder);
 
-            using (var stream = new FileStream(fullPath, FileMode.Create))
+            using (var stream = new FileStream(mp3FullPath, FileMode.Create))
             {
                 await file.CopyToAsync(stream);
+            }
+
+            // ==== 2. Lưu ảnh bìa nếu có ====
+            string? savedCoverFileName = null;
+            if (!string.IsNullOrEmpty(base64Cover))
+            {
+                try
+                {
+                    var base64Data = base64Cover.Split(',').Last();
+                    var bytes = Convert.FromBase64String(base64Data);
+
+                    savedCoverFileName = $"{Guid.NewGuid()}.jpg"; // hoặc png nếu bạn detect kiểu mime
+                    var imageFolder = Path.Combine(Directory.GetCurrentDirectory(), "storage", "cover_images");
+                    var imageFullPath = Path.Combine(imageFolder, savedCoverFileName);
+
+                    Directory.CreateDirectory(imageFolder);
+                    await File.WriteAllBytesAsync(imageFullPath, bytes);
+                }
+                catch
+                {
+                    throw new ArgumentException("Cover ảnh không hợp lệ.");
+                }
             }
 
             var track = new Track
@@ -124,8 +142,9 @@ namespace backend.Services
                 Title = title,
                 ArtistId = artistId,
                 Genres = genres,
-                Cover = cover,
-                Filename = relativePath,
+                Cover = savedCoverFileName,
+                Filename = mp3FileName,
+                IsApproved = artistId == null ? true : false,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -133,7 +152,6 @@ namespace backend.Services
             await _trackRepository.CreateAsync(track);
             return track;
         }
-
 
         public async Task<Track?> GetByIdAsync(string id)
         {
@@ -309,7 +327,9 @@ namespace backend.Services
                     Genres = track.Genres,
                     IsPublic = track.IsPublic,
                     ImageBase64 = base64Image,
-                    lastUpdate = track.UpdatedAt == null ? track.CreatedAt : track.UpdatedAt
+                    lastUpdate = track.UpdatedAt == null ? track.CreatedAt : track.UpdatedAt,
+                    PlaysCount = track.PlayCount,
+                    LikesCount = track.LikeCount
                 };
             }
             catch (Exception ex)
@@ -363,27 +383,25 @@ namespace backend.Services
             var track = await _trackRepository.GetByIdAsync(trackId);
             if (userRole == "admin" || userId == track?.ArtistId)
             {
-                await _trackRepository.DeleteAsync(trackId);
-
                 if (track != null)
                 {
-                    if (track?.ArtistId != null)
+                    var coverPath = Path.Combine(Directory.GetCurrentDirectory(), "storages", "cover_images", track?.Cover ?? "");
+                    var trackPath = Path.Combine(Directory.GetCurrentDirectory(), "storages", "tracks", track?.Filename ?? "");
+
+                    await _trackRepository.DeleteAsync(trackId);
+
+                    if (File.Exists(coverPath))
                     {
-                        var coverPath = Path.Combine(Directory.GetCurrentDirectory(), "storages", "cover_images", track?.Cover ?? "");
-                        var trackPath = Path.Combine(Directory.GetCurrentDirectory(), "storages", "tracks", track?.Filename ?? "");
+                        File.Delete(coverPath);
+                    }
 
-                        await _trackRepository.DeleteAsync(trackId);
+                    if (File.Exists(trackPath))
+                    {
+                        File.Delete(trackPath);
+                    }
 
-                        if (File.Exists(coverPath))
-                        {
-                            File.Delete(coverPath);
-                        }
-
-                        if (File.Exists(trackPath))
-                        {
-                            File.Delete(trackPath);
-                        }
-
+                    if (userRole == "admin" && track?.ArtistId != null)
+                    {
                         var ids = new List<string>();
                         ids.Add(track?.ArtistId);
 
@@ -393,6 +411,7 @@ namespace backend.Services
                             "Bài hát" + track?.Title + "của bạn đã bị xóa bởi hệ thống"
                         );
                     }
+
                     return true;
                 }
                 else

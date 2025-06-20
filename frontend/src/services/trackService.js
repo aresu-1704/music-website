@@ -1,4 +1,25 @@
 
+export const uploadTrack = async (formData, handleSessionOut) => {
+    try {
+        const res = await fetch('http://localhost:5270/api/Track/upload', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+            },
+        });
+
+        const data = await res.text();
+        if (res.status === 401 || res.status === 403) {
+            handleSessionOut();
+        }
+        if (!res.ok) throw new Error(data);
+        return data;
+    } catch (err) {
+        throw err;
+    }
+};
+
 export async function getTopTracks() {
     const res = await fetch('http://localhost:5270/api/Track/top-played', {
         method: 'GET',
@@ -116,6 +137,10 @@ export const changePublic = async (trackId) => {
 export const deleteTrack = async (trackId, handleSessionOut) => {
     const res = await fetch(`http://localhost:5270/api/Track/delete/${trackId}`, {
         method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token'),
+        }
     })
 
     if (res.status === 401 || res.status === 403) {
@@ -123,6 +148,6 @@ export const deleteTrack = async (trackId, handleSessionOut) => {
     }
 
     else if (!res.ok){
-        throw new Error("Không thể xóa !");
+        throw new Error(res.statusText);
     }
 }

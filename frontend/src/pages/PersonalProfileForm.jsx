@@ -255,10 +255,10 @@ const PersonalProfileForm = () => {
                     {tracks.length === 0 ? (
                         <div className="text-center text-light p-5">
                             <div style={{ fontSize: '1.2rem', marginBottom: '1rem' }}>
-                                User này chưa có đăng tải bài hát nào.
+                                Người dùng này chưa có đăng tải bài hát nào.
                             </div>
                             <div className="text-muted">
-                                Hãy quay lại sau để xem những bài hát mới nhất!
+                                Hãy quay lại sau để xem những bài hát mới nhất !
                             </div>
                         </div>
                     ) : (

@@ -55,7 +55,8 @@ export default function TrackDetail() {
     return (
         <>
             <Container fluid className="bg-dark text-light py-5" style={{ minHeight: '100vh' }}>
-                    <div className="track-detail-container container my-4">
+                <div className="track-detail-container container my-4">
+                    <Card className="track-card mb-5">
                         <div className="d-flex flex-wrap gap-4">
                             {/* Ảnh bên trái */}
                             <div className="track-image-container position-relative">
@@ -101,18 +102,21 @@ export default function TrackDetail() {
                                             </span>
                                         ) : "Musicresu"}</p>
                                         <p><strong>Cập nhật:</strong> {new Date().toLocaleDateString()}</p>
+                                        <p><strong>Lượt nghe:</strong> {track.playsCount || 0}</p>
+                                        <p><strong>Lượt thích:</strong> {track.likesCount || 0}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </Card>
 
-                        {/* Bình luận */}
-                        <div className="mt-5">
-                            <h5>Bình luận về bài hát</h5>
-                            <CommentSection trackId={track.trackId} />
-                        </div>
-
+                    {/* Bình luận */}
+                    <div className="track-card mt-5">
+                        <h5>Bình luận về bài hát</h5>
+                        <CommentSection trackId={track.trackId} />
                     </div>
+
+                </div>
             </Container>
             <ToastContainer />
         </>

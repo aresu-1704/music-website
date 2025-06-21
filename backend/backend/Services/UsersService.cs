@@ -95,8 +95,6 @@ namespace backend.Services
                     Status = true,
                     LastLogin = null,
                     Role = "normal",
-                    IsEmailVerified = false,
-                    IsPhoneVerified = false,
                     AvatarUrl = null,
                 };
 
@@ -199,19 +197,16 @@ namespace backend.Services
 
                 if (user.ExpiredDate == null || user.ExpiredDate < DateTime.Now)
                 {
-                    // Chưa có hạn hoặc đã hết hạn → gán lại từ hôm nay
                     user.ExpiredDate = DateTime.Now.AddDays(30);
                 }
                 else
                 {
-                    // Nếu cùng tier và còn hiệu lực → cộng thêm 30 ngày
                     if (user.Role == tier)
                     {
                         user.ExpiredDate = user.ExpiredDate.AddDays(30);
                     }
                     else
                     {
-                        // Nếu khác tier → reset lại hạn
                         user.ExpiredDate = DateTime.Now.AddDays(30);
                     }
                 }

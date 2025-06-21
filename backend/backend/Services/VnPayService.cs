@@ -1,15 +1,19 @@
 ﻿using backend.Controllers;
 using backend.Interfaces;
+using backend.Models;
+using backend.Services;
 using backend.VnPay;
 
 public class VnPayService : IVnPayService
 {
     private readonly IConfiguration _configuration;
     private readonly IUsersService _usersService;
-    public VnPayService(IConfiguration configuration, IUsersService usersService)
+    private readonly IPaymentRecordService _paymentRecordService;
+    public VnPayService(IConfiguration configuration, IUsersService usersService, IPaymentRecordService paymentRecordService)
     {
         _configuration = configuration;
         _usersService = usersService;
+        _paymentRecordService = paymentRecordService;
     }
 
     public string CreatePaymentUrl(PaymentInformationModel model, HttpContext context)
@@ -47,6 +51,17 @@ public class VnPayService : IVnPayService
         if (response != null && response.Success)
         {
             var result = await _usersService.UpgradeTier(response.UserId, response.Tier);
+
+            var record = new PaymentRecord
+            {
+                UserId = response.UserId,
+                OrderId = response.OrderId,
+                Amount = response.Tier == "Premium" ? 199000 : 99000,
+                PaymentTime = DateTime.UtcNow,
+                Tier = response.Tier
+            };
+
+            await _paymentRecordService.AddPaymentAsync(record);
         }
 
         return response;

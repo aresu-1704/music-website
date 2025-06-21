@@ -14,6 +14,7 @@ namespace backend.Interfaces
             string[]? genre,
             string? cover
         );
+        Task<List<TrackAdminView>> GetAllTrack();
         Task<Track?> GetByIdAsync(string id);
         Task<List<TrackThumbnail>> GetTopPlayedThumbnailsAsync(int limit = 20);
         Task<List<TrackThumbnail>> GetTopLikeThumbnailsAsync(int limit = 20);
@@ -23,5 +24,8 @@ namespace backend.Interfaces
         Task<List<Track>> GetPublicApprovedTracksByArtistIdAsync(string artistId);
         Task<List<Track>> GetApprovedTracksByArtistIdAsync(string artistId);
         Task<UserTracksResponse> GetUserTracksResponseAsync(string profileId);
+        Task ApproveTrack(string id);
+        Task ChangePublicStatus(string id);
+        Task<bool> DeleteTrack(string trackId, string userId, string role);
     }
 }

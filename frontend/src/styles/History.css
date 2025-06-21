@@ -1,0 +1,191 @@
+.history-bg {
+  background: linear-gradient(135deg, #181818 0%, #232526 100%);
+  min-height: 100vh;
+}
+
+.history-header {
+  border-radius: 1.5rem;
+  background: rgba(34, 34, 34, 0.85);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.history-logo {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  background: #232526;
+}
+
+.history-title {
+  color: #fff;
+  font-size: 2.1rem;
+  font-weight: normal;
+  letter-spacing: 0.5px;
+}
+
+.delete-all-btn {
+  background: linear-gradient(90deg, #ff4d4d 0%, #ff9966 100%);
+  color: #fff;
+  border: none;
+  border-radius: 2rem;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 0.7rem 2rem;
+  box-shadow: 0 2px 12px rgba(255,77,77,0.12);
+  transition: background 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.delete-all-btn:hover, .delete-all-btn:focus {
+  background: linear-gradient(90deg, #ff9966 0%, #ff4d4d 100%);
+  color: #fff;
+  transform: translateY(-2px) scale(1.04);
+}
+
+.history-scrollable-section {
+  margin-top: 2rem;
+}
+
+/* Empty state */
+.history-empty-state {
+  padding: 3rem 1rem 2rem 1rem;
+  background: rgba(34, 34, 34, 0.7);
+  border-radius: 1.5rem;
+  max-width: 420px;
+  margin: 0 auto;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+}
+.empty-history-img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 1rem;
+  opacity: 0.8;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+}
+
+/* Danh sách nhạc dọc */
+.history-list-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.history-list-item {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .history-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 1.2rem 0.7rem 1rem 0.7rem;
+  }
+  .history-title {
+    font-size: 1.3rem;
+  }
+  .delete-all-btn {
+    width: 100%;
+    justify-content: center;
+    font-size: 0.98rem;
+    padding: 0.6rem 1.2rem;
+  }
+  .history-logo {
+    width: 36px;
+    height: 36px;
+  }
+  .history-empty-state {
+    padding: 2rem 0.5rem 1.5rem 0.5rem;
+    max-width: 95vw;
+  }
+  .history-list-section {
+    gap: 1.2rem;
+    max-width: 100vw;
+    padding: 0 0.2rem;
+  }
+  .history-list-item {
+    padding: 0;
+  }
+  .history-clock-icon {
+    width: 20px !important;
+    height: 20px !important;
+    margin-right: 0.3rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .history-header {
+    padding: 0.7rem 0.2rem 0.7rem 0.2rem;
+  }
+  .history-title {
+    font-size: 1.1rem;
+  }
+  .delete-all-btn {
+    font-size: 0.95rem;
+    padding: 0.5rem 0.7rem;
+  }
+  .history-logo {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Xóa style không còn dùng */
+.history-logo { display: none; }
+.history-scrollable-section { display: none; }
+
+/* Lưới lịch sử nghe nhạc */
+.history-grid-section {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.history-grid-item {
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 1200px) {
+  .history-grid-section {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+}
+@media (max-width: 900px) {
+  .history-grid-section {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2rem;
+  }
+}
+@media (max-width: 600px) {
+  .history-grid-section {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+}
+
+/* Ẩn style dọc cũ nếu còn */
+.history-list-section, .history-list-item { display: none; }
+
+.history-clock-icon {
+  width: 1em;
+  height: 1em;
+  vertical-align: -0.125em;
+  display: inline-block;
+  color: #fff;
+  opacity: 0.85;
+  margin-right: 0.5rem;
+} 

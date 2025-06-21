@@ -4,11 +4,11 @@ import { PlayCircle, Heart, Info } from 'lucide-react';
 import { fetchSearchResults } from '../services/searchService';
 import '../styles/Discover.css';
 import { useMusicPlayer } from '../context/musicPlayerContext';
-import {Spinner} from "react-bootstrap";
+import {Badge, Spinner} from "react-bootstrap";
 
-const MusicCard = ({ id, title, artist, imageUrl, likeCount, playCount, onPlay }) => {
+const MusicCard = ({ id, title, artist, imageUrl, likeCount, playCount, isPublic, onPlay }) => {
   const [hover, setHover] = useState(false);
-  
+
   const handlePlay = (e) => {
     e.preventDefault();
     onPlay();
@@ -19,7 +19,7 @@ const MusicCard = ({ id, title, artist, imageUrl, likeCount, playCount, onPlay }
       className="music-card text-center text-white px-2"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      style={{ cursor: 'pointer' }}
+      style={{ cursor: 'pointer', position: 'relative' }}
     >
       <Link to={`/track/${id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
         <img
@@ -33,7 +33,16 @@ const MusicCard = ({ id, title, artist, imageUrl, likeCount, playCount, onPlay }
             boxShadow: '0 6px 15px rgba(0, 0, 0, 0.6)',
           }}
         />
-        <div className="music-icons-top d-flex gap-3">
+        {!isPublic && (
+            <Badge
+                bg="warning"
+                text="dark"
+                className="position-absolute top-0 end-0 m-3"
+            >
+              👑 VIP
+            </Badge>
+        )}
+        <div className="music-icons-top d-flex gap-3 position-absolute top-0 start-0 m-3">
           <Info size={22} color="white" />
         </div>
         {hover && (
@@ -79,7 +88,8 @@ const SearchForm = () => {
     const searchPlaylist = results.tracks.map(track => ({
       id: track.id,
       title: track.title,
-      subtitle: track.artistId || 'Unknown Artist',
+      subtitle: track.artistName || 'Musicresu',
+      isPublic: track.isPublic,
       imageUrl: track.imageBase64 || '/images/default-music.jpg',
       url: track.audioUrl || ''
     }));
@@ -115,10 +125,11 @@ const SearchForm = () => {
                       <MusicCard
                         id={track.id}
                         title={track.title}
-                        artist={track.artistId}
+                        artist={track.artistName}
                         imageUrl={track.imageBase64 || '/images/default-music.jpg'}
                         likeCount={track.likeCount}
                         playCount={track.playCount}
+                        isPublic={track.isPublic}
                         onPlay={() => handlePlayTrack(track)}
                       />
                     </div>
@@ -134,15 +145,15 @@ const SearchForm = () => {
                 <div className="row">
                   {results.users.map((user) => (
                     <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" key={user.id}>
-                      <Link to={`/profile/${user.id}`} className="text-decoration-none">
+                      <Link to={`/personal-profile/${user.id}`} className="text-decoration-none">
                         <div className="bg-secondary bg-opacity-10 rounded-4 p-4 d-flex align-items-center gap-3">
                           <img
-                            src={user.avatarUrl || '/images/default-avatar.png'}
+                            src={user.avatarBase64 || '/images/default-avatar.png'}
                             alt={user.name}
                             style={{ width: 56, height: 56, borderRadius: '50%', objectFit: 'cover', border: '2px solid #fff2' }}
                           />
                           <div>
-                            <div className="fw-bold text-white" style={{ fontSize: 16 }}>{user.name}</div>
+                            <div className="fw-bold text-white" style={{ fontSize: 16 }}>{user.fullname}</div>
                             <div style={{ color: '#bbb', fontSize: 13 }}>@{user.username}</div>
                           </div>
                         </div>

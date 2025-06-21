@@ -1,25 +1,34 @@
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useAuth } from "../../context/authContext";
+// src/components/Navbar.jsx
 import React, { useState } from "react";
-import { Modal, Button, Dropdown } from "react-bootstrap";
-import { FaUser, FaShieldAlt, FaSignOutAlt, FaCogs, FaHeart, FaEye } from 'react-icons/fa';
-import '../../styles/Navbar.css'
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from "../../context/authContext";
 import { useQueryClient } from "@tanstack/react-query";
+
+import { Dropdown } from "react-bootstrap";
+import '../../styles/Navbar.css';
+
+// Component con đã tách
+import NavbarBrand from "../navbar/NavbarBrand";
+import NavbarMenuUser from "../navbar/NavbarMenuUser";
+import NavbarMenuAdmin from "../navbar/NavbarMenuAdmin";
+import NavbarUserDropdown from "../navbar/NavbarUserDropdown";
+import NavbarModals from "../navbar/NavbarModal";
+import NotificationBell from "../NotificationBell";
 
 const Navbar = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const { user, logout } = useAuth();
     const queryClient = useQueryClient();
 
     const [searchTerm, setSearchTerm] = useState('');
-
-    const navigate = useNavigate();
-
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [showConfirmSigninModal, setShowConfirmSigninModal] = useState(false);
 
+    const isActive = (path) => location.pathname === path;
+
     const handleLogoutClick = () => setShowLogoutModal(true);
-    const handleClose = () => setShowLogoutModal(false);
+    const handleCloseLogout = () => setShowLogoutModal(false);
     const handleConfirmLogout = () => {
         logout();
         queryClient.invalidateQueries(['profile']);
@@ -32,7 +41,7 @@ const Navbar = () => {
     const handleConfirmSignin = () => {
         navigate('/signin');
         setShowConfirmSigninModal(false);
-    }
+    };
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
@@ -41,16 +50,11 @@ const Navbar = () => {
         }
     };
 
-    const isActive = (path) => location.pathname === path;
-
     return (
         <>
             <nav className="navbar navbar-expand-lg navbar-light bg-black shadow px-4 py-3 mt-0">
                 <div className="container-fluid">
-                    <Link to="/" className="navbar-brand d-flex align-items-center gap-2">
-                        <img src="/images/icon.png" alt="Logo" width="50" height="50" />
-                        <span className="text-danger fw-bold fs-3">MUSICRESU</span>
-                    </Link>
+                    <NavbarBrand />
 
                     <button
                         className="navbar-toggler"
@@ -63,261 +67,68 @@ const Navbar = () => {
                     >
                         <span className="navbar-toggler-icon"></span>
                     </button>
-                    {!user?.isLoggedIn || user.role !== "admin" ? (
-                        <div className="collapse navbar-collapse" id="navbarNav">
-                            <ul className="navbar-nav mx-auto gap-3 d-flex align-items-center">
-                                <li className="nav-item">
-                                    <Link to="/" className={`nav-link ${isActive("/") ? "active text-danger fw-semibold" : "text-secondary"}`}>Trang chủ</Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link to="/discover" className={`nav-link ${isActive("/discover") ? "active text-danger fw-semibold" : "text-secondary"}`}>Khám phá</Link>
-                                </li>
-                                <li className="nav-item">
-                                    <form
-                                        onSubmit={handleSearchSubmit}
-                                        className="d-flex align-items-center"
-                                        style={{ width: '500px', position: 'relative' }}
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            width="16"
-                                            height="16"
-                                            fill="gray"
-                                            className="bi bi-search"
-                                            viewBox="0 0 16 16"
-                                            style={{
-                                                position: 'absolute',
-                                                left: '10px',
-                                                pointerEvents: 'none',
-                                            }}
-                                        >
-                                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.85-3.85zm-5.242 1.06a5 5 0 1 1 0-10 5 5 0 0 1 0 10z" />
-                                        </svg>
-                                        <input
-                                            type="text"
-                                            className="form-control"
-                                            placeholder="Nhập tên bài hát hoặc tên người dùng..."
-                                            value={searchTerm}
-                                            onChange={(e) => setSearchTerm(e.target.value)}
-                                            style={{
-                                                borderRadius: '20px',
-                                                paddingLeft: '35px',
-                                                border: '1px solid #ccc',
-                                                outline: 'none',
-                                                transition: 'border-color 0.3s',
-                                            }}
-                                            onFocus={(e) => (e.target.style.borderColor = '#dc3545')}
-                                            onBlur={(e) => (e.target.style.borderColor = '#ccc')}
-                                        />
-                                    </form>
-                                </li>
 
-                                <li className="nav-item">
-                                    {user?.isLoggedIn ? (
-                                        <Link
-                                            to="/library"
-                                            className={`nav-link ${isActive("/library") ? "active text-danger fw-semibold" : "text-secondary"}`}
-                                        >
-                                            Thư viện
-                                        </Link>
-                                    ) : (
-                                        <span
-                                            className="nav-link text-secondary"
-                                            style={{ cursor: 'pointer' }}
-                                            onClick={handleConfirmSigninClick}
-                                        >
-                                    Thư viện
-                                </span>
+                    <div className="collapse navbar-collapse" id="navbarNav">
+                        <ul className="navbar-nav mx-auto gap-3 d-flex align-items-center">
+                            {/* Nếu không phải admin */}
+                            {(!user?.isLoggedIn || user.role !== "admin") && (
+                                <>
+                                    <NavbarMenuUser
+                                        user={user}
+                                        isActive={isActive}
+                                        searchTerm={searchTerm}
+                                        setSearchTerm={setSearchTerm}
+                                        handleSearchSubmit={handleSearchSubmit}
+                                        onRequireSignin={handleConfirmSigninClick}
+                                    />
+
+                                    {!user?.isLoggedIn && (
+                                        <>
+                                            <li className="nav-item">
+                                                <a href="/signin" className={`nav-link ${isActive("/signin") ? "active text-danger fw-semibold" : "text-secondary"}`}>Đăng nhập</a>
+                                            </li>
+                                            <li className="nav-item">
+                                                <a href="/signup" className="btn btn-danger fw-semibold">Đăng ký</a>
+                                            </li>
+                                        </>
                                     )}
-                                </li>
 
-
-                                <li className="nav-item">
-                                    {user?.isLoggedIn ? (
-                                        <Link
-                                            to="/histories"
-                                            className={`nav-link ${isActive("/histories") ? "active text-danger fw-semibold" : "text-secondary"}`}
-                                        >
-                                            Lịch sử nghe
-                                        </Link>
-                                    ) : (
-                                        <span
-                                            className="nav-link text-secondary"
-                                            style={{ cursor: 'pointer' }}
-                                            onClick={handleConfirmSigninClick}
-                                        >
-                                    Lịch sử nghe
-                                </span>
+                                    {user?.isLoggedIn && (
+                                        <>
+                                            <li className="nav-item">
+                                                <a href="/my-tracks" className={`nav-link ${isActive("/my-tracks") ? "active text-danger fw-semibold" : "text-secondary"}`}>Nhạc của tôi</a>
+                                            </li>
+                                            <li className="nav-item dropdown">
+                                                <NavbarUserDropdown user={user} onLogout={handleLogoutClick} />
+                                            </li>
+                                            {user.role !== "admin" && <NotificationBell />}
+                                        </>
                                     )}
-                                </li>
+                                </>
+                            )}
 
-
-
-                                {/* Nếu chưa đăng nhập */}
-                                {!user?.isLoggedIn && (
-                                    <>
-                                        <li className="nav-item">
-                                            <Link to="/signin" className={`nav-link ${isActive("/signin") ? "active text-danger fw-semibold" : "text-secondary"}`}>Đăng nhập</Link>
-                                        </li>
-                                        <li className="nav-item">
-                                            <Link to="/signup" className={`btn btn-danger fw-semibold`}>
-                                                Đăng ký
-                                            </Link>
-                                        </li>
-
-                                    </>
-                                )}
-
-                                {/* Nếu đã đăng nhập */}
-                                {/* Dropdown cho người dùng đã đăng nhập */}
-                                {user?.isLoggedIn && (
+                            {/* Nếu là admin */}
+                            {user?.isLoggedIn && user.role === "admin" && (
+                                <>
+                                    <NavbarMenuAdmin isActive={isActive} />
                                     <li className="nav-item dropdown">
-                                        <Dropdown align="end">
-                                            <Dropdown.Toggle variant="link" id="dropdown-user" className="nav-link text-danger d-flex align-items-center gap-2">
-                                                <div
-                                                    style={{
-                                                        width: "32px",
-                                                        height: "32px",
-                                                        borderRadius: "50%",
-                                                        overflow: "hidden",
-                                                        backgroundColor: "#ccc",
-                                                        flexShrink: 0
-                                                    }}
-                                                >
-                                                    <img
-                                                        src={user.avatar ? user.avatar : "/images/default-avatar.png"}
-                                                        alt="Avatar"
-                                                        style={{
-                                                            width: "100%",
-                                                            height: "100%",
-                                                            objectFit: "cover",
-                                                            display: "block"
-                                                        }}
-                                                    />
-                                                </div>
-                                                Xin chào, {user.fullname}
-                                            </Dropdown.Toggle>
-
-                                            <Dropdown.Menu className="custom-dropdown-menu">
-                                                <Dropdown.Item as={Link} to={`/profile/${user.id}`}>
-                                                    <FaUser className="me-2" /> Thông tin cá nhân
-                                                </Dropdown.Item>
-                                                <Dropdown.Item as={Link} to={`/upgrade/${user.id}}`}>
-                                                    <FaCogs className="me-2" /> Nâng cấp tài khoản
-                                                </Dropdown.Item>
-                                                <Dropdown.Item as={Link} to="/likes">
-                                                    <FaHeart className="me-2" /> Đã thích
-                                                </Dropdown.Item>
-                                                <Dropdown.Item as={Link} to="/follow">
-                                                    <FaEye className="me-2" /> Đang theo dõi
-                                                </Dropdown.Item>
-                                                <Dropdown.Item as={Link} to="/policy">
-                                                    <FaShieldAlt className="me-2" /> Chính sách
-                                                </Dropdown.Item>
-                                                <Dropdown.Divider />
-                                                <Dropdown.Item onClick={handleLogoutClick}>
-                                                    <FaSignOutAlt className="me-2" /> Đăng xuất
-                                                </Dropdown.Item>
-                                            </Dropdown.Menu>
-                                        </Dropdown>
+                                        <NavbarUserDropdown user={user} onLogout={handleLogoutClick} />
                                     </li>
-                                )}
-                            </ul>
-                        </div>
-                    ) : (
-                        <div className="collapse navbar-collapse" id="navbarNav">
-                            <ul className="navbar-nav mx-auto gap-3 d-flex align-items-center">
-                                <li className="nav-item">
-                                    <Link to="/statistic" className={`nav-link ${isActive("/statistic") ? "active text-danger fw-semibold" : "text-secondary"}`}>Số liệu thống kê</Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link to="/account-mn" className={`nav-link ${isActive("/account-mn") ? "active text-danger fw-semibold" : "text-secondary"}`}>Tài khoản người dùng</Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link to="/artist-mn" className={`nav-link ${isActive("/artist-mn") ? "active text-danger fw-semibold" : "text-secondary"}`}>Quản lý nghệ sĩ</Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link to="/albums-mn" className={`nav-link ${isActive("/albums-mn") ? "active text-danger fw-semibold" : "text-secondary"}`}>Albums</Link>
-                                </li>
-                                <li className="nav-item">
-                                    <Link to="/report-mn" className={`nav-link ${isActive("/report-mn") ? "active text-danger fw-semibold" : "text-secondary"}`}>Báo cáo vi phạm</Link>
-                                </li>
-
-                                <li className="nav-item dropdown">
-                                    <Dropdown align="end">
-                                        <Dropdown.Toggle variant="link" id="dropdown-user" className="nav-link text-danger d-flex align-items-center gap-2">
-                                            <div
-                                                style={{
-                                                    width: "32px",
-                                                    height: "32px",
-                                                    borderRadius: "50%",
-                                                    overflow: "hidden",
-                                                    backgroundColor: "#ccc",
-                                                    flexShrink: 0
-                                                }}
-                                            >
-                                                <img
-                                                    src={user.avatar ? user.avatar : "/images/default-avatar.png"}
-                                                    alt="Avatar"
-                                                    style={{
-                                                        width: "100%",
-                                                        height: "100%",
-                                                        objectFit: "cover",
-                                                        display: "block"
-                                                    }}
-                                                />
-                                            </div>
-                                            Xin chào, {user.fullname}
-                                        </Dropdown.Toggle>
-
-                                        <Dropdown.Menu className="custom-dropdown-menu">
-                                            <Dropdown.Item as={Link} to={`/profile/${user.id}`}>
-                                                <FaUser className="me-2" /> Thông tin cá nhân
-                                            </Dropdown.Item>
-                                            <Dropdown.Item as={Link} to="/likes">
-                                                <FaHeart className="me-2" /> Đã thích
-                                            </Dropdown.Item>
-                                            <Dropdown.Item as={Link} to="/follow">
-                                                <FaEye className="me-2" /> Đang theo dõi
-                                            </Dropdown.Item>
-                                            <Dropdown.Item as={Link} to="/policy">
-                                                <FaShieldAlt className="me-2" /> Chính sách
-                                            </Dropdown.Item>
-                                            <Dropdown.Divider />
-                                            <Dropdown.Item onClick={handleLogoutClick}>
-                                                <FaSignOutAlt className="me-2" /> Đăng xuất
-                                            </Dropdown.Item>
-                                        </Dropdown.Menu>
-                                    </Dropdown>
-                                </li>
-                            </ul>
-                        </div>
-                    )}
+                                </>
+                            )}
+                        </ul>
+                    </div>
                 </div>
             </nav>
 
-
-            <Modal show={showLogoutModal} onHide={handleClose} centered dialogClassName={"custom-modal-overlay"} backdrop={true}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Xác nhận đăng xuất</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>Bạn có chắc muốn đăng xuất không?</Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleClose}>Hủy</Button>
-                    <Button variant="danger" onClick={handleConfirmLogout}>Đăng xuất</Button>
-                </Modal.Footer>
-            </Modal>
-
-            <Modal show={showConfirmSigninModal} onHide={handleSigninClose} centered dialogClassName={"custom-modal-overlay"} backdrop={true}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Cần phải đăng nhập</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>Bạn có muốn đăng nhập không?</Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleSigninClose}>Hủy</Button>
-                    <Button variant="danger" onClick={handleConfirmSignin}>Đồng ý</Button>
-                </Modal.Footer>
-            </Modal>
+            <NavbarModals
+                showLogoutModal={showLogoutModal}
+                handleCloseLogout={handleCloseLogout}
+                handleConfirmLogout={handleConfirmLogout}
+                showSigninModal={showConfirmSigninModal}
+                handleSigninClose={handleSigninClose}
+                handleConfirmSignin={handleConfirmSignin}
+            />
         </>
     );
 };

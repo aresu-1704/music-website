@@ -11,5 +11,6 @@ namespace backend.Interfaces
         Task<bool> IsFavoriteAsync(string userId, string trackId);
         Task<List<string>> GetFavoriteTrackIdsByUserAsync(string userId);
         Task<int> GetFavoriteCountByTrackAsync(string trackId);
+        Task DeleteAllFavoritesByUserAsync(string userId);
     }
 }

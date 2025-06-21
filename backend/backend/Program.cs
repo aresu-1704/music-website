@@ -89,6 +89,11 @@ builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<IFollowersRepository, FollowersRepository>();
 builder.Services.AddScoped<IFollowersService, FollowersService>();
+builder.Services.AddScoped<INotificationService, NotificationService>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<ISearchService, SearchService>();
+builder.Services.AddScoped<IPaymentRecordRepository, PaymentRecordRepository>();
+builder.Services.AddScoped<IPaymentRecordService, PaymentRecordService>();
 
 //Redis cache
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
@@ -129,7 +134,8 @@ builder.Services.AddAuthentication("Bearer")
             ValidAudience = configuration["JWT:Audience"],             // Đối tượng sử dụng token
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(configuration["JWT:Key"])),  // Khóa bí mật để xác thực token
-            NameClaimType = JwtRegisteredClaimNames.Sub
+            NameClaimType = JwtRegisteredClaimNames.Sub,
+            RoleClaimType = "role"
         };
 
         options.Events = new JwtBearerEvents
@@ -172,7 +178,8 @@ builder.Services.AddAuthentication("Bearer")
             }
         };
     });
-    builder.Services.AddCors(options =>
+
+builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         policy =>

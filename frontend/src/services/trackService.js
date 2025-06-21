@@ -1,3 +1,25 @@
+
+export const uploadTrack = async (formData, handleSessionOut) => {
+    try {
+        const res = await fetch('http://localhost:5270/api/Track/upload', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
+            },
+        });
+
+        const data = await res.text();
+        if (res.status === 401 || res.status === 403) {
+            handleSessionOut();
+        }
+        if (!res.ok) throw new Error(data);
+        return data;
+    } catch (err) {
+        throw err;
+    }
+};
+
 export async function getTopTracks() {
     const res = await fetch('http://localhost:5270/api/Track/top-played', {
         method: 'GET',
@@ -69,8 +91,9 @@ export const getTrackDetail = async (trackId) => {
     return data;
 };
 
+
 export const getTracksByArtistId = async (profileId) => {
-    const res = await fetch(`http://localhost:5270/api/Profile/MyTracks/${profileId}`);
+    const res = await fetch(`http://localhost:5270/api/Profile/my-tracks/${profileId}`);
     if (!res.ok) {
         throw new Error('Không thể lấy danh sách bài hát.');
     }
@@ -78,3 +101,62 @@ export const getTracksByArtistId = async (profileId) => {
 };
 
 
+export const getAllTracks = async () => {
+    const res = await fetch('http://localhost:5270/api/Track/all-track', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+
+    if (res.status !== 200) {
+        throw new Error("Lấy dữ liệu thất bại");
+    }
+
+    return res.json();
+}
+
+export const changeApprove = async (trackId) => {
+    const res = await fetch(`http://localhost:5270/api/Track/approve/${trackId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+
+    if (res.status !== 200) {
+        throw new Error("Cập nhật thất bại");
+    }
+}
+
+
+export const changePublic = async (trackId) => {
+    const res = await fetch(`http://localhost:5270/api/Track/public/${trackId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+
+    if (res.status !== 200) {
+        throw new Error("Cập nhật thất bại");
+    }
+}
+
+export const deleteTrack = async (trackId, handleSessionOut) => {
+    const res = await fetch(`http://localhost:5270/api/Track/delete/${trackId}`, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token'),
+        }
+    })
+
+    if (res.status === 401 || res.status === 403) {
+        handleSessionOut();
+    }
+
+    else if (!res.ok){
+        throw new Error(res.statusText);
+    }
+}

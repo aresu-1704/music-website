@@ -14,5 +14,8 @@ namespace backend.Interfaces
         Task UpdateAsync(string id, Users user);
         Task DeleteAsync(string id);
         Task<List<Users>> SearchByUsernameOrNameAsync(string keyword);
+        Task<List<Users>> GetManyByIdsAsync(IEnumerable<string> ids);
+        Task<List<Users>> GetUsersByIdsAsync(IEnumerable<string> userIds);
+
     }
 }

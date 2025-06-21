@@ -5,6 +5,9 @@ frontend/.idea
 backend/backend/bin
 backend/backend/obj
 
+backend/backend/bin/
+backend/backend/obj/
+
 backend/backend/storage/
 backend/.vs
 

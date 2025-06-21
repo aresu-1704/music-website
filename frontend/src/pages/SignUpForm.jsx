@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { Google, Facebook, Apple } from 'react-bootstrap-icons';
+import { Link } from 'react-router-dom'
 import { Spinner } from 'react-bootstrap';
 import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -102,11 +102,13 @@ export default function SignUpForm() {
                                 />
                             )}
                         </Formik>
+                        <p className="text-center text-white">
+                            Khi bấm vào đăng ký, bạn đã đồng ý với chính sách của chúng tôi&nbsp;
+                            <Link to="/policy" className="text-decoration-none text-danger fw-bold">
+                                tại đây
+                            </Link>.
+                        </p>
 
-                        <div className="text-center mb-3">Hoặc đăng ký với</div>
-                        <button className="btn btn-outline-danger w-100 mb-2"><Google size={20} className="me-2" />Đăng ký với Google</button>
-                        <button className="btn btn-outline-primary w-100 mb-2"><Facebook size={20} className="me-2" />Đăng ký với Facebook</button>
-                        <button className="btn btn-outline-secondary w-100"><Apple size={20} className="me-2" />Đăng ký với Apple</button>
                     </div>
                 </div>
             )}

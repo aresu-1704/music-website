@@ -54,8 +54,6 @@ namespace backend.Controllers
                 dateOfBirth = user.DateOfBirth,
                 gender = user.Gender,
                 avatarBase64 = avatarBase64,
-                isEmailVerified = user.IsEmailVerified,
-                isPhoneVerified = user.IsPhoneVerified,
                 expiredDate = user.ExpiredDate,
                 Role = user.Role
             };
@@ -114,7 +112,7 @@ namespace backend.Controllers
             }
         }
 
-        [HttpGet("MyTracks/{profileId}")]
+        [HttpGet("my-tracks/{profileId}")]
         public async Task<IActionResult> GetMyTracks(string profileId)
         {
             var response = await _trackService.GetUserTracksResponseAsync(profileId);
@@ -131,8 +129,6 @@ namespace backend.Controllers
         public DateTime dateOfBirth { get; set; }
         public int gender { get; set; }
         public string avatarBase64 { get; set; }
-        public bool isEmailVerified { get; set; }
-        public bool isPhoneVerified { get; set; }
         public DateTime expiredDate { get; set; }
         public string Role { get; set; }
     }

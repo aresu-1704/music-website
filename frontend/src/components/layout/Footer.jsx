@@ -1,21 +1,23 @@
 import '../../styles/Footer.css';
-import { FaPlay, FaPause, FaStepBackward, FaStepForward, FaVolumeMute, FaVolumeDown, FaVolumeUp, FaHeart, FaRedo } from "react-icons/fa";
+import {
+    FaPlay, FaPause, FaStepBackward, FaStepForward,
+    FaVolumeMute, FaVolumeDown, FaVolumeUp, FaHeart, FaRedo
+} from "react-icons/fa";
 import React, { useEffect, useRef, useState } from "react";
 import { useMusicPlayer } from '../../context/musicPlayerContext';
-import {updateTrackPlayCount} from "../../services/trackService";
-import {toast, ToastContainer} from "react-toastify";
+import { updateTrackPlayCount } from "../../services/trackService";
+import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../../context/authContext";
-import {checkUserIsFavorites, toggleFavorites} from "../../services/favoritesService";
-import {useLoginSessionOut} from "../../services/loginSessionOut";
-import {Button, Modal} from "react-bootstrap";
-import {useNavigate} from "react-router-dom";
-import {updateHistory} from "../../services/playHistoryService";
+import { checkUserIsFavorites, toggleFavorites } from "../../services/favoritesService";
+import { useLoginSessionOut } from "../../services/loginSessionOut";
+import { Button, Modal } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
+import { updateHistory } from "../../services/playHistoryService";
 
 const Footer = () => {
     const audioRef = useRef(null);
     const progressRef = useRef(null);
-    const { user } = useAuth();
-
+    const { user, logout } = useAuth();
     const {
         playlist,
         currentTrack,
@@ -32,89 +34,123 @@ const Footer = () => {
     const [volume, setVolume] = useState(1);
     const [isReplay, setIsReplay] = useState(false);
     const [isLiked, setIsLiked] = useState(false);
+    const [listenedTime, setListenedTime] = useState(0);
+
     const [showConfirmSigninModal, setShowConfirmSigninModal] = useState(false);
+    const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+    const navigate = useNavigate();
     const isReplayRef = useRef(isReplay);
     const handleSessionOut = useLoginSessionOut();
-    const navigate = useNavigate();
-
-    const handleConfirmSigninClick = () => setShowConfirmSigninModal(true);
-    const handleSigninClose = () => setShowConfirmSigninModal(false);
-    const handleConfirmSignin = () => {
-        setIsPlaying(false);
-        playTrackList([], 0); // clear playlist
-        navigate('/signin');
-        setShowConfirmSigninModal(false);
-    }
 
     useEffect(() => {
-        if (!user.isLoggedIn) {
-            setIsLiked(false); // Reset lại khi logout
-        }
-    }, [user.isLoggedIn]);
-
-
-    useEffect(() => {
-        isReplayRef.current = isReplay; // cập nhật khi isReplay thay đổi
+        isReplayRef.current = isReplay;
     }, [isReplay]);
 
+    const checkVipPermission = () => {
+        const isVip = currentTrack?.isPublic === false;
+        const hasPermission = user?.isLoggedIn && user.role !== "normal";
+
+        if (!currentTrack || !isVip) return true;
+
+        if (!user?.isLoggedIn) {
+            setIsPlaying(false);
+            setShowConfirmSigninModal(true);
+            return false;
+        }
+
+        if (user.role === "normal") {
+            setIsPlaying(false);
+            setShowUpgradeModal(true);
+            return false;
+        }
+
+        return true;
+    };
+
     useEffect(() => {
+        playTrackList([], 0)
+        setIsPlaying(false);
+        setIsLiked(false);
+        setIsReplay(false);
+    }, [user?.isLoggedIn]);
+
+    useEffect(() => {
+        if (!currentTrack || !currentTrack.id) return;
+
         const fetchFavoriteStatus = async () => {
             if (currentTrack?.id && user.isLoggedIn) {
                 try {
-                    const res = await checkUserIsFavorites(currentTrack.id, handleSessionOut);
-                    handleUpdateLastPlay(currentTrack.id);
-                    setIsLiked(res.favorited);
+                    const res = await checkUserIsFavorites(currentTrack.id);
+                    if (res) {
+                        setIsLiked(res.favorited);
+                    } else {
+                        toast.error("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại", {
+                            position: "top-center",
+                            autoClose: 2000,
+                            pauseOnHover: false,
+                        });
+
+                        setTimeout(() => {
+                            logout();
+                            navigate('/signin');
+                            setIsPlaying(false);
+                            playTrackList([], 0);
+                        }, 2500);
+                    }
                 } catch (err) {
                     console.error("Lỗi khi kiểm tra yêu thích:", err);
                 }
             }
         };
+
         fetchFavoriteStatus();
     }, [currentTrack?.id]);
 
+    useEffect(() => {
+        setCurrentTime(0);
+        setListenedTime(0);
+        setDuration(0);
+    }, [currentTrack?.id]);
 
-    const handleReplay = () => {
-        setIsReplay(prev => !prev);
-    };
-
-    const handleLike = async () => {
-        if (user.isLoggedIn) {
-            setIsLiked(prev => !prev);
-            const res = await toggleFavorites(currentTrack.id, handleSessionOut);
+    useEffect(() => {
+        if (!checkVipPermission()){
+            setIsPlaying(false);
+            return;
         }
-        else {
-            handleConfirmSigninClick()
+        if (audioRef.current && audioUrl) {
+            audioRef.current.load();
         }
-    };
+    }, [audioUrl]);
 
-
-    const formatTime = (time) => {
-        if (isNaN(time)) return "0:00";
-        const minutes = Math.floor(time / 60);
-        const seconds = Math.floor(time % 60).toString().padStart(2, '0');
-        return `${minutes}:${seconds}`;
-    };
+    useEffect(() => {
+        if (audioRef.current) {
+            audioRef.current.volume = volume;
+        }
+    }, [volume]);
 
     const togglePlay = () => {
         if (!audioRef.current) return;
+        if (!checkVipPermission()) return;
+
         if (isPlaying) {
             audioRef.current.pause();
             setIsPlaying(false);
         } else {
             audioRef.current.play()
                 .then(() => setIsPlaying(true))
-                .catch((err) => console.error("Trình duyệt chặn phát audio:", err));
+                .catch(err => console.error("Trình duyệt chặn phát audio:", err));
         }
     };
 
     const playNext = () => {
-        if (playlist.length === 0) return;
+        if (playlist.length === 0 || playlist.length === 1) return;
         const nextIndex = (currentTrackIndex + 1) % playlist.length;
         playTrackList(playlist, nextIndex);
     };
 
     const playPrev = () => {
-        if (playlist.length === 0) return;
+        if (playlist.length === 0 || playlist.length === 1) return;
         const prevIndex = (currentTrackIndex - 1 + playlist.length) % playlist.length;
         playTrackList(playlist, prevIndex);
     };
@@ -122,6 +158,13 @@ const Footer = () => {
     const handleTimeUpdate = () => {
         const current = audioRef.current?.currentTime || 0;
         const dur = audioRef.current?.duration || 1;
+
+        setListenedTime(prev => {
+            const delta = current - currentTime;
+            if (delta >= 0 && delta < 3) return prev + delta;
+            return prev;
+        });
+
         setCurrentTime(current);
         setDuration(dur);
         setProgress((current / dur) * 100);
@@ -138,35 +181,57 @@ const Footer = () => {
         }
     };
 
+    const handleReplay = () => {
+        setIsReplay(prev => !prev);
+    };
+
+    const handleLike = async () => {
+        if (user.isLoggedIn) {
+            setIsLiked(prev => !prev);
+            await toggleFavorites(currentTrack.id, handleSessionOut);
+        } else {
+            setShowConfirmSigninModal(true);
+        }
+    };
+
     const handleUpdateLastPlay = async (trackId) => {
-        await updateHistory(trackId, handleSessionOut);
-    }
+        return await updateHistory(trackId);
+    };
 
     const handleUpdateTrackPlayCount = async (id) => {
         try {
             await updateTrackPlayCount(id);
         } catch (err) {
-            toast.error("Không thể kết nối đến máy chủ hiện tại", { position: "top-center", autoClose: 2000 });
+            toast.error("Không thể kết nối đến máy chủ hiện tại", {
+                position: "top-center",
+                autoClose: 2000,
+            });
         }
+    };
+
+    const formatTime = (time) => {
+        if (isNaN(time)) return "0:00";
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60).toString().padStart(2, '0');
+        return `${minutes}:${seconds}`;
+    };
+
+    const handleCloseModal = () => {
+        if (currentTrack?.isPublic === false) {
+            if (playlist.length > 1) {
+                playNext();
+            } else {
+                playTrackList([], 0);
+            }
+        }
+        setShowUpgradeModal(false);
+        setShowConfirmSigninModal(false);
     }
-
-    useEffect(() => {
-        if (audioRef.current && audioUrl) {
-            audioRef.current.load();
-        }
-    }, [audioUrl]);
-
-    useEffect(() => {
-        if (audioRef.current) {
-            audioRef.current.volume = volume;
-        }
-    }, [volume]);
 
     return (
         <>
-            {currentTrack && audioUrl&& (
+            {currentTrack && audioUrl && (
                 <footer className="footer-player">
-                    {/* Thông tin nhạc */}
                     <div className="track-info">
                         <img src={currentTrack?.imageUrl || '/images/default-music.jpg'} alt="cover" />
                         <div>
@@ -175,7 +240,6 @@ const Footer = () => {
                         </div>
                     </div>
 
-                    {/* Điều khiển + progress */}
                     <div className="center-controls-horizontal">
                         <div className="control-buttons">
                             <button onClick={playPrev}><FaStepBackward /></button>
@@ -196,7 +260,6 @@ const Footer = () => {
                         </div>
                     </div>
 
-                    {/* Volume và các nút bổ sung */}
                     <div className="volume-section">
                         <button
                             onClick={handleReplay}
@@ -226,11 +289,16 @@ const Footer = () => {
                         ref={audioRef}
                         preload="auto"
                         onEnded={() => {
+                            if (currentTrack.id && listenedTime >= 0.9 * duration) {
+                                handleUpdateTrackPlayCount(currentTrack.id);
+                                handleUpdateLastPlay(currentTrack.id);
+                            }
+
+                            setListenedTime(0);
+
+                            if (!checkVipPermission()) return;
+
                             if (isReplayRef.current) {
-                                if(currentTrack.id != null) {
-                                    handleUpdateTrackPlayCount(currentTrack.id);
-                                    handleUpdateLastPlay(currentTrack.id);
-                                }
                                 audioRef.current.currentTime = 0;
                                 audioRef.current.play().catch(err => console.error("Không thể replay:", err));
                             } else {
@@ -240,6 +308,10 @@ const Footer = () => {
                         }}
                         onTimeUpdate={handleTimeUpdate}
                         onCanPlay={() => {
+                            if (!checkVipPermission()) {
+                                audioRef.current.pause();
+                                return;
+                            }
                             if (isPlaying) {
                                 audioRef.current.play().catch(err => console.warn("Autoplay bị chặn:", err));
                             }
@@ -250,16 +322,39 @@ const Footer = () => {
                     </audio>
                 </footer>
             )}
+
             <ToastContainer />
 
-            <Modal show={showConfirmSigninModal} onHide={handleSigninClose} centered dialogClassName={"custom-modal-overlay"} backdrop={true}>
+            <Modal show={showConfirmSigninModal} onHide={handleCloseModal} centered dialogClassName="custom-modal-overlay" backdrop={true}>
                 <Modal.Header closeButton>
                     <Modal.Title>Cần phải đăng nhập</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>Bạn có muốn đăng nhập không?</Modal.Body>
+                <Modal.Body>Bạn có muốn đăng nhập để nghe và yêu thích bài hát này không?</Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={handleSigninClose}>Hủy</Button>
-                    <Button variant="danger" onClick={handleConfirmSignin}>Đồng ý</Button>
+                    <Button variant="secondary" onClick={handleCloseModal}>Hủy</Button>
+                    <Button variant="danger" onClick={() => {
+                        setShowConfirmSigninModal(false);
+                        setIsPlaying(false);
+                        playTrackList([], 0);
+                        navigate('/signin');
+                    }}>Đăng nhập</Button>
+                </Modal.Footer>
+            </Modal>
+
+            <Modal show={showUpgradeModal} onHide={handleCloseModal} centered dialogClassName="custom-modal-overlay" backdrop={true}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Nâng cấp tài khoản</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    Bạn cần nâng cấp để nghe bài hát <strong>{currentTrack?.title}</strong>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCloseModal}>Để sau</Button>
+                    <Button variant="warning" onClick={() => {
+                        setShowUpgradeModal(false);
+                        playTrackList([], 0);
+                        navigate(`/upgrade/${user.id}`);
+                    }}>Nâng cấp ngay</Button>
                 </Modal.Footer>
             </Modal>
         </>

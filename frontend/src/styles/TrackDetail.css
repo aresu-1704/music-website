@@ -5,8 +5,8 @@
 }
 
 .track-image-container {
-    width: 250px;
-    height: 250px;
+    width: 275px;
+    height: 275px;
     overflow: hidden;
 }
 
@@ -25,4 +25,21 @@
 .uploader-link:hover {
     text-decoration: underline;
     color: #0dcaf0 !important;
+}
+
+.uploader-link {
+    cursor: pointer;
+    white-space: nowrap;
+    text-decoration: none;
+}
+.uploader-link:hover {
+    text-decoration: underline;
+}
+
+.track-card {
+    background-color: #2c2c2c; /* xám đậm vừa */
+    color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.3);
 }

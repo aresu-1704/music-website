@@ -20,6 +20,7 @@ namespace backend
     [JsonSerializable(typeof(backend.Controllers.SendOtpRequest))]
     [JsonSerializable(typeof(backend.Controllers.VerifyOtpRequest))]
     [JsonSerializable(typeof(backend.Controllers.ResetPasswordRequest))]
+    [JsonSerializable(typeof(List<TrackAdminView>))]
     [JsonSerializable(typeof(List<CommentDetail>))]
     [JsonSerializable(typeof(backend.Controllers.AddCommentRequest))]
     [JsonSerializable(typeof(Dictionary<string, string>))]
@@ -34,11 +35,14 @@ namespace backend
     [JsonSerializable(typeof(backend.Models.TrackSearchDto))]
     [JsonSerializable(typeof(List<FavoriteTracksResponse>))]
     [JsonSerializable(typeof(List<HistoryTrackResponse>))]
+    [JsonSerializable(typeof(List<NotificationDto>))]
     [JsonSerializable(typeof(List<TrackInfo>))]
     [JsonSerializable(typeof(List<TrackListItemDto>))]
     [JsonSerializable(typeof(backend.Controllers.UserTracksResponse))]
     [JsonSerializable(typeof(FollowCheckResponse))]
     [JsonSerializable(typeof(FollowingListResponse))]
+    [JsonSerializable(typeof(List<PaymentRecord>))] 
+
     public partial class JsonContext : JsonSerializerContext
     {
     }

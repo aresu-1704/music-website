@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import {
-    Card, Button, Form, Row, Col, InputGroup, Spinner, Container, Modal
-} from 'react-bootstrap';
-import {
-    PlayFill, LockFill, CheckCircle, Trash
-} from 'react-bootstrap-icons';
+import { Button, Spinner, Container, Modal, Form, InputGroup } from 'react-bootstrap';
+import { PlayFill, Trash } from 'react-bootstrap-icons';
 import { useNavigate } from 'react-router-dom';
-import {changeApprove, changePublic, deleteTrack, getAllTracks} from '../services/trackService';
+import { changeApprove, changePublic, deleteTrack, getAllTracks } from '../services/trackService';
 import { useAuth } from "../context/authContext";
+import { useMusicPlayer } from "../context/musicPlayerContext";
+import { useLoginSessionOut } from "../services/loginSessionOut";
+import { ToastContainer } from "react-toastify";
 import '../styles/AdminTrackList.css';
-import {useMusicPlayer} from "../context/musicPlayerContext";
-import {useLoginSessionOut} from "../services/loginSessionOut";
-import {deleteAllFavorites} from "../services/favoritesService";
-import {ToastContainer} from "react-toastify"; // nhớ tạo file này
 
 const AdminTrackList = () => {
     const { user } = useAuth();
@@ -22,11 +17,31 @@ const AdminTrackList = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(true);
     const { playTrackList } = useMusicPlayer();
-    const handleSessionOut = useLoginSessionOut()
+    const handleSessionOut = useLoginSessionOut();
 
     const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
     const [trackIdToDelete, setTrackIdToDelete] = useState(null);
 
+    useEffect(() => {
+        if (!(user?.isLoggedIn && user?.role === 'admin')) {
+            navigate('/');
+            return;
+        }
+        fetchTracks();
+    }, [user, navigate]);
+
+    const fetchTracks = async () => {
+        try {
+            setLoading(true);
+            const data = await getAllTracks();
+            setTracks(data);
+        } catch (err) {
+            console.error('Lỗi khi tải danh sách nhạc:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+    
     const handleDelete = (trackId) => {
         setTrackIdToDelete(trackId);
         setShowConfirmDeleteModal(true);
@@ -34,7 +49,6 @@ const AdminTrackList = () => {
 
     const handleConfirmDelete = async () => {
         if (!trackIdToDelete) return;
-
         try {
             await deleteTrack(trackIdToDelete, handleSessionOut);
             setTracks(prev => prev.filter(t => t.trackId !== trackIdToDelete));
@@ -51,253 +65,185 @@ const AdminTrackList = () => {
         setTrackIdToDelete(null);
     };
 
-    useEffect(() => {
-        if (!(user?.isLoggedIn && user?.role === 'admin')) {
-            navigate('/');
-            return;
-        }
-
-        const fetchTracks = async () => {
-            try {
-                const data = await getAllTracks();
-                setTracks(data);
-            } catch (err) {
-                console.error('Lỗi khi tải danh sách nhạc:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchTracks();
-    }, [user, navigate]);
-
     const handleApprove = async (trackId) => {
-        await changeApprove(trackId);
-        setTracks(prev =>
-            prev.map(t =>
-                t.trackId === trackId ? { ...t, isApproved: !t.isApproved } : t
-            )
-        );
+        try {
+            await changeApprove(trackId);
+            setTracks(prev =>
+                prev.map(t =>
+                    t.trackId === trackId ? { ...t, isApproved: !t.isApproved } : t
+                )
+            );
+        } catch (err) {
+            console.error("Lỗi khi phê duyệt track:", err);
+        }
     };
 
     const handleTogglePublic = async (trackId) => {
-        await changePublic(trackId);
-        setTracks(prev =>
-            prev.map(t =>
-                t.trackId === trackId ? { ...t, isPublic: !t.isPublic } : t
-            )
-        );
+        try {
+            await changePublic(trackId);
+            setTracks(prev =>
+                prev.map(t =>
+                    t.trackId === trackId ? { ...t, isPublic: !t.isPublic } : t
+                )
+            );
+        } catch (err) {
+            console.error("Lỗi khi thay đổi trạng thái track:", err);
+        }
     };
 
-
     const handlePlayMusic = (track) => {
-        const playList = [
-            {
-                id: track.trackId,
-                title: track.title,
-                subtitle: track.uploaderName !== null ? track.uploaderName : "Musicresu",
-                imageUrl: track.imageBase64,
-                isPublic: track.isPublic,
-            }
-        ];
+        const playList = [{
+            id: track.trackId,
+            title: track.title,
+            subtitle: track.uploaderName || "Musicresu",
+            imageUrl: track.imageBase64,
+            isPublic: track.isPublic,
+        }];
         playTrackList(playList, 0);
-    }
+    };
 
     const filteredTracks = tracks.filter(t => {
         const matchStatus =
             filterStatus === 'all' ||
             (filterStatus === 'approved' && t.isApproved) ||
             (filterStatus === 'pending' && !t.isApproved);
-
         const uploaderName = (t.uploaderName || 'Musicresu').toLowerCase();
         const matchArtist = uploaderName.includes(searchQuery.toLowerCase());
-
         return matchStatus && matchArtist;
     });
 
-    return (
-        <Container fluid className="admin-dark-bg px-5 pt-5 p-3">
-            <div className="container mt-0">
-                <h3>🎵 Quản lý danh sách nhạc</h3>
+    const stats = {
+        total: tracks.length,
+        approved: tracks.filter(t => t.isApproved).length,
+        pending: tracks.filter(t => !t.isApproved).length
+    };
 
-                {loading ? (
-                    <div className="d-flex justify-content-center mt-5">
-                        <Spinner animation="border" role="status">
-                            <span className="visually-hidden">Đang tải...</span>
-                        </Spinner>
-                    </div>
-                ) : (
-                    <>
-                        {/* 🔎 Thanh filter */}
-                        <Row className="my-3">
-                            <Col md={4}>
-                                <Form.Select
-                                    className="bg-dark text-light border-secondary dark-input"
-                                    value={filterStatus}
-                                    onChange={e => setFilterStatus(e.target.value)}
-                                >
-                                    <option value="all">Tất cả</option>
-                                    <option value="approved">Đã duyệt</option>
-                                    <option value="pending">Chưa duyệt</option>
-                                </Form.Select>
-
-                            </Col>
-                            <Col md={8}>
-                                <InputGroup>
-                                    <Form.Control
-                                        className="bg-dark text-light border-secondary dark-input"
-                                        type="text"
-                                        placeholder="Tìm theo tên nghệ sĩ..."
-                                        value={searchQuery}
-                                        onChange={e => setSearchQuery(e.target.value)}
-                                    />
-                                </InputGroup>
-                            </Col>
-                        </Row>
-
-                        {/* 🎵 Danh sách nhạc */}
-                        {filteredTracks.length === 0 ? (
-                            <p className="text-muted">Không có bài nhạc nào phù hợp.</p>
-                        ) : (
-                            filteredTracks.map(track => (
-                                <Card key={track.trackId} className="mb-3 admin-track-card">
-                                    <Row className="g-0 align-items-center">
-                                        <Col xs={12} md="auto">
-                                            <Card.Img
-                                                src={track.imageBase64}
-                                                style={{
-                                                    width: '240px',
-                                                    height: '240px',
-                                                    objectFit: 'cover',
-                                                }}
-                                            />
-                                        </Col>
-
-                                        <Col xs={12} md>
-                                            <Card.Body className="d-flex flex-column justify-content-between h-100">
-                                                <div className="d-flex justify-content-between">
-                                                    <div>
-                                                        <Card.Title>{track.title}</Card.Title>
-                                                        <Card.Text>
-                                                            <strong>Thể loại:</strong> {track.genres?.join(', ') || 'Không rõ'}<br />
-                                                            <strong>Người đăng:</strong>{' '}
-                                                            {track.uploaderId ? (
-                                                                <a
-                                                                    href={`/personal-profile/${track.uploaderId}`}
-                                                                    className="text-info text-decoration-none"
-                                                                >
-                                                                    {track.uploaderName || 'Musicresu'}
-                                                                </a>
-                                                            ) : (
-                                                                'Musicresu'
-                                                            )}<br />
-                                                            <strong>Ngày cập nhật:</strong>{' '}
-                                                            {track.lastUpdate
-                                                                ? new Date(track.lastUpdate).toLocaleDateString()
-                                                                : 'Không rõ'}<br />
-                                                            {track.uploaderId !== null && (
-                                                                <>
-                                                                    <strong>Tình trạng:</strong>{' '}
-                                                                    {track.isApproved ? (
-                                                                        <span className="text-success">Đã duyệt</span>
-                                                                    ) : (
-                                                                        <span className="text-danger">Chưa duyệt</span>
-                                                                    )}<br />
-                                                                </>
-                                                            )}
-
-                                                            {track.uploaderId === null && (
-                                                                <>
-                                                                    <strong>Hiển thị:</strong>{' '}
-                                                                    {track.isPublic ? (
-                                                                        <span className="text-primary">Công khai</span>
-                                                                    ) : (
-                                                                        <span className="text-warning">VIP</span>
-                                                                    )}
-                                                                </>
-                                                            )}
-
-                                                        </Card.Text>
-                                                    </div>
-
-                                                    {/* Nút Play ở góc phải gần ảnh */}
-                                                    <div>
-                                                        <Button
-                                                            variant="danger"
-                                                            className="rounded-circle shadow"
-                                                            style={{ width: 50, height: 50 }}
-                                                            onClick={() => handlePlayMusic(track)}
-                                                        >
-                                                            <PlayFill size={25} />
-                                                        </Button>
-                                                    </div>
-                                                </div>
-
-                                                {/* Các nút còn lại ở dưới */}
-                                                <div className="d-flex justify-content-end gap-2 mt-3 flex-wrap">
-                                                    {track.uploaderId == null && (
-                                                        <Button
-                                                            variant={track.isPublic ? 'secondary' : 'info'}
-                                                            onClick={() => handleTogglePublic(track.trackId)}
-                                                        >
-                                                            {track.isPublic
-                                                                ? 'Chuyển sang nhạc VIP'
-                                                                : 'Chuyển sang nhạc thường'}
-                                                        </Button>
-                                                    )}
-
-                                                    {!track.isApproved ? (
-                                                        <Button
-                                                            variant="success"
-                                                            onClick={() => handleApprove(track.trackId)}
-                                                        >
-                                                            <CheckCircle /> Phê duyệt
-                                                        </Button>
-                                                    ) : (
-                                                        <Button
-                                                            variant="warning"
-                                                            onClick={() => handleApprove(track.trackId)}
-                                                        >
-                                                            <LockFill /> Khóa
-                                                        </Button>
-                                                    )}
-
-                                                    <Button
-                                                        variant="danger"
-                                                        onClick={() => handleDelete(track.trackId)}
-                                                    >
-                                                        <Trash /> Xóa
-                                                    </Button>
-                                                </div>
-                                            </Card.Body>
-                                        </Col>
-                                    </Row>
-                                </Card>
-                            ))
-                        )}
-                        <ToastContainer />
-                    </>
-                )}
+    if (loading) {
+        return (
+            <div className="admin-page d-flex justify-content-center align-items-center vh-100">
+                <Spinner animation="border" variant="light" />
             </div>
-            <Modal
-                show={showConfirmDeleteModal}
-                onHide={handleCancelDelete}
-                centered
-                dialogClassName="custom-modal-overlay"
-                backdrop={true}
-            >
-                <Modal.Header closeButton className="bg-dark text-white">
-                    <Modal.Title className="text-white">Xác nhận xóa bài nhạc</Modal.Title>
+        );
+    }
+
+    return (
+        <div className="admin-track-management">
+            <Container fluid className="admin-container">
+                <header className="admin-header">
+                    <h1 className="admin-title">🎵 Quản lý bài hát</h1>
+                    <div className="admin-stats">
+                        <span>Tổng: {stats.total}</span>
+                        <span>Đã duyệt: {stats.approved}</span>
+                        <span>Chờ duyệt: {stats.pending}</span>
+                    </div>
+                </header>
+
+                <section className="admin-filters">
+                    <Form.Select
+                        className="filter-select"
+                        value={filterStatus}
+                        onChange={e => setFilterStatus(e.target.value)}
+                    >
+                        <option value="all">Tất cả trạng thái</option>
+                        <option value="approved">Đã duyệt</option>
+                        <option value="pending">Chờ duyệt</option>
+                    </Form.Select>
+                    <Form.Control
+                        type="text"
+                        className="filter-input"
+                        placeholder="Tìm theo tên nghệ sĩ..."
+                        value={searchQuery}
+                        onChange={e => setSearchQuery(e.target.value)}
+                    />
+                </section>
+
+                <div className="admin-track-list-header">
+                    <span className="col-cover">#</span>
+                    <span className="col-title">Tiêu đề</span>
+                    <span className="col-genre">Thể loại</span>
+                    <span className="col-date">Ngày cập nhật</span>
+                    <span className="col-status">Trạng thái</span>
+                    <span className="col-actions text-end">Hành động</span>
+                </div>
+
+                <main className="admin-track-list">
+                    {filteredTracks.length === 0 ? (
+                        <div className="empty-state">
+                            <h4>Không có bài hát nào</h4>
+                            <p>Không tìm thấy bài hát nào phù hợp với bộ lọc hiện tại.</p>
+                        </div>
+                    ) : (
+                        filteredTracks.map(track => (
+                            <div key={track.trackId} className="admin-track-item">
+                                <div className="track-cover-wrapper">
+                                    <img src={track.imageBase64 || '/images/default-music.jpg'} alt={track.title} className="track-cover"/>
+                                    <button className="play-btn-overlay" onClick={() => handlePlayMusic(track)}>
+                                        <PlayFill size={20} />
+                                    </button>
+                                </div>
+
+                                <div className="track-info-main">
+                                    <h3 className="track-title">{track.title}</h3>
+                                    <a href={`/personal-profile/${track.uploaderId}`} className="track-artist-link">
+                                        {track.uploaderName || 'Musicresu'}
+                                    </a>
+                                </div>
+                                
+                                <div className="track-meta-details col-genre">
+                                    {track.genres?.join(', ') || 'Không xác định'}
+                                </div>
+                                
+                                <div className="track-meta-details col-date">
+                                    {track.lastUpdate ? new Date(track.lastUpdate).toLocaleDateString('vi-VN') : '—'}
+                                </div>
+                                
+                                <div className="track-meta-details col-status">
+                                    {track.uploaderId !== null ? (
+                                        <span className={`status-badge ${track.isApproved ? 'status-approved' : 'status-wait'}`}>
+                                            {track.isApproved ? 'Đã duyệt' : 'Chờ duyệt'}
+                                        </span>
+                                    ) : (
+                                        <span className={`status-badge ${track.isPublic ? 'status-public' : 'status-vip'}`}>
+                                            {track.isPublic ? 'Công khai' : 'VIP'}
+                                        </span>
+                                    )}
+                                </div>
+                                
+                                <div className="track-actions-group">
+                                    {track.uploaderId === null && (
+                                        <button className="action-btn-text" onClick={() => handleTogglePublic(track.trackId)}>
+                                            {track.isPublic ? 'Set VIP' : 'Set Public'}
+                                        </button>
+                                    )}
+                                    {track.uploaderId !== null && (
+                                         <button className="action-btn-text" onClick={() => handleApprove(track.trackId)}>
+                                            {track.isApproved ? 'Khóa' : 'Duyệt'}
+                                        </button>
+                                    )}
+                                    <button className="action-btn-icon" onClick={() => handleDelete(track.trackId)} title="Xóa">
+                                        <Trash size={18} />
+                                    </button>
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </main>
+                <ToastContainer />
+            </Container>
+
+            <Modal show={showConfirmDeleteModal} onHide={handleCancelDelete} centered className="admin-modal">
+                <Modal.Header closeButton>
+                    <Modal.Title>Xác nhận xóa</Modal.Title>
                 </Modal.Header>
-                <Modal.Body className="bg-dark text-white">
-                    Bạn có chắc chắn muốn xóa bài nhạc này?
+                <Modal.Body>
+                    Bạn có chắc chắn muốn xóa bài hát này? Hành động này không thể hoàn tác.
                 </Modal.Body>
-                <Modal.Footer className="bg-dark">
-                    <Button variant="secondary" onClick={handleCancelDelete}>Không</Button>
-                    <Button variant="danger" onClick={handleConfirmDelete}>Có</Button>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={handleCancelDelete}>Hủy</Button>
+                    <Button variant="danger" onClick={handleConfirmDelete}>Xóa</Button>
                 </Modal.Footer>
             </Modal>
-        </Container>
+        </div>
     );
 };
 

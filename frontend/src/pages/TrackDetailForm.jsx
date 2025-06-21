@@ -79,15 +79,20 @@ export default function TrackDetail() {
                             {/* Thông tin bên phải */}
                             <div className="flex-grow-1 d-flex flex-column justify-content-start">
                                 <div className="d-flex justify-content-between align-items-start">
-                                    <h2 className="fw-bold">{track.title}</h2>
+                                    <h2 className="fw-bold text-truncate" style={{ maxWidth: 'calc(100% - 80px)' }}>
+                                        {track.title}
+                                    </h2>
+
                                     <Button
                                         variant="danger"
-                                        className="rounded-circle shadow"
-                                        style={{ width: 50, height: 50 }}
-                                        onClick={() => handlePlayMusic()}
+                                        className="d-flex align-items-center justify-content-center"
+                                        style={{ width: '150px', height: '50px' }}
+                                        onClick={handlePlayMusic}
                                     >
-                                        <PlayFill size={25} />
+                                        🎧 Nghe
                                     </Button>
+
+
                                 </div>
 
                                 <div className="track-info mt-2">
@@ -110,6 +115,7 @@ export default function TrackDetail() {
                         </div>
                     </Card>
 
+                    {/* Bình luận */}
                     <div className="track-card mt-5">
                         <h5>Bình luận về bài hát</h5>
                         <CommentSection trackId={track.trackId} />

@@ -68,7 +68,6 @@ const Navbar = () => {
 
                     <div className="collapse navbar-collapse" id="navbarNav">
                         <ul className="navbar-nav mx-auto gap-3 d-flex align-items-center">
-                            {/* Nếu không phải admin */}
                             {(!user?.isLoggedIn || user.role !== "admin") && (
                                 <>
                                     <NavbarMenuUser
@@ -110,10 +109,9 @@ const Navbar = () => {
                                 </>
                             )}
 
-                            {/* Nếu là admin */}
                             {user?.isLoggedIn && user.role === "admin" && (
                                 <>
-                                    <NavbarMenuAdmin isActive={isActive} />
+                                    <NavbarMenuAdmin isActive={isActive} searchTerm={searchTerm} setSearchTerm={setSearchTerm} handleSearchSubmit={handleSearchSubmit} />
                                     <li className="nav-item dropdown">
                                         <NavbarUserDropdown user={user} onLogout={handleLogoutClick} />
                                     </li>

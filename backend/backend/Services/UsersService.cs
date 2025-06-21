@@ -376,5 +376,111 @@ namespace backend.Services
                 await _usersRepository.UpdateAsync(id, user);
             }
         }
+
+        public async Task<List<Users>> GetAllUsers()
+        {
+            try
+            {
+                return await _usersRepository.GetAllAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting all users: {ex.Message}");
+                return new List<Users>();
+            }
+        }
+
+        public async Task<List<UserAdminView>> GetAllUsersAdminView()
+        {
+            try
+            {
+                var users = await _usersRepository.GetAllAsync();
+                var result = new List<UserAdminView>();
+
+                foreach (var user in users)
+                {
+                    string? avatarUrl = !string.IsNullOrEmpty(user.AvatarUrl)
+                        ? $"/avatar/{user.AvatarUrl}"
+                        : null;
+
+                    result.Add(new UserAdminView
+                    {
+                        UserId = user.Id,
+                        Username = user.Username,
+                        Name = user.Name,
+                        Email = user.Email,
+                        PhoneNumber = user.PhoneNumber,
+                        DateOfBirth = user.DateOfBirth,
+                        Gender = user.Gender,
+                        Status = user.Status,
+                        CreatedAt = user.CreatedAt,
+                        LastLogin = user.LastLogin,
+                        AvatarUrl = avatarUrl,
+                        Role = user.Role
+                    });
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error getting all users admin view: {ex.Message}");
+                return new List<UserAdminView>();
+            }
+        }
+
+        public async Task<bool> UpdateUserStatus(string userId, bool status)
+        {
+            try
+            {
+                var user = await _usersRepository.GetByIdAsync(userId);
+                if (user != null)
+                {
+                    user.Status = status;
+                    await _usersRepository.UpdateAsync(userId, user);
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating user status: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateUserRole(string userId, string role)
+        {
+            try
+            {
+                var user = await _usersRepository.GetByIdAsync(userId);
+                if (user != null)
+                {
+                    user.Role = role;
+                    await _usersRepository.UpdateAsync(userId, user);
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating user role: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteUserAsync(string userId)
+        {
+            try
+            {
+                await _usersRepository.DeleteAsync(userId);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error deleting user: {ex.Message}");
+                return false;
+            }
+        }
     }
 }

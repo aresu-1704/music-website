@@ -14,5 +14,10 @@ namespace backend.Interfaces
         Task<bool> VerifyOnlyOtpAsync(string email, string otp);
         Task<bool> VerifyOtpAsync(string email, string otp, string newPassword);
         Task UpdateFollowCount(string id, int count);
+        Task<List<Users>> GetAllUsers();
+        Task<bool> UpdateUserStatus(string userId, bool status);
+        Task<bool> UpdateUserRole(string userId, string role);
+        Task<List<UserAdminView>> GetAllUsersAdminView();
+        Task<bool> DeleteUserAsync(string userId);
     }
 }

@@ -31,6 +31,7 @@ import MyTrackForm from "./pages/MyTrackForm";
 import LibraryForm from './pages/LibraryForm';
 import PlaylistDetailForm from './pages/PlaylistDetailForm';
 import FollowForm from './pages/FollowForm';
+import AccountManagementForm from './pages/AccountManagementForm';
 
 
 const queryClient = new QueryClient();
@@ -57,7 +58,7 @@ const App = () => (
                             <Route path="track/:trackId" element={<TrackDetail /> } />
                             <Route path="/personal-profile/:profileId" element={<PersonalProfileForm />} />
                             <Route path="/histories" element={<HistoryForm />} />
-                            <Route path="/track-management" element={<AdminTrackList /> } />
+                            <Route path="/track-management" element={<AdminTrackList />} />
                             <Route path="/likes" element={<FavoriteForm />} />
                             <Route path="/my-tracks/:profileId" element={<MyTrackForm />} />
                             <Route path={"/upload"} element={<UploadTrackForm />} />
@@ -65,6 +66,7 @@ const App = () => (
                             <Route path="/playlist/:playlistId" element={<PlaylistDetailForm />} />
                             <Route path={"/statistic"} element={<RevenueChartForm />} />
                             <Route path="/FollowingList/:userId" element={<FollowForm />} />
+                            <Route path="/account-mn" element={<AccountManagementForm />} />
                             <Route path="/*" element={<NotFoundForm />} />
                         </Routes>
                     </MainLayout>

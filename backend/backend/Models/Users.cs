@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace backend.Models
 {
+    [BsonIgnoreExtraElements]
     public class Users
     {
         [BsonId]
@@ -74,5 +75,41 @@ namespace backend.Models
 
         [BsonElement("expired_date")]
         public DateTime ExpiredDate { get; set; }
+    }
+
+    public class UpdateStatusRequest
+    {
+        public bool Status { get; set; }
+    }
+
+    public class UpdateRoleRequest
+    {
+        public string Role { get; set; }
+    }
+
+    public class UserAdminView
+    {
+        public string UserId { get; set; }
+        public string Username { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public DateTime DateOfBirth { get; set; }
+        public int Gender { get; set; }
+        public bool Status { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? LastLogin { get; set; }
+        public string AvatarUrl { get; set; }
+        public string Role { get; set; }
+    }
+
+    public class UpdateStatusResponse
+    {
+        public string Message { get; set; }
+    }
+
+    public class UpdateRoleResponse
+    {
+        public string Message { get; set; }
     }
 }

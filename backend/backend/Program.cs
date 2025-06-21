@@ -16,6 +16,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Diagnostics;
 using Microsoft.Extensions.FileProviders;
+using System.Security.Claims;
 
 void StartRedisIfNotRunning()
 {
@@ -181,6 +182,12 @@ builder.Services.AddAuthentication("Bearer")
         };
     });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminPolicy", policy =>
+        policy.RequireClaim("http://schemas.microsoft.com/ws/2008/06/identity/claims/role", "admin"));
+});
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
@@ -224,6 +231,26 @@ app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Middleware để xử lý role claims
+/*
+app.Use(async (context, next) =>
+{
+    if (context.User.Identity.IsAuthenticated)
+    {
+        var roleClaim = context.User.FindFirst("role");
+        if (roleClaim != null)
+        {
+            var identity = context.User.Identity as System.Security.Claims.ClaimsIdentity;
+            if (identity != null && !identity.HasClaim(System.Security.Claims.ClaimTypes.Role, roleClaim.Value))
+            {
+                identity.AddClaim(new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Role, roleClaim.Value));
+            }
+        }
+    }
+    await next();
+});
+*/
 
 // Map route cho controller
 app.MapControllers();

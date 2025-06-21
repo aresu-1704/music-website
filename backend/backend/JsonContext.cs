@@ -55,6 +55,19 @@ namespace backend
     [JsonSerializable(typeof(MessageResponse))]
     [JsonSerializable(typeof(FollowingDetailsListResponse))]
     [JsonSerializable(typeof(FollowingDetailsResponse))]
+    [JsonSerializable(typeof(AdminUserDto))]
+    [JsonSerializable(typeof(List<AdminUserDto>))]
+    [JsonSerializable(typeof(GetProfileDataResponse))]
+    [JsonSerializable(typeof(PersonalRequest))]
+    [JsonSerializable(typeof(PersonalAvatarRequest))]
+    [JsonSerializable(typeof(UserTracksResponse))]
+    [JsonSerializable(typeof(backend.Models.UserAdminView))]
+    [JsonSerializable(typeof(List<backend.Models.UserAdminView>))]
+    [JsonSerializable(typeof(backend.Models.UpdateStatusRequest))]
+    [JsonSerializable(typeof(backend.Models.UpdateRoleRequest))]
+    [JsonSerializable(typeof(backend.Models.UpdateStatusResponse))]
+    [JsonSerializable(typeof(backend.Models.UpdateRoleResponse))]
+    [JsonSerializable(typeof(object))]
 
     public partial class JsonContext : JsonSerializerContext
     {

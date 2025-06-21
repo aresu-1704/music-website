@@ -111,3 +111,94 @@ export function useUserProfile(userID) {
         refetchOnWindowFocus: false
     });
 }
+
+// Admin methods
+export const getAllUsers = async () => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:5270/api/Profile/admin/all-users`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch users');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        throw error;
+    }
+};
+
+export const updateUserStatus = async (userId, status) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:5270/api/Profile/admin/update-status/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status }),
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            return result;
+        } else {
+            const errorData = await response.text();
+            console.error('Server error:', errorData);
+            throw new Error(`Server error: ${response.status}`);
+        }
+    } catch (error) {
+        console.error('Error updating user status:', error);
+        throw error;
+    }
+};
+
+export const updateUserRole = async (userId, role) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`http://localhost:5270/api/Profile/admin/update-role/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ role }),
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            return result;
+        } else {
+            const errorData = await response.text();
+            console.error('Server error:', errorData);
+            throw new Error(`Server error: ${response.status}`);
+        }
+    } catch (error) {
+        console.error('Error updating user role:', error);
+        throw error;
+    }
+};
+
+export async function deleteUserFromDatabase(userId) {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`/api/profile/admin/delete/${userId}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        },
+    });
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || 'Lỗi xóa user');
+    }
+    return await response.json();
+}

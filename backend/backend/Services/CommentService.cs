@@ -24,24 +24,9 @@ namespace backend.Services
             foreach (var comment in comments)
             {
                 var user = await _userRepository.GetByIdAsync(comment.UserId);
-                string? avatarBase64 = null;
-                if (user != null)
-                {
-                    if (!string.IsNullOrEmpty(user.AvatarUrl))
-                    {
-                        try
-                        {
-                            byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(user.AvatarUrl);
-                            avatarBase64 = Convert.ToBase64String(imageBytes);
-                            avatarBase64 = $"data:image/jpeg;base64,{avatarBase64}";
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Lỗi khi đọc ảnh: {ex.Message}");
-                            avatarBase64 = null;
-                        }
-                    }
-                }
+                string? avatarBase64 = !string.IsNullOrEmpty(user.AvatarUrl)
+                    ? $"http://localhost:5270/avatar/{user.AvatarUrl}"
+                    : null;
 
                 result.Add(new CommentDetail
                 {

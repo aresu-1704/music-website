@@ -69,7 +69,9 @@ namespace backend.Models
         [BsonElement("role")]
         public string Role { get; set; } = "normal";
 
-        //Gói nâng cấp tài khoản
+        [BsonElement("follow_count")]
+        public int FollowCount { get; set; } = 0;
+
         [BsonElement("expired_date")]
         public DateTime ExpiredDate { get; set; }
     }

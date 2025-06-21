@@ -8,53 +8,36 @@ import '../styles/Discover.css';
 import '../styles/History.css';
 import { useNavigate } from "react-router-dom";
 
-const MusicCard = ({ title, subtitle, imageUrl, isPublic, onPlay, onInfo, onDelete }) => {
-    const [hover, setHover] = useState(false);
-
+const MusicCard = ({ title, artistName, subtitle, imageUrl, isPublic, onPlay, onInfo, onDelete }) => {
     return (
-        <div
-            className="music-card text-center text-white px-2"
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
-            style={{ cursor: 'pointer' }}
-        >
-            <div>
+        <div className="history-music-card">
+            <div className="history-card-image-container">
                 <img
                     src={imageUrl || '/images/default-music.jpg'}
                     alt={title}
-                    style={{
-                        width: '100%',
-                        height: '340px',
-                        objectFit: 'cover',
-                        borderRadius: '16px',
-                        boxShadow: '0 6px 15px rgba(0, 0, 0, 0.6)',
-                    }}
+                    className="history-card-image"
                 />
                 {!isPublic && (
-                    <Badge
-                        bg="warning"
-                        text="dark"
-                        className="position-absolute top-0 end-0 m-3"
-                    >
+                    <Badge bg="warning" text="dark" className="vip-badge">
                         👑 VIP
                     </Badge>
                 )}
+                <div className="history-card-overlay">
+                    <button className="icon-button" onClick={onInfo} title="Thông tin">
+                        <Info size={22} />
+                    </button>
+                    <button className="play-button" onClick={onPlay}>
+                        <PlayCircle size={50} />
+                    </button>
+                    <button className="icon-button" onClick={onDelete} title="Xóa khỏi lịch sử">
+                        <Trash2 size={22} />
+                    </button>
+                </div>
             </div>
-
-            <div className="music-icons-top d-flex gap-3">
-                <Info size={22} onClick={onInfo} />
-                <Trash2 size={22} onClick={onDelete} className="text-danger" />
-            </div>
-
-            <div className="music-card-overlay">
-                <button className="play-button border-0 bg-transparent" onClick={onPlay}>
-                    <PlayCircle size={60} color="white" />
-                </button>
-            </div>
-
-            <div className="mt-3">
-                <div className="fw-bold" style={{ fontSize: '16px' }}>{title}</div>
-                <div style={{ fontSize: '13px', color: '#ccc' }}>{subtitle}</div>
+            <div className="history-card-info">
+                <p className="history-card-title">{title}</p>
+                <p className="history-card-artist">{artistName ? artistName : 'Musicresu'}</p>
+                <p className="history-card-subtitle">{subtitle}</p>
             </div>
         </div>
     );
@@ -157,54 +140,55 @@ const HistoryForm = () => {
     return (
         <>
             {/* Modal xác nhận xóa */}
-            <Modal show={showConfirmModal} onHide={handleCancelDelete} centered dialogClassName={"custom-modal-overlay"} backdrop={true}>
+            <Modal show={showConfirmModal} onHide={handleCancelDelete} centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>Xác nhận xóa lịch sử</Modal.Title>
+                    <Modal.Title>Xác nhận xóa</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     {deleteTarget ? (
                         <>Bạn có chắc muốn xóa bài hát <b>{deleteTarget.title}</b> khỏi lịch sử không?</>
                     ) : (
-                        <>Bạn có chắc muốn <b>xóa tất cả lịch sử nghe nhạc</b> không?</>
+                        <>Bạn có chắc muốn <b>xóa tất cả lịch sử nghe nhạc</b> không? Thao tác này không thể hoàn tác.</>
                     )}
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={handleCancelDelete}>Hủy</Button>
-                    <Button variant="danger" onClick={handleConfirmDelete}>Đồng ý</Button>
+                    <Button variant="danger" onClick={handleConfirmDelete}>Xóa</Button>
                 </Modal.Footer>
             </Modal>
-            {isLoading && (
-                <Container fluid className="history-bg d-flex align-items-center justify-content-center" style={{ minHeight: '100vh' }}>
-                    <Spinner animation="border" role="status" />
-                </Container>
-            )}
 
-            {!isLoading && (
-                <Container fluid className="history-bg py-5" style={{ minHeight: '100vh' }}>
-                    <div className="history-header d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 px-2 px-md-4">
-                        <h2 className="history-title m-0 d-flex align-items-center gap-2">
-                            <Clock size={28} className="history-clock-icon me-2" />
-                            Lịch sử nghe nhạc
-                        </h2>
-                        {historyTracks.length > 0 && (
-                            <Button className="delete-all-btn" onClick={handleDeleteAll}>
-                                <Trash2 size={20} className="me-2" /> Xóa tất cả lịch sử
-                            </Button>
-                        )}
+            <div className="history-page">
+                {isLoading ? (
+                    <div className="loading-container">
+                        <Spinner animation="border" role="status" />
                     </div>
-
-                    {error && (
-                        <div className="alert alert-danger" role="alert">
-                            {error}
+                ) : (
+                    <Container fluid className="history-container py-4">
+                        <div className="history-header">
+                            <h1 className="history-title">
+                                <Clock size={32} className="history-clock-icon" />
+                                Lịch sử nghe nhạc
+                            </h1>
+                            {historyTracks.length > 0 && (
+                                <Button variant="outline-danger" className="delete-all-btn" onClick={handleDeleteAll}>
+                                    <Trash2 size={18} /> Xóa tất cả
+                                </Button>
+                            )}
                         </div>
-                    )}
 
-                    {!error && historyTracks.length > 0 ? (
-                        <div className="history-grid-section">
-                            {historyTracks.map((track) => (
-                                <div key={track.trackId} className="history-grid-item">
+                        {error && (
+                            <div className="alert alert-danger" role="alert">
+                                {error}
+                            </div>
+                        )}
+
+                        {!error && historyTracks.length > 0 ? (
+                            <div className="history-grid">
+                                {historyTracks.map((track) => (
                                     <MusicCard
+                                        key={track.trackId}
                                         title={track.title}
+                                        artistName={track.artistName ? track.artistName : 'Musicresu'}
                                         subtitle={timeAgo(track.lastPlay)}
                                         imageUrl={track.imageUrl}
                                         isPublic={track.isPublic}
@@ -215,18 +199,18 @@ const HistoryForm = () => {
                                         onInfo={() => navigate(`/track/${track.trackId}`)}
                                         onDelete={() => handleDeleteTrack(track)}
                                     />
-                                </div>
-                            ))}
-                        </div>
-                    ) : !error && (
-                        <div className="history-empty-state text-center text-white mt-5">
-                            <img src="/images/default-music.jpg" alt="No history" className="empty-history-img mb-4" />
-                            <h3 className="mb-2">Chưa có lịch sử nghe nhạc</h3>
-                            <p className="mb-0">Hãy bắt đầu nghe nhạc để tạo lịch sử của bạn</p>
-                        </div>
-                    )}
-                </Container>
-            )}
+                                ))}
+                            </div>
+                        ) : !error && (
+                            <div className="history-empty-state text-center">
+                                <img src="/images/default-music.jpg" alt="No history" className="empty-history-img mb-4" />
+                                <h3>Chưa có lịch sử nghe nhạc</h3>
+                                <p>Hãy bắt đầu khám phá và nghe nững bài hát bạn yêu thích.</p>
+                            </div>
+                        )}
+                    </Container>
+                )}
+            </div>
         </>
     );
 };

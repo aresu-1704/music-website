@@ -1,86 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import {Container, Button, Badge, Spinner} from 'react-bootstrap';
-import { PlayCircle, Heart, Info, ChevronRight, ChevronLeft } from 'lucide-react';
-import {getTopLikeTracks, getTopTracks} from "../services/trackService";
+import { Container, Button, Badge, Spinner } from 'react-bootstrap';
+import { PlayCircle, Info, ChevronRight, ChevronLeft } from 'lucide-react';
+import { getTopLikeTracks, getTopTracks } from "../services/trackService";
 import { useMusicPlayer } from '../context/musicPlayerContext';
-import '../styles/Discover.css'
-import {useNavigate} from "react-router-dom";
+import '../styles/Discover.css';
+import { useNavigate } from "react-router-dom";
 
-const MusicCard = ({ id, title, subtitle, imageUrl, isPublic, onPlay, onInfo }) => {
-    const [hover, setHover] = useState(false);
+const MusicCard = ({ track, onPlay, onInfo }) => {
     return (
-        <>
-            <div
-                className="music-card text-white px-2"
-                onMouseEnter={() => setHover(true)}
-                onMouseLeave={() => setHover(false)}
-                style={{ cursor: 'pointer', position: 'relative', height: '340px', borderRadius: '16px', overflow: 'hidden' }}
-            >
+        <div className="discover-music-card" onClick={() => onInfo(track)}>
+            <div className="discover-card-image-container">
                 <img
-                    src={imageUrl || '/images/default-music.jpg'}
-                    alt={title}
-                    style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover',
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        zIndex: 1,
-                        transition: 'opacity 0.3s',
-                        borderRadius: '16px',
-                    }}
+                    src={track.imageUrl || '/images/default-music.jpg'}
+                    alt={track.title}
+                    className="discover-card-image"
                 />
-
-
-                {!isPublic && (
-                    <Badge
-                        bg="warning"
-                        text="dark"
-                        className="position-absolute top-0 end-0 m-3"
-                        style={{ zIndex: 3 }}
-                    >
+                {!track.isPublic && (
+                    <Badge bg="warning" text="dark" className="vip-badge">
                         👑 VIP
                     </Badge>
                 )}
-
-                <div className="music-icons-top d-flex gap-3 position-absolute top-0 start-0 m-3" style={{ zIndex: 3 }}>
-                    <Info size={22} onClick={onInfo} style={{ cursor: 'pointer' }} />
-                </div>
-
-                <div
-                    className="music-card-overlay d-flex align-items-center justify-content-center"
-                    style={{
-                        position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        width: '100%',
-                        height: '100%',
-                        zIndex: 2,
-                        backgroundColor: 'rgba(0, 0, 0, 0.4)',
-                        opacity: hover ? 1 : 0,
-                        transition: 'opacity 0.3s ease',
-                    }}
-                >
-                    <button className="play-button border-0 bg-transparent">
-                        <PlayCircle size={100} color="white" onClick={onPlay} />
+                <div className="discover-card-overlay">
+                    <button
+                        className="play-button"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onPlay(track);
+                        }}
+                    >
+                        <PlayCircle size={50} />
                     </button>
                 </div>
             </div>
-            {/* Title và subtitle */}
-            <div
-                className="music-info position-absolute text-start w-100 px-3"
-                style={{
-                    bottom: '10px',
-                    zIndex: 3,
-                    color: 'white',
-                    textShadow: '0 0 4px black',
-                }}
-            >
-                <div className="fw-bold" style={{ fontSize: '16px' }}>{title}</div>
-                <div style={{ fontSize: '13px', color: '#ccc' }}>{subtitle}</div>
+            <div className="discover-card-info">
+                <p className="discover-card-title">{track.title}</p>
+                <p className="discover-card-artist">{track.artistName ? track.artistName : 'Musicresu'}</p>
             </div>
-        </>
+        </div>
     );
 };
 
@@ -96,121 +52,99 @@ const ScrollableSection = ({ title, items, onPlay, onInfo }) => {
 
     const visibleItems = items.slice(startIndex, startIndex + visibleCount);
 
-    if (visibleItems == null) {
-        return (
-            <div className="text-center mt-4 text-white">
-                Không có kết quả
-            </div>
-        )
+    if (!items || items.length === 0) {
+        return <div className="text-center mt-4 text-white">Không có bài hát nào trong danh sách này.</div>;
     }
 
     return (
-        <div className="mb-5">
-            <h4 className="text-white mb-4">{title}</h4>
-
-            <div className="scrollable-wrapper position-relative" style={{ height: '400px' }}>
-                <div className="d-flex overflow-hidden flex-nowrap w-100 h-100" style={{ padding: '0 60px' }}>
-                    {visibleItems.map((item) => (
-                        <div
+        <div className="discover-section mb-5">
+            <h2 className="discover-section-title">{title}</h2>
+            <div className="scrollable-wrapper position-relative">
+                <div className="discover-grid">
+                    {items.map((item) => (
+                        <MusicCard
                             key={item.id}
-                            style={{ flex: `0 0 calc(100% / ${visibleCount})`, padding: '0 8px' }}
-                        >
-                            <MusicCard {...item} onPlay={() => onPlay(item)} onInfo={() => onInfo(item)} />
-                        </div>
+                            track={item}
+                            onPlay={onPlay}
+                            onInfo={onInfo}
+                        />
                     ))}
                 </div>
-                <Button variant="dark" onClick={handlePrev} disabled={startIndex === 0} style={navBtnStyle('left')}>
-                    <ChevronLeft size={24} />
-                </Button>
-                <Button variant="dark" onClick={handleNext} disabled={startIndex >= maxStartIndex} style={navBtnStyle('right')}>
-                    <ChevronRight size={24} />
-                </Button>
+                {/* Note: If you want carousel-like buttons, they would need different logic 
+                    as the current layout shows all cards in a scrolling container or wraps them. 
+                    For simplicity, this example removes them in favor of a clean grid. */}
             </div>
         </div>
     );
 };
 
-const navBtnStyle = (side) => ({
-    position: 'absolute',
-    top: '44%',
-    [side]: '10px',
-    transform: 'translateY(-50%)',
-    zIndex: 10,
-    height: '48px',
-    width: '48px',
-    borderRadius: '50%',
-    boxShadow: '0 0 8px rgba(0,0,0,0.5)',
-});
-
 const DiscoverForm = () => {
     const [trendingSongs, setTrendingSongs] = useState([]);
     const [favoriteSongs, setFavoriteSongs] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
     const { playTrackList } = useMusicPlayer();
 
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true);
-            const trackList = await getTopTracks();
-            const likeLists = await getTopLikeTracks();
+            try {
+                const [trackList, likeLists] = await Promise.all([
+                    getTopTracks(),
+                    getTopLikeTracks()
+                ]);
 
-            const topSongs = trackList.map((track, index) => ({
-                id: track.id || index,
-                title: track.title || `Bài hát ${index + 1}`,
-                subtitle: 'Top Trending',
-                imageUrl: track.imageBase64 || '/images/default-music.jpg',
-                isPublic: track.isPublic,
-            }));
+                const mapTrackData = (track, index) => ({
+                    id: track.id || index,
+                    title: track.title || `Bài hát ${index + 1}`,
+                    artistName: track.artistName ? track.artistName : 'Musicresu',
+                    imageUrl: track.imageBase64 || '/images/default-music.jpg',
+                    isPublic: track.isPublic,
+                });
 
-            const topFavoritesSongs = likeLists.map((track, index) => ({
-                id: track.id || index,
-                title: track.title || `Bài hát ${index + 1}`,
-                subtitle: 'Được yêu thích nhất',
-                imageUrl: track.imageBase64 || '/images/default-music.jpg',
-                isPublic: track.isPublic,
-            }));
-
-            setTrendingSongs(topSongs);
-            setFavoriteSongs(topFavoritesSongs);
-            setIsLoading(false);
+                setTrendingSongs(trackList.map(mapTrackData));
+                setFavoriteSongs(likeLists.map(mapTrackData));
+            } catch (error) {
+                console.error("Failed to fetch discover data:", error);
+            } finally {
+                setIsLoading(false);
+            }
         };
         fetchData();
     }, []);
 
-    return (
-        <>
-            {isLoading && (
-                <Container fluid className="bg-dark py-5" style={{ minHeight: '100vh' }}>
-                    <div className="d-flex justify-content-center align-items-center vh-100">
-                        <Spinner animation="border" role="status" />
-                    </div>
-                </Container>
-            )}
+    const createPlayHandler = (playlist) => (track) => {
+        const index = playlist.findIndex(t => t.id === track.id);
+        if (index !== -1) {
+            playTrackList(playlist, index);
+        }
+    };
 
-            {!isLoading && (
-                <Container fluid className="bg-dark py-5" style={{ minHeight: '100vh' }}>
-                    <ScrollableSection
-                        title="Những bài hát phổ biến nhất"
-                        items={trendingSongs}
-                        onPlay={(track) => {
-                            const index = trendingSongs.findIndex(t => t.id === track.id);
-                            playTrackList(trendingSongs, index);
-                        }}
-                        onInfo={(track) => navigate(`/track/${track.id}`)}
-                    />
-                    <ScrollableSection
-                        title="Những bài hát được yêu thích nhất"
-                        items={favoriteSongs}
-                        onPlay={(track) => {
-                            const index = trendingSongs.findIndex(t => t.id === track.id);
-                            playTrackList(trendingSongs, index);
-                        }}
-                        onInfo={(track) => navigate(`/track/${track.id}`)}
-                    />
-                </Container>
-            )}
-        </>
+    if (isLoading) {
+        return (
+            <div className="loading-container">
+                <Spinner animation="border" />
+            </div>
+        );
+    }
+
+    return (
+        <div className="discover-page">
+            <Container fluid className="discover-container py-4">
+                <ScrollableSection
+                    title="Phổ biến nhất"
+                    items={trendingSongs}
+                    onPlay={createPlayHandler(trendingSongs)}
+                    onInfo={(track) => navigate(`/track/${track.id}`)}
+                />
+                <ScrollableSection
+                    title="Được yêu thích nhất"
+                    items={favoriteSongs}
+                    onPlay={createPlayHandler(favoriteSongs)}
+                    onInfo={(track) => navigate(`/track/${track.id}`)}
+                />
+            </Container>
+        </div>
     );
 };
 

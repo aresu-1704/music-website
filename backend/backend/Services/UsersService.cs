@@ -154,7 +154,7 @@ namespace backend.Services
             }
         }
 
-        public async Task<string> UpdatePersonalData(string userID, string fullname, int gender, DateTime dateOfBirth, string avtUrl = null)
+        public async Task<string> UpdatePersonalData(string userID, string fullname, int gender, DateTime dateOfBirth, string avtUrl = null, string address = null, bool? isEmailVerified = null)
         {
             var user = await _usersRepository.GetByIdAsync(userID);
             if (user != null)
@@ -165,10 +165,16 @@ namespace backend.Services
                 if (avtUrl != null)
                 {
                     user.AvatarUrl = avtUrl;
-                }                
-
+                }
+                if (address != null)
+                {
+                    user.Address = address;
+                }
+                if (isEmailVerified.HasValue)
+                {
+                    user.IsEmailVerified = isEmailVerified.Value;
+                }
                 await _usersRepository.UpdateAsync(userID, user);
-
                 return "Success";
             }
             else
@@ -375,6 +381,22 @@ namespace backend.Services
                 
                 await _usersRepository.UpdateAsync(id, user);
             }
+        }
+
+        public async Task<bool> ChangePassword(string userId, string oldPassword, string newPassword)
+        {
+            var user = await _usersRepository.GetByIdAsync(userId);
+            if (user == null)
+                return false;
+            var hashOld = HashingUtil.HashPassword(oldPassword, user.Salt);
+            if (hashOld != user.Password)
+                return false;
+            var newSalt = HashingUtil.GenerateSalt();
+            var newHash = HashingUtil.HashPassword(newPassword, newSalt);
+            user.Password = newHash;
+            user.Salt = newSalt;
+            await _usersRepository.UpdateAsync(userId, user);
+            return true;
         }
     }
 }

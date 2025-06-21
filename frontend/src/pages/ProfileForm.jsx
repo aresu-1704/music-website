@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
-import {Container, Nav, Tab, Row, Col, Spinner, Button, Alert, Card} from 'react-bootstrap';
+import {Container, Nav, Tab, Row, Col, Spinner, Button, Alert, Card, Modal} from 'react-bootstrap';
 import { Person, GeoAlt, ShieldLock, Link45deg } from 'react-bootstrap-icons';
 import '../styles/Profile.css'
 import {useNavigate, useParams} from "react-router-dom";
 import { queryClient } from "../context/queryClientContext";
-import { useUserProfile, updatePersonalData, updatePersonalDataWithAvatar } from "../services/profileService";
+import { useUserProfile, updatePersonalData, updatePersonalDataWithAvatar, updateAddress, sendVerifyEmailOtp, verifyEmailOtp } from "../services/profileService";
 import { toast, ToastContainer } from "react-toastify";
 import {Field, Form, Formik} from "formik";
 import * as Yup from 'yup';
@@ -18,6 +18,32 @@ export default function ProfileForm() {
     const [ isSubmitting, setSubmitting ] = useState(false);
     const { user, logout } = useAuth();
     const handleSessionOut = useLoginSessionOut()
+    const [showOtpModal, setShowOtpModal] = useState(false);
+    const [otpValue, setOtpValue] = useState('');
+    const [pendingVerify, setPendingVerify] = useState(false);
+    const [sendingOtp, setSendingOtp] = useState(false);
+    const [otpCountdown, setOtpCountdown] = useState(0);
+    const otpTimerRef = React.useRef();
+    const [isLoadingAddress, setIsLoadingAddress] = useState(false);
+    const [isLoadingPassword, setIsLoadingPassword] = useState(false);
+    const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '']);
+    const otpInputRefs = React.useRef([]);
+
+    // Đếm ngược gửi lại OTP
+    React.useEffect(() => {
+        if (otpCountdown > 0) {
+            otpTimerRef.current = setInterval(() => {
+                setOtpCountdown((prev) => {
+                    if (prev <= 1) {
+                        clearInterval(otpTimerRef.current);
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+        }
+        return () => clearInterval(otpTimerRef.current);
+    }, [otpCountdown]);
 
     if (isLoading) {
         return (
@@ -50,6 +76,8 @@ export default function ProfileForm() {
         avatarBase64: userData.avatarBase64 || '',
         avatarFile: null,
         avatarPreview: '',
+        isEmailVerified: userData.isEmailVerified || false,
+        address: userData.address || '',
     };
 
     const profileSchema = Yup.object().shape({
@@ -121,6 +149,33 @@ export default function ProfileForm() {
         }
     }
 
+    const handleOtpChange = (e, idx) => {
+        const value = e.target.value.replace(/[^0-9]/g, '');
+        if (!value) {
+            const newDigits = [...otpDigits];
+            newDigits[idx] = '';
+            setOtpDigits(newDigits);
+            if (idx > 0) otpInputRefs.current[idx - 1].focus();
+            return;
+        }
+        if (value.length === 1) {
+            const newDigits = [...otpDigits];
+            newDigits[idx] = value;
+            setOtpDigits(newDigits);
+            if (idx < 5) otpInputRefs.current[idx + 1].focus();
+        }
+    };
+
+    const handleOtpPaste = (e) => {
+        const paste = e.clipboardData.getData('text').replace(/[^0-9]/g, '').slice(0, 6);
+        if (paste.length) {
+            const arr = paste.split('');
+            setOtpDigits(arr.concat(Array(6 - arr.length).fill('')));
+            if (arr.length < 6) otpInputRefs.current[arr.length].focus();
+            else otpInputRefs.current[5].blur();
+        }
+    };
+
     return (
         <>
             <Container fluid className="account-settings px-5 pt-5">
@@ -139,11 +194,11 @@ export default function ProfileForm() {
                                         <GeoAlt className="me-2" /> Địa chỉ liên lạc
                                     </Nav.Link>
                                 </Nav.Item>
-                                <Nav.Item>
+                                {/* <Nav.Item>
                                     <Nav.Link eventKey="social">
                                         <Link45deg className="me-2" /> Liên kết mạng xã hội
                                     </Nav.Link>
-                                </Nav.Item>
+                                </Nav.Item> */}
                                 {user.role !== "admin" && user.role !== "normal" && user.role !== "artist" && (
                                     <Nav.Item>
                                         <Nav.Link eventKey="tier">
@@ -269,8 +324,158 @@ export default function ProfileForm() {
                                         )}
                                     </Card>
                                 </Tab.Pane>
-                                <Tab.Pane eventKey="contact">[Form Địa chỉ liên lạc]</Tab.Pane>
-                                <Tab.Pane eventKey="social">[Liên kết mạng xã hội]</Tab.Pane>
+                                <Tab.Pane eventKey="contact">
+                                    <Card className="bg-dark text-light shadow-lg p-4 rounded-4">
+                                        <h2 className="mb-3 border-bottom pb-2">📧 Địa chỉ liên lạc</h2>
+                                        {isLoadingAddress && (
+                                            <div className="d-flex justify-content-center align-items-center">
+                                                <Spinner animation="border" role="status" />
+                                            </div>
+                                        )}
+                                        {!isLoadingAddress && (
+                                        <Formik
+                                            initialValues={{
+                                                email: userData.email || '',
+                                                isEmailVerified: userData.isEmailVerified || false,
+                                                address: userData.address || '',
+                                            }}
+                                            enableReinitialize
+                                            onSubmit={async (values, { setSubmitting }) => {
+                                                setIsLoadingAddress(true);
+                                                setSubmitting(true);
+                                                const result = await updateAddress(userId, values.address);
+                                                if (result === 'Thành công') {
+                                                    toast.success('Cập nhật địa chỉ thành công!', { position: 'top-center', autoClose: 2000 });
+                                                    await refetch();
+                                                } else {
+                                                    toast.error(result || 'Lỗi không xác định', { position: 'top-center', autoClose: 2000 });
+                                                }
+                                                setTimeout(() => {
+                                                    setIsLoadingAddress(false);
+                                                    setSubmitting(false);
+                                                }, 2500);
+                                            }}
+                                        >
+                                            {({ values, setFieldValue, isSubmitting }) => (
+                                                <Form>
+                                                    <div className="mb-3">
+                                                        <label>Email</label>
+                                                        <div className="d-flex flex-row align-items-center gap-2">
+                                                            <Field name="email" type="text" className="form-control" readOnly />
+                                                            {values.isEmailVerified ? (
+                                                                <span className="badge bg-success">Đã xác minh</span>
+                                                            ) : (
+                                                                <button
+                                                                    type="button"
+                                                                    className="btn btn-danger form-action-btn"
+                                                                    disabled={sendingOtp || showOtpModal || otpCountdown > 0}
+                                                                    onClick={async () => {
+                                                                        setSendingOtp(true);
+                                                                        const sendRes = await sendVerifyEmailOtp(userId);
+                                                                        if (sendRes === 'Đã gửi OTP') {
+                                                                            setShowOtpModal(true);
+                                                                            setOtpCountdown(60);
+                                                                        } else {
+                                                                            toast.error(sendRes, { position: 'top-center', autoClose: 2000 });
+                                                                        }
+                                                                        setSendingOtp(false);
+                                                                    }}
+                                                                >
+                                                                    {otpCountdown > 0 ? `Gửi lại OTP (${otpCountdown}s)` : 'Xác minh'}
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    <div className="mb-3">
+                                                        <label>Địa chỉ</label>
+                                                        <div className="d-flex flex-row align-items-center gap-2">
+                                                            <Field name="address" type="text" className="form-control" placeholder="Nhập địa chỉ liên lạc..." />
+                                                            <button type="submit" className="btn btn-danger form-action-btn" disabled={isSubmitting}>Lưu địa chỉ</button>
+                                                        </div>
+                                                    </div>
+                                                </Form>
+                                            )}
+                                        </Formik>
+                                        )}
+                                        {/* Modal nhập OTP xác minh email */}
+                                        <Modal show={showOtpModal} onHide={() => { setShowOtpModal(false); setOtpValue(''); setOtpCountdown(0); setOtpDigits(['', '', '', '', '', '']); }} centered>
+                                            <Modal.Header closeButton className="bg-dark text-white">
+                                                <Modal.Title className="text-white">Nhập mã OTP xác minh email</Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body className="bg-dark text-white">
+                                                <div className="mb-3 text-center">
+                                                    <label className="mb-2">Nhập mã OTP</label>
+                                                    <div style={{ display: 'flex', justifyContent: 'center', gap: 10 }} onPaste={handleOtpPaste}>
+                                                        {otpDigits.map((digit, idx) => (
+                                                            <input
+                                                                key={idx}
+                                                                type="text"
+                                                                inputMode="numeric"
+                                                                maxLength={1}
+                                                                className="otp-input-box"
+                                                                style={{
+                                                                    width: 44, height: 54, textAlign: 'center', fontSize: 28,
+                                                                    borderRadius: 10, border: '2px solid #444', background: '#222', color: '#fff', outline: 'none'
+                                                                }}
+                                                                value={digit}
+                                                                onChange={e => handleOtpChange(e, idx)}
+                                                                ref={el => otpInputRefs.current[idx] = el}
+                                                                onFocus={e => e.target.select()}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                                <div className="text-muted small mb-2">OTP sẽ hết hạn sau 5 phút. Nếu chưa nhận được, hãy thử gửi lại sau 60 giây.</div>
+                                                <Button
+                                                    variant="outline-warning"
+                                                    className="mb-2"
+                                                    disabled={otpCountdown > 0 || sendingOtp}
+                                                    onClick={async () => {
+                                                        setSendingOtp(true);
+                                                        const sendRes = await sendVerifyEmailOtp(userId);
+                                                        if (sendRes === 'Đã gửi OTP') {
+                                                            toast.success('Đã gửi lại OTP!', { position: 'top-center', autoClose: 2000 });
+                                                            setOtpCountdown(60);
+                                                        } else {
+                                                            toast.error(sendRes, { position: 'top-center', autoClose: 2000 });
+                                                        }
+                                                        setSendingOtp(false);
+                                                    }}
+                                                >
+                                                    {otpCountdown > 0 ? `Gửi lại OTP (${otpCountdown}s)` : 'Gửi lại OTP'}
+                                                </Button>
+                                            </Modal.Body>
+                                            <Modal.Footer className="bg-dark">
+                                                <Button variant="secondary" onClick={() => { setShowOtpModal(false); setOtpValue(''); setOtpCountdown(0); setOtpDigits(['', '', '', '', '', '']); }}>
+                                                    Đóng
+                                                </Button>
+                                                <Button
+                                                    variant="danger"
+                                                    disabled={pendingVerify || otpDigits.some(d => d === '')}
+                                                    onClick={async () => {
+                                                        setPendingVerify(true);
+                                                        const otpValue = otpDigits.join('');
+                                                        const verifyRes = await verifyEmailOtp(userId, otpValue);
+                                                        if (verifyRes === 'Xác minh thành công') {
+                                                            toast.success('Xác minh email thành công!', { position: 'top-center', autoClose: 2000 });
+                                                            setShowOtpModal(false);
+                                                            setOtpValue('');
+                                                            setOtpCountdown(0);
+                                                            setOtpDigits(['', '', '', '', '', '']);
+                                                            await refetch();
+                                                        } else {
+                                                            toast.error(verifyRes, { position: 'top-center', autoClose: 2000 });
+                                                        }
+                                                        setPendingVerify(false);
+                                                    }}
+                                                >
+                                                    Xác nhận
+                                                </Button>
+                                            </Modal.Footer>
+                                        </Modal>
+                                    </Card>
+                                </Tab.Pane>
+                                {/* <Tab.Pane eventKey="social">[Liên kết mạng xã hội]</Tab.Pane> */}
                                 <Tab.Pane eventKey="tier">
                                     <Card className="bg-dark text-light shadow-lg p-4 rounded-4">
                                         <h2 className="mb-4 border-bottom pb-2">✨ Quản lý gói nâng cấp</h2>
@@ -327,7 +532,83 @@ export default function ProfileForm() {
 
                                 </Tab.Pane>
                                 <Tab.Pane eventKey="security">
-
+                                    <Card className="bg-dark text-light shadow-lg p-4 rounded-4">
+                                        <h2 className="mb-3 border-bottom pb-2">🔒 Mật khẩu & Bảo mật</h2>
+                                        {isLoadingPassword && (
+                                            <div className="d-flex justify-content-center align-items-center">
+                                                <Spinner animation="border" role="status" />
+                                            </div>
+                                        )}
+                                        {!isLoadingPassword && (
+                                        <Formik
+                                            initialValues={{
+                                                oldPassword: '',
+                                                newPassword: '',
+                                                confirmPassword: ''
+                                            }}
+                                            validate={values => {
+                                                const errors = {};
+                                                if (!values.oldPassword) errors.oldPassword = 'Nhập mật khẩu cũ';
+                                                if (!values.newPassword) errors.newPassword = 'Nhập mật khẩu mới';
+                                                if (values.newPassword && values.newPassword.length < 8) errors.newPassword = 'Mật khẩu mới phải >= 8 ký tự';
+                                                if (values.newPassword !== values.confirmPassword) errors.confirmPassword = 'Mật khẩu xác nhận không khớp';
+                                                return errors;
+                                            }}
+                                            onSubmit={async (values, { setSubmitting, resetForm }) => {
+                                                setIsLoadingPassword(true);
+                                                setSubmitting(true);
+                                                const res = await fetch(`http://localhost:5270/api/Profile/change-password/${userId}`, {
+                                                    method: 'POST',
+                                                    headers: {
+                                                        'Content-Type': 'application/json',
+                                                        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                                                    },
+                                                    body: JSON.stringify({
+                                                        oldPassword: values.oldPassword,
+                                                        newPassword: values.newPassword
+                                                    })
+                                                });
+                                                if (res.ok) {
+                                                    toast.success('Đổi mật khẩu thành công!', { position: 'top-center', autoClose: 2000 });
+                                                    resetForm();
+                                                } else {
+                                                    const msg = await res.text();
+                                                    toast.error(msg || 'Đổi mật khẩu thất bại', { position: 'top-center', autoClose: 2000 });
+                                                }
+                                                setTimeout(() => {
+                                                    setIsLoadingPassword(false);
+                                                    setSubmitting(false);
+                                                }, 2500);
+                                            }}
+                                        >
+                                            {({ errors, touched, isSubmitting }) => (
+                                                <Form>
+                                                    <div className="mb-3">
+                                                        <label>Mật khẩu cũ</label>
+                                                        <Field name="oldPassword" type="password" className="form-control" />
+                                                        {errors.oldPassword && touched.oldPassword && <div className="text-danger small">{errors.oldPassword}</div>}
+                                                    </div>
+                                                    <div className="mb-3">
+                                                        <label>Mật khẩu mới</label>
+                                                        <Field name="newPassword" type="password" className="form-control" />
+                                                        {errors.newPassword && touched.newPassword && <div className="text-danger small">{errors.newPassword}</div>}
+                                                    </div>
+                                                    <div className="mb-3">
+                                                        <label>Xác nhận mật khẩu mới</label>
+                                                        <Field name="confirmPassword" type="password" className="form-control" />
+                                                        {errors.confirmPassword && touched.confirmPassword && <div className="text-danger small">{errors.confirmPassword}</div>}
+                                                    </div>
+                                                    <div className="d-flex justify-content-between align-items-center mt-4">
+                                                        <button type="button" className="btn btn-link text-warning p-0" onClick={() => window.location.href='/forgot-password'}>
+                                                            Quên mật khẩu?
+                                                        </button>
+                                                        <button type="submit" className="btn btn-danger" disabled={isSubmitting}>Đổi mật khẩu</button>
+                                                    </div>
+                                                </Form>
+                                            )}
+                                        </Formik>
+                                        )}
+                                    </Card>
                                 </Tab.Pane>
                             </Tab.Content>
                         </Col>

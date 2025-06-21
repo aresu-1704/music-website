@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Card, Button, Modal, Form, Badge, Spinner, Alert } from 'react-bootstrap';
-import { Plus, Pencil, Trash, PlayFill, Search, X } from 'react-bootstrap-icons';
+import { Container, Row, Col, Button, Modal, Form, Badge, Spinner, Alert } from 'react-bootstrap';
+import { Plus, Pencil, Trash, Search } from 'lucide-react';
 import { useAuth } from '../context/authContext';
 import { useMusicPlayer } from '../context/musicPlayerContext';
 import { getUserPlaylists, createPlaylist, deletePlaylist, getUserPlaylistLimits } from '../services/playlistService';
@@ -10,6 +10,58 @@ import { addTrackToPlaylist } from '../services/playlistService';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/Library.css';
+
+const PlaylistCard = ({ playlist, onAddTrack, onEdit, onDelete }) => (
+    <div className="playlist-card" onClick={() => onEdit(playlist)}>
+        <div className="playlist-card-image-container">
+            <img
+                src={playlist.imageBase64 || '/images/default-music.jpg'}
+                alt={playlist.name}
+                className="playlist-card-image"
+            />
+            <div className="playlist-card-overlay">
+                <button
+                    className="icon-button add-track-btn"
+                    title="Thêm bài hát"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onAddTrack(playlist);
+                    }}
+                >
+                    <Plus size={24} />
+                </button>
+            </div>
+        </div>
+        <div className="playlist-card-info">
+            <h5 className="playlist-card-title">{playlist.name}</h5>
+            <p className="playlist-card-track-count">{playlist.trackCount} bài hát</p>
+            <div className="playlist-card-actions">
+                <Button
+                    variant="outline-light"
+                    size="sm"
+                    className="action-btn"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onEdit(playlist);
+                    }}
+                >
+                    <Pencil size={14} />
+                </Button>
+                <Button
+                    variant="outline-danger"
+                    size="sm"
+                    className="action-btn"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(playlist.id);
+                    }}
+                >
+                    <Trash size={14} />
+                </Button>
+            </div>
+        </div>
+    </div>
+);
 
 const LibraryForm = () => {
     const { userId } = useParams();
@@ -128,8 +180,7 @@ const LibraryForm = () => {
         }
     };
 
-    const handlePlayPlaylist = (playlist) => {
-        // Chuyển hướng đến trang chi tiết playlist để phát nhạc
+    const handleEditPlaylist = (playlist) => {
         navigate(`/playlist/${playlist.id}`);
     };
 
@@ -154,11 +205,11 @@ const LibraryForm = () => {
 
     const getRoleDisplay = (role) => {
         switch (role) {
-            case 'normal': return { text: '🆓 Normal', color: 'secondary' };
-            case 'Vip': return { text: '⭐ VIP', color: 'warning' };
-            case 'Premium': return { text: '💎 Premium', color: 'info' };
-            case 'admin': return { text: '👑 Admin', color: 'danger' };
-            default: return { text: '🆓 Normal', color: 'secondary' };
+            case 'normal': return { text: 'Normal', color: 'secondary' };
+            case 'Vip': return { text: 'VIP', color: 'warning' };
+            case 'Premium': return { text: 'Premium', color: 'info' };
+            case 'admin': return { text: 'Admin', color: 'danger' };
+            default: return { text: 'Normal', color: 'secondary' };
         }
     };
 
@@ -174,129 +225,81 @@ const LibraryForm = () => {
         }
     };
 
+    if (loading) {
+        return (
+            <div className="loading-container">
+                <Spinner animation="border" role="status" />
+            </div>
+        );
+    }
+
     if (user?.id !== userId) {
         return (
-            <Container fluid className="bg-dark py-5" style={{ minHeight: '100vh' }}>
-                <Alert variant="danger">Bạn không có quyền truy cập trang này.</Alert>
-            </Container>
+            <div className="library-page">
+                <Container className="py-5">
+                    <Alert variant="danger">Bạn không có quyền truy cập trang này.</Alert>
+                </Container>
+            </div>
         );
     }
 
     return (
         <>
-            <Container fluid className="bg-dark py-5" style={{ minHeight: '100vh' }}>
-                <div className="container">
-                    {/* Header */}
-                    <div className="d-flex justify-content-between align-items-center mb-4">
-                        <div>
-                            <h1 className="text-white fw-bold">📚 Thư viện nhạc</h1>
+            <div className="library-page">
+                <Container fluid className="library-container py-4">
+                    <div className="library-header">
+                        <div className="library-header-info">
+                            <h1 className="library-title">Thư viện</h1>
                             {limits && (
-                                <div className="text-light">
-                                    <Badge bg={getRoleDisplay(limits.userRole).color} className="me-2">
+                                <div className="library-limits">
+                                    <Badge bg={getRoleDisplay(limits.userRole).color} className="me-2 user-role-badge">
                                         {getRoleDisplay(limits.userRole).text}
                                     </Badge>
-                                    <span className="me-3">
-                                        {getLimitsDisplay(limits)}
+                                    <span>
+                                        Playlists: <strong>{limits.currentPlaylists} / {limits.maxPlaylists === 2147483647 ? 'Không giới hạn' : limits.maxPlaylists}</strong>
                                     </span>
                                 </div>
                             )}
                         </div>
                         <Button 
-                            variant="danger" 
+                            className="create-playlist-btn"
                             onClick={() => setShowCreateModal(true)}
                             disabled={limits && limits.currentPlaylists >= limits.maxPlaylists}
                         >
-                            <Plus className="me-2" />
+                            <Plus size={20} className="me-2" />
                             Tạo playlist mới
                         </Button>
                     </div>
 
-                    {/* Playlists Grid */}
-                    {loading ? (
-                        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '300px' }}>
-                            <Spinner animation="border" role="status" />
-                        </div>
-                    ) : playlists.length === 0 ? (
-                        <div className="text-center text-light py-5">
-                            <h4>Chưa có playlist nào</h4>
-                            <p>Tạo playlist đầu tiên để bắt đầu!</p>
+                    {playlists.length === 0 ? (
+                        <div className="library-empty-state text-center">
+                            <img src="/images/default-music.jpg" alt="No playlists" className="empty-library-img mb-4" />
+                            <h3>Chưa có playlist nào</h3>
+                            <p>Tạo playlist đầu tiên để sắp xếp những bài hát yêu thích của bạn.</p>
                         </div>
                     ) : (
-                        <Row>
+                        <div className="library-grid">
                             {playlists.map((playlist) => (
-                                <Col key={playlist.id} xs={12} sm={6} md={4} lg={3} className="mb-4">
-                                    <Card 
-                                        className="playlist-card h-100" 
-                                        style={{ cursor: 'pointer' }}
-                                        onClick={() => navigate(`/playlist/${playlist.id}`)}
-                                    >
-                                        <div className="playlist-image-container">
-                                            <Card.Img
-                                                variant="top"
-                                                src={playlist.imageBase64 || '/images/default-music.jpg'}
-                                                className="playlist-image"
-                                            />
-                                            <div className="playlist-overlay">
-                                                <Button
-                                                    variant="outline-light"
-                                                    size="sm"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        setSelectedPlaylist(playlist);
-                                                        setShowAddTrackModal(true);
-                                                    }}
-                                                >
-                                                    <Plus />
-                                                </Button>
-                                            </div>
-                                        </div>
-                                        <Card.Body className="d-flex flex-column">
-                                            <Card.Title className="text-white mb-2">{playlist.name}</Card.Title>
-                                            <Card.Text className="text-muted small mb-2">
-                                                {playlist.trackCount} bài hát
-                                            </Card.Text>
-                                            {playlist.description && (
-                                                <Card.Text className="text-muted small mb-3">
-                                                    {playlist.description}
-                                                </Card.Text>
-                                            )}
-                                            <div className="mt-auto d-flex gap-2">
-                                                <Button
-                                                    variant="outline-primary"
-                                                    size="sm"
-                                                    className="flex-fill"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        navigate(`/playlist/${playlist.id}`);
-                                                    }}
-                                                >
-                                                    <Pencil className="me-1" />
-                                                    Chỉnh sửa
-                                                </Button>
-                                                <Button
-                                                    variant="outline-danger"
-                                                    size="sm"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleDeletePlaylist(playlist.id);
-                                                    }}
-                                                >
-                                                    <Trash />
-                                                </Button>
-                                            </div>
-                                        </Card.Body>
-                                    </Card>
-                                </Col>
+                                <PlaylistCard
+                                    key={playlist.id}
+                                    playlist={playlist}
+                                    onAddTrack={() => {
+                                        setSelectedPlaylist(playlist);
+                                        setShowAddTrackModal(true);
+                                    }}
+                                    onEdit={handleEditPlaylist}
+                                    onDelete={handleDeletePlaylist}
+                                />
                             ))}
-                        </Row>
+                        </div>
                     )}
-                </div>
-            </Container>
+                </Container>
+            </div>
 
             {/* Create Playlist Modal */}
-            <Modal show={showCreateModal} onHide={() => setShowCreateModal(false)} size="lg">
+            <Modal show={showCreateModal} onHide={() => setShowCreateModal(false)} centered dialogClassName="custom-modal">
                 <Modal.Header closeButton>
-                    <Modal.Title>🎵 Tạo playlist mới</Modal.Title>
+                    <Modal.Title>Tạo playlist mới</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
@@ -322,23 +325,19 @@ const LibraryForm = () => {
                         <Form.Group className="mb-3">
                             <Form.Label>Ảnh bìa</Form.Label>
                             <div className="d-flex align-items-center gap-3">
-                                <div className="playlist-cover-preview">
-                                    <img
-                                        src={previewImage || '/images/default-music.jpg'}
-                                        alt="Preview"
-                                        className="img-fluid rounded"
-                                        style={{ width: '100px', height: '100px', objectFit: 'cover' }}
-                                    />
-                                </div>
+                                <img
+                                    src={previewImage || '/images/default-music.jpg'}
+                                    alt="Preview"
+                                    className="playlist-cover-preview"
+                                />
                                 <div>
                                     <Form.Control
                                         type="file"
                                         accept="image/*"
                                         onChange={handleImageChange}
+                                        size="sm"
                                     />
-                                    <Form.Text className="text-muted">
-                                        Nếu không chọn, sẽ sử dụng ảnh mặc định
-                                    </Form.Text>
+                                    <Form.Text>Ảnh mặc định sẽ được sử dụng nếu không có ảnh nào được chọn.</Form.Text>
                                 </div>
                             </div>
                         </Form.Group>
@@ -348,75 +347,72 @@ const LibraryForm = () => {
                     <Button variant="secondary" onClick={() => setShowCreateModal(false)}>
                         Hủy
                     </Button>
-                    <Button variant="danger" onClick={handleCreatePlaylist}>
+                    <Button variant="primary" onClick={handleCreatePlaylist}>
                         Tạo playlist
                     </Button>
                 </Modal.Footer>
             </Modal>
 
             {/* Add Track Modal */}
-            <Modal show={showAddTrackModal} onHide={() => setShowAddTrackModal(false)} size="lg">
+            <Modal show={showAddTrackModal} onHide={() => setShowAddTrackModal(false)} centered dialogClassName="custom-modal">
                 <Modal.Header closeButton>
                     <Modal.Title>
                         Thêm bài hát vào "{selectedPlaylist?.name}"
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <div className="mb-3">
-                        <div className="input-group">
-                            <Form.Control
-                                type="text"
-                                placeholder="Tìm kiếm bài hát..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                onKeyPress={(e) => e.key === 'Enter' && handleSearchTracks()}
-                            />
-                            <Button variant="outline-secondary" onClick={handleSearchTracks}>
-                                <Search />
-                            </Button>
-                        </div>
+                    <div className="input-group mb-3">
+                        <Form.Control
+                            type="text"
+                            placeholder="Tìm kiếm theo tên bài hát..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            onKeyPress={(e) => e.key === 'Enter' && handleSearchTracks()}
+                        />
+                        <Button variant="primary" onClick={handleSearchTracks}>
+                            <Search size={18} />
+                        </Button>
                     </div>
 
                     {searchLoading ? (
-                        <div className="text-center py-3">
+                        <div className="text-center py-4">
                             <Spinner animation="border" role="status" />
                         </div>
                     ) : searchResults.length > 0 ? (
-                        <div className="search-results">
+                        <div className="search-results-list">
                             {searchResults.map((track) => (
-                                <div key={track.id} className="search-result-item d-flex align-items-center p-2 border-bottom">
+                                <div key={track.id} className="search-result-item">
                                     <img
                                         src={track.imageBase64 || '/images/default-music.jpg'}
                                         alt={track.title}
-                                        className="me-3"
-                                        style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }}
+                                        className="search-result-img"
                                     />
-                                    <div className="flex-grow-1">
-                                        <div className="fw-bold">{track.title}</div>
-                                        <div className="text-muted small">{track.artistName || 'Musicresu'}</div>
-                                        {!track.isPublic && (
-                                            <Badge bg="warning" text="dark" size="sm">VIP</Badge>
-                                        )}
+                                    <div className="search-result-info">
+                                        <div className="search-result-title">{track.title}</div>
+                                        <div className="search-result-artist">{track.artistName || 'N/A'}</div>
                                     </div>
+                                     {!track.isPublic && (
+                                        <Badge bg="warning" text="dark" className="me-auto ms-2">VIP</Badge>
+                                    )}
                                     <Button
-                                        variant="outline-primary"
+                                        variant="outline-success"
                                         size="sm"
+                                        className="ms-auto"
                                         onClick={() => handleAddTrackToPlaylist(track.id)}
                                     >
-                                        <Plus />
+                                        <Plus size={18}/>
                                     </Button>
                                 </div>
                             ))}
                         </div>
                     ) : searchQuery && !searchLoading ? (
-                        <div className="text-center py-3 text-muted">
-                            Không tìm thấy bài hát nào
+                        <div className="text-center py-4 text-muted">
+                            Không tìm thấy kết quả phù hợp.
                         </div>
                     ) : null}
                 </Modal.Body>
             </Modal>
-
-            <ToastContainer />
+            <ToastContainer theme="dark" />
         </>
     );
 };

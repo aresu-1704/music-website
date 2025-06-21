@@ -103,6 +103,58 @@ export const updatePersonalDataWithAvatar = async (userID, data) => {
     }
 }
 
+export const updateAddress = async (userID, address) => {
+    try {
+        const res = await fetch(`http://localhost:5270/api/Profile/address/${userID}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+            body: JSON.stringify({ address }),
+        });
+        if (res.ok) return 'Thành công';
+        if (res.status === 403 || res.status === 401) return 'Phiên đăng nhập hết hạn';
+        return 'Lỗi';
+    } catch (error) {
+        return 'Không thể kết nối đến máy chủ';
+    }
+};
+
+export const sendVerifyEmailOtp = async (userID) => {
+    try {
+        const res = await fetch(`http://localhost:5270/api/Profile/send-verify-email-otp/${userID}`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+        if (res.ok) return 'Đã gửi OTP';
+        if (res.status === 403 || res.status === 401) return 'Phiên đăng nhập hết hạn';
+        return 'Lỗi';
+    } catch (error) {
+        return 'Không thể kết nối đến máy chủ';
+    }
+};
+
+export const verifyEmailOtp = async (userID, otp) => {
+    try {
+        const res = await fetch(`http://localhost:5270/api/Profile/verify-email-otp/${userID}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+            body: JSON.stringify({ otp }),
+        });
+        if (res.ok) return 'Xác minh thành công';
+        if (res.status === 403 || res.status === 401) return 'Phiên đăng nhập hết hạn';
+        return 'Lỗi';
+    } catch (error) {
+        return 'Không thể kết nối đến máy chủ';
+    }
+};
+
 export function useUserProfile(userID) {
     return useQuery({
         queryKey: ['profile', userID],

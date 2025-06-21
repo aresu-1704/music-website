@@ -147,13 +147,6 @@ export default function CommentSection({ trackId }) {
                                                         Xóa
                                                     </Button>
                                                 )}
-                                                <Button
-                                                    variant="outline-warning"
-                                                    size="sm"
-                                                    onClick={() => toast.info("Đã gửi báo cáo")}
-                                                >
-                                                    Báo cáo
-                                                </Button>
                                             </>
                                         )}
                                     </div>

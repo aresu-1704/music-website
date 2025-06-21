@@ -3,7 +3,7 @@ import {Container, Nav, Tab, Row, Col, Spinner, Button, Alert, Card} from 'react
 import { Person, GeoAlt, ShieldLock, Link45deg } from 'react-bootstrap-icons';
 import '../styles/Profile.css'
 import {useNavigate, useParams} from "react-router-dom";
-import { queryClient } from "../context/QueryClientContext";
+import { queryClient } from "../context/queryClientContext";
 import { useUserProfile, updatePersonalData, updatePersonalDataWithAvatar } from "../services/profileService";
 import { toast, ToastContainer } from "react-toastify";
 import {Field, Form, Formik} from "formik";

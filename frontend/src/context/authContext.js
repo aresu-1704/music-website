@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
-import { queryClient } from "./QueryClientContext";
+import { queryClient } from "./queryClientContext";
 import {useNavigate} from "react-router-dom";
 import {useMusicPlayer} from "./musicPlayerContext";
 

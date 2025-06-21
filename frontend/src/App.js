@@ -27,6 +27,7 @@ import HistoryForm from './pages/HistoryForm';
 import AdminTrackList from "./pages/AdminTrackListForm";
 import UploadTrackForm from "./pages/UploadTrackForm";
 import RevenueChartForm from "./pages/RevenueChartForm";
+import MyTrackForm from "./pages/MyTrackForm";
 
 const queryClient = new QueryClient();
 
@@ -59,7 +60,7 @@ const App = () => (
 
 
 
-
+                            <Route path={"/my-tracks"} element={<MyTrackForm />} />
                             <Route path={"/statistic"} element={<RevenueChartForm />} />
                             <Route path="/*" element={<NotFoundForm />} />
                         </Routes>

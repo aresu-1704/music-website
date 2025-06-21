@@ -5,15 +5,15 @@ import {
 import {
     PlayFill, LockFill, CheckCircle, Trash
 } from 'react-bootstrap-icons';
-import { useNavigate } from 'react-router-dom';
-import {changeApprove, changePublic, deleteTrack, getAllTracks} from '../services/trackService';
+import {useNavigate} from 'react-router-dom';
+import {changeApprove, changePublic, deleteTrack, getTracksByArtistId} from '../services/trackService';
 import { useAuth } from "../context/authContext";
 import '../styles/AdminTrackList.css';
 import {useMusicPlayer} from "../context/musicPlayerContext";
 import {useLoginSessionOut} from "../services/loginSessionOut";
 import {ToastContainer} from "react-toastify";
 
-const AdminTrackList = () => {
+const MyTrackForm = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
     const [tracks, setTracks] = useState([]);
@@ -51,15 +51,15 @@ const AdminTrackList = () => {
     };
 
     useEffect(() => {
-        if (!(user?.isLoggedIn && user?.role === 'admin')) {
-            navigate('/');
+        if (!user.isLoggedIn) {
+            navigate('/login');
             return;
         }
 
         const fetchTracks = async () => {
             try {
-                const data = await getAllTracks();
-                setTracks(data);
+                const data = await getTracksByArtistId(user.id);
+                setTracks(data.tracks);
             } catch (err) {
                 console.error('Lỗi khi tải danh sách nhạc:', err);
             } finally {
@@ -141,20 +141,7 @@ const AdminTrackList = () => {
                                 </Form.Select>
 
                             </Col>
-                            <Col md={8}>
-                                <InputGroup>
-                                    <Form.Control
-                                        className="bg-dark text-light border-secondary dark-input"
-                                        type="text"
-                                        placeholder="Tìm theo tên nghệ sĩ..."
-                                        value={searchQuery}
-                                        onChange={e => setSearchQuery(e.target.value)}
-                                    />
-
-                                </InputGroup>
-                            </Col>
                         </Row>
-
                         {/* 🎵 Danh sách nhạc */}
                         {filteredTracks.length === 0 ? (
                             <p className="text-muted">Không có bài nhạc nào phù hợp.</p>
@@ -200,9 +187,9 @@ const AdminTrackList = () => {
                                                                     <strong>Tình trạng:</strong>{' '}
                                                                     {track.isApproved ? (
                                                                         <span className="text-success">Đã duyệt</span>
-                                                                        ) : (
+                                                                    ) : (
                                                                         <span className="text-danger">Chưa duyệt</span>
-                                                                        )}<br />
+                                                                    )}<br />
                                                                 </>
                                                             )}
 
@@ -296,4 +283,4 @@ const AdminTrackList = () => {
     );
 };
 
-export default AdminTrackList;
+export default MyTrackForm;

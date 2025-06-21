@@ -263,7 +263,7 @@ const PersonalProfileForm = () => {
                         </div>
                     ) : (
                         <Row>
-                            {tracks.map(track => (
+                            {tracks.filter(track => track.isApproved).map(track => (
                                 <Col xs={12} key={track.id} className="mb-3">
                                     <Card className="d-flex flex-row align-items-center bg-black text-light border-0 shadow rounded-4 p-3 mb-3">
                                         <div
@@ -282,9 +282,6 @@ const PersonalProfileForm = () => {
                                                 alt={track.title}
                                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                             />
-                                            {!track.isPublic && (
-                                                <span className="position-absolute top-0 end-0 m-1 badge text-dark bg-warning">👑 VIP</span>
-                                            )}
                                         </div>
 
                                         <div className="flex-grow-1">

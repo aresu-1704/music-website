@@ -53,6 +53,8 @@ namespace backend
     [JsonSerializable(typeof(PlaylistTrackDto))]
     [JsonSerializable(typeof(ErrorResponse))]
     [JsonSerializable(typeof(MessageResponse))]
+    [JsonSerializable(typeof(FollowingDetailsListResponse))]
+    [JsonSerializable(typeof(FollowingDetailsResponse))]
 
     public partial class JsonContext : JsonSerializerContext
     {

@@ -7,7 +7,7 @@ import { useMusicPlayer } from '../context/musicPlayerContext';
 import '../styles/Personal.css';
 import {fetchProfileData, getProfileData} from '../services/profileService';
 import { useAuth } from '../context/authContext';
-import { followUser, unfollowUser, checkFollowStatus } from '../services/followerService';
+import { followUser, unfollowUser, checkFollowing } from '../services/followerService';
 import { useLoginSessionOut } from '../services/loginSessionOut';
 
 const PersonalProfileForm = () => {
@@ -58,7 +58,7 @@ const PersonalProfileForm = () => {
         const checkFollow = async () => {
             if (user?.id && profileId && user.id !== profileId) {
                 try {
-                    const res = await checkFollowStatus(profileId, handleSessionOut);
+                    const res = await checkFollowing(profileId, handleSessionOut);
                     if (res) {
                         setIsFollowing(res.following);
                     }

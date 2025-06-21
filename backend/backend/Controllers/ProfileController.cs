@@ -3,6 +3,7 @@ using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace backend.Controllers
 {
@@ -166,13 +167,12 @@ namespace backend.Controllers
         public DateTime DateOfBirth { get; set; }
         public IFormFile Avatar { get; set; }
     }
-    #endregion
-
     public class UserTracksResponse
     {
         public string Role { get; set; }
         public List<TrackListItemDto> Tracks { get; set; }
     }
+    #endregion
 
     public class PublicProfileDataDto
     {

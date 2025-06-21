@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System;
 
 namespace backend.Controllers
 {
@@ -62,6 +63,26 @@ namespace backend.Controllers
                 Count = followingList.Count 
             });
         }
+
+        [HttpGet("FollowingList/{followerId}")]
+        public async Task<IActionResult> GetFollowingDetailsList(string followerId)
+        {
+            var authenticatedUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
+            if (string.IsNullOrEmpty(followerId))
+                return BadRequest("FollowerId is required");
+            
+            if (authenticatedUserId != followerId)
+                return Forbid("Bạn chỉ có thể xem danh sách theo dõi của chính mình");
+            
+            var followingDetailsList = await _followersService.GetFollowingDetailsListAsync(followerId);
+            return Ok(new FollowingDetailsListResponse 
+            { 
+                FollowerId = followerId, 
+                FollowingList = followingDetailsList, 
+                Count = followingDetailsList.Count 
+            });
+        }
     }
 
     public class FollowCheckResponse
@@ -74,5 +95,24 @@ namespace backend.Controllers
         public string FollowerId { get; set; }
         public List<string> FollowingList { get; set; }
         public int Count { get; set; }
+    }
+
+    public class FollowingDetailsListResponse
+    {
+        public string FollowerId { get; set; }
+        public List<FollowingDetailsResponse> FollowingList { get; set; }
+        public int Count { get; set; }
+    }
+
+    public class FollowingDetailsResponse
+    {
+        public string FollowingId { get; set; }
+        public string FollowingName { get; set; }
+        public string FollowingEmail { get; set; }
+        public string FollowingAvatar { get; set; }
+        public string FollowingRole { get; set; }
+        public int FollowingGender { get; set; }
+        public DateTime FollowingDateOfBirth { get; set; }
+        public bool IsFollowing { get; set; }
     }
 } 

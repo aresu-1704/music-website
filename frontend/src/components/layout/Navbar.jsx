@@ -102,7 +102,6 @@ const Navbar = () => {
                                                 >
                                                     Nhạc của tôi
                                                 </Link>
-
                                             </li>
                                             <li className="nav-item dropdown">
                                                 <NavbarUserDropdown user={user} onLogout={handleLogoutClick} />

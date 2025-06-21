@@ -3,7 +3,7 @@ import {Card, Button, Badge, Alert, OverlayTrigger, Tooltip, Modal, Spinner, Con
 import { BadgeCheck, Star, Music, Download, Headphones, ShieldCheck, UploadCloud, Users } from "lucide-react";
 import '../styles/Upgrade.css';
 import {useNavigate, useParams} from "react-router-dom";
-import {getPaymentsUrl} from "../services/PaymentService";
+import {getPaymentsUrl} from "../services/paymentService";
 import {toast, ToastContainer} from "react-toastify";
 import { useAuth } from "../context/authContext";
 import {loginSessionOut, useLoginSessionOut} from "../services/loginSessionOut";

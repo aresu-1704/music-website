@@ -1,6 +1,6 @@
 // src/services/commentService.js
 
-const API_BASE = 'http://localhost:5270/api/Comment';
+const API_BASE = `${process.env.REACT_APP_API_BASE_URL}/api/Comment`;
 
 export const getCommentsByTrackId = async (trackId) => {
     const res = await fetch(`${API_BASE}/comments/${trackId}`);
@@ -25,11 +25,12 @@ export const postComment = async (trackId, content, handleSessionOut) => {
     if (res.status === 401 || res.status === 403) {
         handleSessionOut();
     }
+
+    return res.ok;
 };
 
-// src/services/commentService.js
-export async function deleteComment(commentId, handleSessionOut) {
-    const res = await fetch(`http://localhost:5270/api/Comment/delete-comment/${commentId}`, {
+export const deleteComment = async (commentId, handleSessionOut) => {
+    const res = await fetch(`${API_BASE}/delete-comment/${commentId}`, {
         method: 'DELETE',
         headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -40,5 +41,4 @@ export async function deleteComment(commentId, handleSessionOut) {
     if (!res.ok) throw new Error('Xóa thất bại');
 
     return true;
-}
-
+};

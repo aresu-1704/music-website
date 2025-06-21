@@ -1,167 +1,109 @@
+const API_BASE = `${process.env.REACT_APP_API_BASE_URL}/api/Playlist`;
+
+const authHeader = () => ({
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+});
+
 export const getUserPlaylists = async (userId) => {
-    try {
-        const response = await fetch(`http://localhost:5270/api/Playlist/user/${userId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-        });
+    const res = await fetch(`${API_BASE}/user/${userId}`, {
+        method: 'GET',
+        headers: authHeader(),
+    });
 
-        if (!response.ok) {
-            throw new Error('Failed to fetch playlists');
-        }
-
-        return await response.json();
-    } catch (error) {
-        throw error;
-    }
+    if (!res.ok) throw new Error('Failed to fetch playlists');
+    return await res.json();
 };
 
 export const getPlaylistDetail = async (playlistId) => {
-    try {
-        const response = await fetch(`http://localhost:5270/api/Playlist/${playlistId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-        });
+    const res = await fetch(`${API_BASE}/${playlistId}`, {
+        method: 'GET',
+        headers: authHeader(),
+    });
 
-        if (!response.ok) {
-            throw new Error('Failed to fetch playlist detail');
-        }
-
-        return await response.json();
-    } catch (error) {
-        throw error;
-    }
+    if (!res.ok) throw new Error('Failed to fetch playlist detail');
+    return await res.json();
 };
 
 export const createPlaylist = async (playlistData) => {
-    try {
-        const response = await fetch('http://localhost:5270/api/Playlist', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-            body: JSON.stringify(playlistData),
-        });
+    const res = await fetch(`${API_BASE}`, {
+        method: 'POST',
+        headers: authHeader(),
+        body: JSON.stringify(playlistData),
+    });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to create playlist');
-        }
-
-        return await response.json();
-    } catch (error) {
-        throw error;
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to create playlist');
     }
+
+    return await res.json();
 };
 
 export const updatePlaylist = async (playlistId, playlistData) => {
-    try {
-        const response = await fetch(`http://localhost:5270/api/Playlist/${playlistId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-            body: JSON.stringify(playlistData),
-        });
+    const res = await fetch(`${API_BASE}/${playlistId}`, {
+        method: 'PUT',
+        headers: authHeader(),
+        body: JSON.stringify(playlistData),
+    });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to update playlist');
-        }
-
-        return await response.json();
-    } catch (error) {
-        throw error;
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to update playlist');
     }
+
+    return await res.json();
 };
 
 export const deletePlaylist = async (playlistId) => {
-    try {
-        const response = await fetch(`http://localhost:5270/api/Playlist/${playlistId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-        });
+    const res = await fetch(`${API_BASE}/${playlistId}`, {
+        method: 'DELETE',
+        headers: authHeader(),
+    });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to delete playlist');
-        }
-
-        return await response.json();
-    } catch (error) {
-        throw error;
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to delete playlist');
     }
+
+    return await res.json();
 };
 
 export const addTrackToPlaylist = async (playlistId, trackId) => {
-    try {
-        const response = await fetch(`http://localhost:5270/api/Playlist/${playlistId}/tracks`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-            body: JSON.stringify({ trackId }),
-        });
+    const res = await fetch(`${API_BASE}/${playlistId}/tracks`, {
+        method: 'POST',
+        headers: authHeader(),
+        body: JSON.stringify({ trackId }),
+    });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to add track to playlist');
-        }
-
-        return await response.json();
-    } catch (error) {
-        throw error;
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to add track to playlist');
     }
+
+    return await res.json();
 };
 
 export const removeTrackFromPlaylist = async (playlistId, trackId) => {
-    try {
-        const response = await fetch(`http://localhost:5270/api/Playlist/${playlistId}/tracks/${trackId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-        });
+    const res = await fetch(`${API_BASE}/${playlistId}/tracks/${trackId}`, {
+        method: 'DELETE',
+        headers: authHeader(),
+    });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error || 'Failed to remove track from playlist');
-        }
-
-        return await response.json();
-    } catch (error) {
-        throw error;
+    if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Failed to remove track from playlist');
     }
+
+    return await res.json();
 };
 
 export const getUserPlaylistLimits = async (userId) => {
-    try {
-        const response = await fetch(`http://localhost:5270/api/Playlist/limits/${userId}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            },
-        });
+    const res = await fetch(`${API_BASE}/limits/${userId}`, {
+        method: 'GET',
+        headers: authHeader(),
+    });
 
-        if (!response.ok) {
-            throw new Error('Failed to fetch playlist limits');
-        }
-
-        return await response.json();
-    } catch (error) {
-        throw error;
-    }
-}; 
+    if (!res.ok) throw new Error('Failed to fetch playlist limits');
+    return await res.json();
+};

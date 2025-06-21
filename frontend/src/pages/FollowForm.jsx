@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/authContext';
-import { followerService } from '../services/followerService';
+import {
+    followUser,
+    unfollowUser,
+    checkFollowing,
+    getFollowingList,
+    checkUserFollowsAnother,
+} from '../services/followerService';
 import { Container, Row, Col, Card, Button, Spinner, Alert, Badge } from 'react-bootstrap';
 import { PersonPlusFill, PersonCheckFill, PlayFill } from 'react-bootstrap-icons';
 import { Link } from 'react-router-dom';
@@ -33,7 +39,7 @@ const FollowForm = () => {
     const fetchFollowingList = async () => {
         try {
             setLoading(true);
-            const data = await followerService.getFollowingList(userId);
+            const data = await getFollowingList(userId);
             setFollowingList(data.followingList || []);
         } catch (err) {
             setError(err.message);
@@ -47,12 +53,12 @@ const FollowForm = () => {
             const isCurrentlyFollowing = followingList.some(following => following.followingId === followingId);
             
             if (isCurrentlyFollowing) {
-                await followerService.unfollowUser(userId, followingId);
+                await unfollowUser(userId, followingId);
                 setFollowingList(prevList => 
                     prevList.filter(following => following.followingId !== followingId)
                 );
             } else {
-                await followerService.followUser(userId, followingId);
+                await followUser(userId, followingId);
                 fetchFollowingList();
             }
         } catch (err) {

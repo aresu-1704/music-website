@@ -1,20 +1,21 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Container, Card, Row, Col, Alert, Button, Spinner } from 'react-bootstrap';
-import axios from 'axios';
+import { useLocation } from 'react-router-dom';
+import { Container, Card, Row, Col, Alert, Spinner } from 'react-bootstrap';
+import { fetchPaymentResult } from '../services/paymentService';
 
 export default function PaymentResultForm() {
     const location = useLocation();
-    const navigate = useNavigate();
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
     useEffect(() => {
-        const fetchResult = async () => {
-            const searchParams = new URLSearchParams(location.search);
-            const responseCode = searchParams.get('vnp_ResponseCode');
-            const transactionStatus = searchParams.get('vnp_TransactionStatus');
+        const loadResult = async () => {
+            const searchParams = location.search;
+
+            const params = new URLSearchParams(searchParams);
+            const responseCode = params.get('vnp_ResponseCode');
+            const transactionStatus = params.get('vnp_TransactionStatus');
 
             if (!responseCode || !transactionStatus) {
                 setError('Không có dữ liệu giao dịch. Có thể bạn đã hủy trước khi hoàn tất.');
@@ -22,27 +23,19 @@ export default function PaymentResultForm() {
                 return;
             }
 
-            const success = responseCode === '00' && transactionStatus === '00';
-
             try {
-                const apiUrl = `http://localhost:5270/api/VnPay/return${location.search}`;
-                const response = await axios.get(apiUrl);
-
-                setResult({
-                    ...response.data,
-                    success: success
-                });
+                const data = await fetchPaymentResult(searchParams);
+                setResult(data);
             } catch (err) {
-                setError('Lỗi khi xác thực giao dịch với hệ thống. Vui lòng thử lại.');
                 console.error(err);
+                setError('Lỗi khi xác thực giao dịch với hệ thống. Vui lòng thử lại.');
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchResult();
+        loadResult();
     }, [location.search]);
-
 
     const formatCurrency = (amount) => {
         return (Number(amount) / 100).toLocaleString('vi-VN', {

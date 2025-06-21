@@ -1,143 +1,76 @@
+// services/followerService.js
+const API_BASE = `${process.env.REACT_APP_API_BASE_URL}/api/Followers`;
+
+const authHeader = () => ({
+    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+    'Content-Type': 'application/json',
+});
+
+// Theo dõi người dùng
 export const followUser = async (userId, handleSessionOut) => {
     const token = localStorage.getItem('token');
-    if (!token) {
-        handleSessionOut();
-        return;
-    }
+    if (!token) return handleSessionOut();
 
-    const res = await fetch(`http://localhost:5270/api/Followers/follow/${userId}`, {
+    const res = await fetch(`${API_BASE}/follow/${userId}`, {
         method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
     });
 
+    if (res.status === 401 || res.status === 403) return handleSessionOut();
     if (!res.ok) throw new Error('Không thể theo dõi người dùng.');
-    // Không cần parse JSON vì response trống
     return { success: true };
 };
 
+// Bỏ theo dõi người dùng
 export const unfollowUser = async (userId, handleSessionOut) => {
     const token = localStorage.getItem('token');
-    if (!token) {
-        handleSessionOut();
-        return;
-    }
+    if (!token) return handleSessionOut();
 
-    const res = await fetch(`http://localhost:5270/api/Followers/unfollow/${userId}`, {
+    const res = await fetch(`${API_BASE}/unfollow/${userId}`, {
         method: 'DELETE',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
     });
 
+    if (res.status === 401 || res.status === 403) return handleSessionOut();
     if (!res.ok) throw new Error('Không thể bỏ theo dõi người dùng.');
-    // Không cần parse JSON vì response trống
     return { success: true };
 };
 
+// Kiểm tra trạng thái follow
 export const checkFollowing = async (userId, handleSessionOut) => {
     const token = localStorage.getItem('token');
-    if (!token) {
-        handleSessionOut();
-        return;
-    }
+    if (!token) return handleSessionOut();
 
-    const res = await fetch(`http://localhost:5270/api/Followers/check/${userId}`, {
+    const res = await fetch(`${API_BASE}/check/${userId}`, {
         method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
     });
 
+    if (res.status === 401 || res.status === 403) return handleSessionOut();
     if (!res.ok) throw new Error('Không thể kiểm tra trạng thái theo dõi.');
     return await res.json();
 };
 
-export const followerService = {
-    // Lấy danh sách người dùng mà user đang theo dõi
-    getFollowingList: async (userId) => {
-        try {
-            const response = await fetch(`http://localhost:5270/api/Followers/FollowingList/${userId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-            
-            if (!response.ok) {
-                throw new Error('Lỗi khi lấy danh sách theo dõi');
-            }
-            
-            return await response.json();
-        } catch (error) {
-            throw new Error(error.message || 'Lỗi khi lấy danh sách theo dõi');
-        }
-    },
+// Danh sách đang theo dõi
+export const getFollowingList = async (userId, handleSessionOut) => {
+    const res = await fetch(`${API_BASE}/FollowingList/${userId}`, {
+        method: 'GET',
+        headers: authHeader(),
+    });
 
-    // Kiểm tra xem user có đang theo dõi một người khác không
-    checkFollowing: async (followerId, followingId) => {
-        try {
-            const response = await fetch(`http://localhost:5270/api/Followers/CheckFollowing/${followerId}/${followingId}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-            
-            if (!response.ok) {
-                throw new Error('Lỗi khi kiểm tra trạng thái theo dõi');
-            }
-            
-            return await response.json();
-        } catch (error) {
-            throw new Error(error.message || 'Lỗi khi kiểm tra trạng thái theo dõi');
-        }
-    },
+    if (res.status === 401 || res.status === 403) return handleSessionOut();
+    if (!res.ok) throw new Error('Không thể lấy danh sách đang theo dõi.');
+    return await res.json();
+};
 
-    // Theo dõi một người dùng
-    followUser: async (followerId, followingId) => {
-        try {
-            const response = await fetch(`http://localhost:5270/api/Followers/follow/${followingId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-            
-            if (!response.ok) {
-                throw new Error('Lỗi khi theo dõi người dùng');
-            }
-            
-            // Không cần parse JSON vì response trống
-            return { success: true };
-        } catch (error) {
-            throw new Error(error.message || 'Lỗi khi theo dõi người dùng');
-        }
-    },
+// Kiểm tra followerId có theo dõi followingId
+export const checkUserFollowsAnother = async (followerId, followingId, handleSessionOut) => {
+    const res = await fetch(`${API_BASE}/CheckFollowing/${followerId}/${followingId}`, {
+        method: 'GET',
+        headers: authHeader(),
+    });
 
-    // Bỏ theo dõi một người dùng
-    unfollowUser: async (followerId, followingId) => {
-        try {
-            const response = await fetch(`http://localhost:5270/api/Followers/unfollow/${followingId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                },
-            });
-            
-            if (!response.ok) {
-                throw new Error('Lỗi khi bỏ theo dõi người dùng');
-            }
-            
-            // Không cần parse JSON vì response trống
-            return { success: true };
-        } catch (error) {
-            throw new Error(error.message || 'Lỗi khi bỏ theo dõi người dùng');
-        }
-    }
-}; 
+    if (res.status === 401 || res.status === 403) return handleSessionOut();
+    if (!res.ok) throw new Error('Không thể kiểm tra trạng thái theo dõi.');
+    return await res.json();
+};

@@ -1,6 +1,8 @@
+const API_BASE = process.env.REACT_APP_API_BASE_URL;
+
 export async function loginUser({ username, password }) {
     try {
-        const response = await fetch('http://localhost:5270/api/Auth/login', {
+        const response = await fetch(`${API_BASE}/api/Auth/login`, {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, password })
@@ -41,7 +43,7 @@ export const registerUser = async (values) => {
         gender: genderMap[values.gender],
     };
 
-    const response = await fetch('http://localhost:5270/api/Auth/register', {
+    const response = await fetch(`${API_BASE}/api/Auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -49,4 +51,3 @@ export const registerUser = async (values) => {
 
     return response;
 };
-

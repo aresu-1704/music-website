@@ -184,18 +184,6 @@ builder.Services.AddAuthentication("Bearer")
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowFrontend",
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:3000") // domain frontend
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
-});
-
-// Cái này tao cũng không biết cấu hình cái gì đừng hỏi tao
-builder.Services.AddCors(options =>
-{
     options.AddPolicy("AllowAll",
         builder =>
         {
@@ -214,7 +202,7 @@ StartRedisIfNotRunning();
 
 var app = builder.Build();
 
-// Bật Swagger nếu đang ở môi trường Development
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

@@ -97,7 +97,6 @@ export default function CommentSection({ trackId }) {
                     <Spinner animation="border" />
                 </div>
             ) : (
-                // Trong phần render comment:
                 comments.map(comment => (
                     <Card key={comment.commentId} className="my-2 comment-card">
                         <Card.Body className="d-flex">

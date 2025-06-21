@@ -3,13 +3,12 @@ import {
     Card, Button, Form, Row, Col, InputGroup, Spinner, Container, Modal
 } from 'react-bootstrap';
 import {
-    PlayFill, LockFill, CheckCircle, Trash
+    Trash
 } from 'react-bootstrap-icons';
 import { useNavigate } from 'react-router-dom';
-import {changeApprove, changePublic, deleteTrack, getAllTracks, getTracksByArtistId} from '../services/trackService';
+import {deleteTrack, getTracksByArtistId} from '../services/trackService';
 import { useAuth } from "../context/authContext";
 import '../styles/AdminTrackList.css';
-import {useMusicPlayer} from "../context/musicPlayerContext";
 import {useLoginSessionOut} from "../services/loginSessionOut";
 import {ToastContainer} from "react-toastify";
 import {Info} from "lucide-react"; // nhớ tạo file này
@@ -21,7 +20,6 @@ const MyTrackForm = () => {
     const [filterStatus, setFilterStatus] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(true);
-    const { playTrackList } = useMusicPlayer();
     const handleSessionOut = useLoginSessionOut()
 
     const [showConfirmDeleteModal, setShowConfirmDeleteModal] = useState(false);
@@ -37,7 +35,7 @@ const MyTrackForm = () => {
 
         try {
             await deleteTrack(trackIdToDelete, handleSessionOut);
-            setTracks(prev => prev.filter(t => t.trackId !== trackIdToDelete));
+            setTracks(prev => prev.filter(t => t.id !== trackIdToDelete));
         } catch (err) {
             console.error("Lỗi khi xóa track:", err);
         } finally {
@@ -195,7 +193,7 @@ const MyTrackForm = () => {
                                                 <div className="d-flex justify-content-end gap-2 mt-3 flex-wrap">
                                                     <Button
                                                         variant="danger"
-                                                        onClick={() => handleDelete(track.trackId)}
+                                                        onClick={() => handleDelete(track.id)}
                                                     >
                                                         <Trash /> Xóa
                                                     </Button>

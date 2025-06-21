@@ -3,6 +3,7 @@ using backend.Controllers;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using backend.DTOs;
 
 namespace backend.Services
 {
@@ -50,30 +51,20 @@ namespace backend.Services
                 var user = await _usersRepository.GetByIdAsync(followingId);
                 if (user != null)
                 {
-                    string avatarUrl = null;
-                    if (!string.IsNullOrEmpty(user.AvatarUrl))
-                    {
-                        try
-                        {
-                            var imageBytes = await System.IO.File.ReadAllBytesAsync(user.AvatarUrl);
-                            avatarUrl = $"data:image/jpeg;base64,{System.Convert.ToBase64String(imageBytes)}";
-                        }
-                        catch
-                        {
-                            avatarUrl = null;
-                        }
-                    }
+                    string? avatarBase64 = !string.IsNullOrEmpty(user.AvatarUrl)
+                        ? $"http://localhost:5270/avatar/{user.AvatarUrl}"
+                        : null;
 
                     followingDetails.Add(new FollowingDetailsResponse
                     {
                         FollowingId = user.Id,
                         FollowingName = user.Name,
                         FollowingEmail = user.Email,
-                        FollowingAvatar = avatarUrl,
+                        FollowingAvatar = avatarBase64,
                         FollowingRole = user.Role,
                         FollowingGender = user.Gender,
                         FollowingDateOfBirth = user.DateOfBirth,
-                        IsFollowing = true // Vì đây là danh sách đang theo dõi
+                        IsFollowing = true
                     });
                 }
             }

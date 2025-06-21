@@ -183,17 +183,5 @@ namespace backend.Controllers
                 return BadRequest(new ErrorResponse { Error = ex.Message });
             }
         }
-    }
-
-    #region Response Models
-    public class ErrorResponse
-    {
-        public string Error { get; set; } = string.Empty;
-    }
-
-    public class MessageResponse
-    {
-        public string Message { get; set; } = string.Empty;
-    }
-    #endregion
+    }    
 } 

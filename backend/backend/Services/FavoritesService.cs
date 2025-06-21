@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.IO;
+using backend.DTOs;
 
 namespace backend.Services
 {

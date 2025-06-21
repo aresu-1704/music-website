@@ -2,6 +2,7 @@
 using backend.Models;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
+using backend.DTOs;
 
 namespace backend.Interfaces
 {

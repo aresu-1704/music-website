@@ -17,15 +17,13 @@ const FollowForm = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        // Kiểm tra xem user có đang xem danh sách theo dõi của chính mình không
         if (!user?.isLoggedIn) {
             navigate('/signin');
             return;
         }
 
-        // Đảm bảo user chỉ có thể xem danh sách theo dõi của chính mình
         if (userId !== user.id) {
-            navigate(`/FollowingList/${user.id}`);
+            navigate(`/follow/${user.id}`);
             return;
         }
 
@@ -49,16 +47,12 @@ const FollowForm = () => {
             const isCurrentlyFollowing = followingList.some(following => following.followingId === followingId);
             
             if (isCurrentlyFollowing) {
-                // Bỏ theo dõi
                 await followerService.unfollowUser(userId, followingId);
-                // Cập nhật state local thay vì load lại trang
                 setFollowingList(prevList => 
                     prevList.filter(following => following.followingId !== followingId)
                 );
             } else {
-                // Theo dõi
                 await followerService.followUser(userId, followingId);
-                // Refresh danh sách sau khi theo dõi vì cần thêm user mới
                 fetchFollowingList();
             }
         } catch (err) {
@@ -227,7 +221,7 @@ const FollowForm = () => {
                                                 <div className="mt-auto">
                                                     <div className="d-flex gap-2">
                                                         <Link 
-                                                            to={`/Profile/MyTracks/${following.followingId}`}
+                                                            to={`/personal-profile/${following.followingId}`}
                                                             className="flex-grow-1"
                                                         >
                                                             <Button 

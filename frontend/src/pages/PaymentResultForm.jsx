@@ -12,13 +12,26 @@ export default function PaymentResultForm() {
 
     useEffect(() => {
         const fetchResult = async () => {
+            const searchParams = new URLSearchParams(location.search);
+            const responseCode = searchParams.get('vnp_ResponseCode');
+            const transactionStatus = searchParams.get('vnp_TransactionStatus');
+
+            if (!responseCode || !transactionStatus) {
+                setError('Không có dữ liệu giao dịch. Có thể bạn đã hủy trước khi hoàn tất.');
+                setLoading(false);
+                return;
+            }
+
+            const success = responseCode === '00' && transactionStatus === '00';
+
             try {
-                const searchParams = location.search;
-                const apiUrl = `http://localhost:5270/api/VnPay/return${searchParams}`;
+                const apiUrl = `http://localhost:5270/api/VnPay/return${location.search}`;
                 const response = await axios.get(apiUrl);
 
-                setResult(response.data);
-
+                setResult({
+                    ...response.data,
+                    success: success
+                });
             } catch (err) {
                 setError('Lỗi khi xác thực giao dịch với hệ thống. Vui lòng thử lại.');
                 console.error(err);
@@ -29,6 +42,7 @@ export default function PaymentResultForm() {
 
         fetchResult();
     }, [location.search]);
+
 
     const formatCurrency = (amount) => {
         return (Number(amount) / 100).toLocaleString('vi-VN', {
@@ -55,63 +69,34 @@ export default function PaymentResultForm() {
             padding: '8rem'
         }}>
             <Container>
-                <Row className="justify-content-center">
-                    <Col md={10} lg={8}>
-                        <Card className="shadow-lg text-white" style={{ backgroundColor: '#222', border: '1px solid #444' }}>
-                            <Card.Body>
-                                <h2 className="text-center mb-4" style={{
-                                    fontSize: '2rem',
-                                    fontWeight: '700',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '1px'
-                                }}>
-                                    Kết quả thanh toán
-                                </h2>
+                {error || !result || !result.orderId ? (
+                    <Alert variant="danger" className="text-center fs-5 fw-bold">
+                        ❌ {error || 'Thanh toán thất bại hoặc bị hủy giữa chừng.'}
+                    </Alert>
+                ) : (
+                    <>
+                        <Alert variant={result.success ? 'success' : 'danger'} className="text-center fs-5 fw-bold">
+                            {result.success ? '✅ Thanh toán thành công!' : '❌ Thanh toán thất bại.'}
+                        </Alert>
 
-                                {error ? (
-                                    <Alert variant="danger" className="text-center fs-5 fw-bold">
-                                        ❌ {error}
-                                    </Alert>
-                                ) : (
-                                    <>
-                                        <Alert variant={result.success ? 'success' : 'danger'} className="text-center fs-5 fw-bold">
-                                            {result.success ? '✅ Thanh toán thành công!' : '❌ Thanh toán thất bại.'}
-                                        </Alert>
-
-                                        <Row className="mb-3 fs-5">
-                                            <Col sm={5}><strong>Mã giao dịch:</strong></Col>
-                                            <Col sm={7} className="text-break">{result.orderId}</Col>
-                                        </Row>
-                                        <Row className="mb-3 fs-5">
-                                            <Col sm={5}><strong>Phương thức:</strong></Col>
-                                            <Col sm={7}>{result.paymentMethod}</Col>
-                                        </Row>
-                                        <Row className="mb-3 fs-5">
-                                            <Col sm={5}><strong>Người dùng:</strong></Col>
-                                            <Col sm={7} className="text-break">{result.userId}</Col>
-                                        </Row>
-                                        <Row className="mb-3 fs-5">
-                                            <Col sm={5}><strong>Gói:</strong></Col>
-                                            <Col sm={7}>{result.tier}</Col>
-                                        </Row>
-                                    </>
-                                )}
-
-                                {result.success && (
-                                    <p className="text-center text-warning fw-medium mt-3">
-                                        ⚠️ Vui lòng đăng xuất và đăng nhập lại để hệ thống cập nhật gói tài khoản mới.
-                                    </p>
-                                )}
-                                <div className="text-center mt-3">
-                                    <Button variant="danger" size="lg" onClick={() => navigate('/')}>
-                                        Quay về trang chủ
-                                    </Button>
-                                </div>
-
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                </Row>
+                        <Row className="mb-3 fs-5">
+                            <Col sm={5}><strong>Mã giao dịch:</strong></Col>
+                            <Col sm={7} className="text-break">{result.orderId}</Col>
+                        </Row>
+                        <Row className="mb-3 fs-5">
+                            <Col sm={5}><strong>Phương thức:</strong></Col>
+                            <Col sm={7}>{result.paymentMethod}</Col>
+                        </Row>
+                        <Row className="mb-3 fs-5">
+                            <Col sm={5}><strong>Người dùng:</strong></Col>
+                            <Col sm={7} className="text-break">{result.userId}</Col>
+                        </Row>
+                        <Row className="mb-3 fs-5">
+                            <Col sm={5}><strong>Gói:</strong></Col>
+                            <Col sm={7}>{result.tier}</Col>
+                        </Row>
+                    </>
+                )}
             </Container>
         </div>
     );

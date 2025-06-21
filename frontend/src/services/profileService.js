@@ -2,6 +2,26 @@ import { useQuery } from "@tanstack/react-query";
 
 export const fetchProfileData = async (userID) => {
     try {
+        const res = await fetch(`http://localhost:5270/api/Profile/my-profile/${userID}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+
+        if (!res.ok) {
+            throw new Error("Không thể tìm thấy dữ liệu người dùng !");
+        }
+
+        return res.json();
+    }
+    catch (error) {
+        throw new Error(error.message);
+    }
+};
+
+export const getProfileData = async (userID) => {
+    try {
         const res = await fetch(`http://localhost:5270/api/Profile/profile/${userID}`, {
             method: 'GET',
             headers: {

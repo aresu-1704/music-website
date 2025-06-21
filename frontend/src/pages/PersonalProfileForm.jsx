@@ -5,7 +5,7 @@ import { Container, Row, Col, Card, Button, Spinner, Alert } from 'react-bootstr
 import { PlayFill, PersonPlusFill, PersonCheckFill } from 'react-bootstrap-icons';
 import { useMusicPlayer } from '../context/musicPlayerContext';
 import '../styles/Personal.css';
-import { fetchProfileData } from '../services/ProfileService';
+import {fetchProfileData, getProfileData} from '../services/profileService';
 import { useAuth } from '../context/authContext';
 import { followUser, unfollowUser, checkFollowStatus } from '../services/followerService';
 import { useLoginSessionOut } from '../services/loginSessionOut';
@@ -42,7 +42,7 @@ const PersonalProfileForm = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const data = await fetchProfileData(profileId);
+                const data = await getProfileData(profileId);
                 setUserInfo(data);
                 setRole(data.role || null);
             } catch (err) {

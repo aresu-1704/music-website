@@ -20,7 +20,7 @@ namespace backend.Controllers
         }
 
         [Authorize]
-        [HttpGet("profile/{userID}")]
+        [HttpGet("my-profile/{userID}")]
         public async Task<IActionResult> GetProfileData(string userID)
         {
             var user = await _userService.GetProfileInfo(userID);
@@ -55,6 +55,45 @@ namespace backend.Controllers
                 gender = user.Gender,
                 avatarBase64 = avatarBase64,
                 expiredDate = user.ExpiredDate,
+                Role = user.Role
+            };
+
+            return Ok(response);
+        }
+
+
+        [HttpGet("profile/{userID}")]
+        public async Task<IActionResult> GetPublicProfileData(string userID)
+        {
+            var user = await _userService.GetProfileInfo(userID);
+
+            if (user == null)
+            {
+                return NotFound("Không tìm thấy người dùng.");
+            }
+
+            string avatarBase64 = null;
+            if (!string.IsNullOrEmpty(user.AvatarUrl))
+            {
+                try
+                {
+                    byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(user.AvatarUrl);
+                    avatarBase64 = Convert.ToBase64String(imageBytes);
+                    avatarBase64 = $"data:image/jpeg;base64,{avatarBase64}";
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Lỗi khi đọc ảnh: {ex.Message}");
+                    avatarBase64 = null;
+                }
+            }
+
+            var response = new PublicProfileDataDto
+            {
+                fullname = user.Name,
+                dateOfBirth = user.DateOfBirth,
+                gender = user.Gender,
+                avatarBase64 = avatarBase64,
                 Role = user.Role
             };
 
@@ -155,5 +194,14 @@ namespace backend.Controllers
     {
         public string Role { get; set; }
         public List<TrackListItemDto> Tracks { get; set; }
+    }
+
+    public class PublicProfileDataDto
+    {
+        public string fullname { get; set; }
+        public int gender { get; set; }
+        public DateTime dateOfBirth { get; set; }
+        public string Role { get; set; }
+        public string avatarBase64 { get; set; }
     }
 }

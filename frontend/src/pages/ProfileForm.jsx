@@ -4,7 +4,7 @@ import { Person, GeoAlt, ShieldLock, Link45deg } from 'react-bootstrap-icons';
 import '../styles/Profile.css'
 import {useNavigate, useParams} from "react-router-dom";
 import { queryClient } from "../context/QueryClientContext";
-import { useUserProfile, updatePersonalData, updatePersonalDataWithAvatar } from "../services/ProfileService";
+import { useUserProfile, updatePersonalData, updatePersonalDataWithAvatar } from "../services/profileService";
 import { toast, ToastContainer } from "react-toastify";
 import {Field, Form, Formik} from "formik";
 import * as Yup from 'yup';

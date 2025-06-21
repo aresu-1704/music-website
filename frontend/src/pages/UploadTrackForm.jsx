@@ -133,16 +133,15 @@ const UploadTrackForm = () => {
 
                     <Form.Group className="mb-3">
                         <Form.Label>Thể loại</Form.Label>
-                        <InputGroup className="genre-input-group bg-secondary text-white border-0">
+                        <InputGroup>
                             <Form.Control
                                 value={genreInput}
                                 onChange={(e) => setGenreInput(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddGenre())}
                                 placeholder="Nhập thể loại"
+                                className="bg-secondary text-white border-0"
                             />
-                            <Button onClick={handleAddGenre}>
-                                <Plus size={24} />
-                            </Button>
+                            <Button variant="danger" style={{ width: '52px', height: '52px', padding: 0 }} onClick={handleAddGenre}><Plus /></Button>
                         </InputGroup>
                         <div className="mt-2">
                             {genres.map((g, i) => (
@@ -162,12 +161,12 @@ const UploadTrackForm = () => {
                                 id="cover-input"
                                 className="d-none"
                                 onChange={(e) => {
-                                    const file = e.currentTarget.files?.[0];
-                                    if (file) {
-                                        formik.setFieldValue('cover', file);
-                                        setPreviewImage(URL.createObjectURL(file));
-                                    }
+                                    if (!e.currentTarget.files || e.currentTarget.files.length === 0) return;
+                                    const file = e.currentTarget.files[0];
+                                    formik.setFieldValue('cover', file);
+                                    setPreviewImage(URL.createObjectURL(file));
                                 }}
+
                             />
                             <Button variant="outline-light" onClick={() => document.getElementById('cover-input').click()}>
                                 📸 Chọn ảnh bìa
@@ -188,11 +187,10 @@ const UploadTrackForm = () => {
                                 id="audio-input"
                                 className="d-none"
                                 onChange={(e) => {
-                                    const file = e.currentTarget.files?.[0];
-                                    if (file) {
-                                        formik.setFieldValue('file', file);
-                                        setPreviewAudio(URL.createObjectURL(file));
-                                    }
+                                    if (!e.currentTarget.files || e.currentTarget.files.length === 0) return;
+                                    const file = e.currentTarget.files[0];
+                                    formik.setFieldValue('file', file);
+                                    setPreviewAudio(URL.createObjectURL(file));
                                 }}
                             />
                             <Button variant="outline-light" onClick={() => document.getElementById('audio-input').click()}>

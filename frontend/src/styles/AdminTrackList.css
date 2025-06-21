@@ -57,6 +57,14 @@
     transform: scale(1.05);
 }
 
+.admin-stats {
+    display: flex;
+    gap: 24px; /* khoảng cách giữa các mục */
+    margin-top: 12px;
+    font-weight: 500;
+}
+
+
 /* Admin Track Management Page */
 .admin-track-management {
     background-color: #121212;
@@ -112,9 +120,11 @@
 /* Track List Header */
 .admin-track-management .admin-track-list-header {
     display: grid;
-    grid-template-columns: 80px 3fr 2fr 2fr 1fr 2fr;
+    grid-template-columns: 86px 385px 1.9fr 1.9fr 1fr 2fr;
     gap: 1.5rem;
     padding: 0 1.5rem;
+    padding-bottom: 1.5rem;
+    padding-top: 1.5rem;
     color: #b3b3b3;
     font-size: 0.8rem;
     text-transform: uppercase;
@@ -150,8 +160,8 @@
 /* Columns */
 .admin-track-management .track-cover-wrapper {
     position: relative;
-    width: 50px;
-    height: 50px;
+    width: 100px;
+    height: 100px;
     flex-shrink: 0;
 }
 
@@ -192,12 +202,14 @@
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 0;
+    padding-left: 10px;
 }
 
 .admin-track-management .track-artist-link {
     font-size: 0.85rem;
     color: #b3b3b3;
     text-decoration: none;
+    padding-left: 10px;
 }
 .admin-track-management .track-artist-link:hover {
     text-decoration: underline;
@@ -228,6 +240,10 @@
 }
 .admin-track-management .status-vip, .admin-track-management .status-pending {
     background-color: #ffc107; color: black;
+}
+
+.status-wait {
+    background-color: #dc3545; color: black;
 }
 .admin-track-management .status-public {
     background-color: #17a2b8; color: white;

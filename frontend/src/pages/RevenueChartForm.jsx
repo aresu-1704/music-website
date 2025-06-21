@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { getRevenueByTimeRange, getRevenueByTier } from '../services/paymentRecordService';
 import { Row, Col, Form, Button, Card, Container } from 'react-bootstrap';
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
+import {
+    LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer
+} from 'recharts';
 import dayjs from 'dayjs';
+import '../styles/RevenueChartForm.css';
 
 const RevenueChartForm = () => {
     const [fromDate, setFromDate] = useState('2000-01-01');
@@ -53,32 +56,49 @@ const RevenueChartForm = () => {
         <Container className="p-4">
             <Card className="p-4 bg-dark text-white mb-4">
                 <h4 className="mb-4">🤑 Thống kê doanh thu</h4>
-                <Form onSubmit={handleSubmit}>
-                    <Row className="g-3 align-items-end">
+
+                <Form onSubmit={handleSubmit} className="revenue-form">
+                    {/* Tier riêng hàng */}
+                    <Row className="mb-3">
                         <Col md={3}>
                             <Form.Group>
-                                <Form.Label>Từ ngày</Form.Label>
-                                <Form.Control type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} className="bg-light" />
-                            </Form.Group>
-                        </Col>
-                        <Col md={3}>
-                            <Form.Group>
-                                <Form.Label>Đến ngày</Form.Label>
-                                <Form.Control type="date" value={toDate} onChange={e => setToDate(e.target.value)} className="bg-light" />
-                            </Form.Group>
-                        </Col>
-                        <Col md={3}>
-                            <Form.Group>
-                                <Form.Label>Tier</Form.Label>
-                                <Form.Select value={tier} onChange={e => setTier(e.target.value)} className="bg-light">
+                                <Form.Label>Gói nâng cấp</Form.Label>
+                                <Form.Select
+                                    value={tier}
+                                    onChange={e => setTier(e.target.value)}
+                                >
                                     <option value="VIP">VIP</option>
                                     <option value="Premium">Premium</option>
                                 </Form.Select>
                             </Form.Group>
                         </Col>
+                    </Row>
+
+                    {/* Ngày và nút lọc */}
+                    <Row className="g-3 align-items-end">
                         <Col md={3}>
-                            <Button type="submit" variant="danger" className="w-100">Lọc</Button>
+                            <Form.Group>
+                                <Form.Label>Từ ngày</Form.Label>
+                                <Form.Control
+                                    type="date"
+                                    value={fromDate}
+                                    onChange={e => setFromDate(e.target.value)}
+                                />
+                            </Form.Group>
                         </Col>
+                        <Col md={3}>
+                            <Form.Group>
+                                <Form.Label>Đến ngày</Form.Label>
+                                <Form.Control
+                                    type="date"
+                                    value={toDate}
+                                    onChange={e => setToDate(e.target.value)}
+                                />
+                            </Form.Group>
+                        </Col>
+                            <Button type="submit" variant="danger" className="">
+                                Lọc
+                            </Button>
                     </Row>
                 </Form>
             </Card>
@@ -93,12 +113,18 @@ const RevenueChartForm = () => {
                                 <XAxis dataKey="date" stroke="#ccc" />
                                 <YAxis stroke="#ccc" tickFormatter={formatMoney} />
                                 <Tooltip
-                                    formatter={(value, name) => [formatMoney(value), "Tổng cộng"]}
+                                    formatter={(value) => formatMoney(value)}
                                     labelFormatter={(label) => `Ngày: ${label}`}
                                     contentStyle={{ backgroundColor: '#222', borderColor: '#555' }}
                                     itemSorter={(item) => -item.value}
                                 />
-                                <Line type="monotone" dataKey="total" stroke="#00bcd4" strokeWidth={2} dot={{ r: 3 }} />
+                                <Line
+                                    type="monotone"
+                                    dataKey="total"
+                                    stroke="#00bcd4"
+                                    strokeWidth={2}
+                                    dot={{ r: 3 }}
+                                />
                             </LineChart>
                         </ResponsiveContainer>
                     </Card>
@@ -114,8 +140,18 @@ const RevenueChartForm = () => {
                                 <CartesianGrid stroke="#444" />
                                 <XAxis dataKey="date" stroke="#ccc" />
                                 <YAxis stroke="#ccc" tickFormatter={formatMoney} />
-                                <Tooltip formatter={(value) => formatMoney(value)} />
-                                <Line type="monotone" dataKey="total" stroke="#4caf50" strokeWidth={2} dot={{ r: 3 }} />
+                                <Tooltip
+                                    formatter={(value) => formatMoney(value)}
+                                    labelFormatter={(label) => `Ngày: ${label}`}
+                                    contentStyle={{ backgroundColor: '#222', borderColor: '#555' }}
+                                />
+                                <Line
+                                    type="monotone"
+                                    dataKey="total"
+                                    stroke="#4caf50"
+                                    strokeWidth={2}
+                                    dot={{ r: 3 }}
+                                />
                             </LineChart>
                         </ResponsiveContainer>
                     </Card>

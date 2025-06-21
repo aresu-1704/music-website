@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Spinner, Container, Modal, Form, InputGroup } from 'react-bootstrap';
-import { PlayFill, LockFill, CheckCircle, Trash } from 'react-bootstrap-icons';
+import { PlayFill, Trash } from 'react-bootstrap-icons';
 import { useNavigate } from 'react-router-dom';
 import { changeApprove, changePublic, deleteTrack, getAllTracks } from '../services/trackService';
 import { useAuth } from "../context/authContext";
@@ -120,7 +120,7 @@ const AdminTrackList = () => {
 
     if (loading) {
         return (
-            <div className="admin-page d-flex justify-content-center align-items-center">
+            <div className="admin-page d-flex justify-content-center align-items-center vh-100">
                 <Spinner animation="border" variant="light" />
             </div>
         );
@@ -199,7 +199,7 @@ const AdminTrackList = () => {
                                 
                                 <div className="track-meta-details col-status">
                                     {track.uploaderId !== null ? (
-                                        <span className={`status-badge ${track.isApproved ? 'status-approved' : 'status-pending'}`}>
+                                        <span className={`status-badge ${track.isApproved ? 'status-approved' : 'status-wait'}`}>
                                             {track.isApproved ? 'Đã duyệt' : 'Chờ duyệt'}
                                         </span>
                                     ) : (

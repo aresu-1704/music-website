@@ -28,14 +28,13 @@
     border-radius: 1rem;
 }
 
-/* Genre Input Group */
 .genre-input-group.input-group {
-    border-radius: 50px;
+    border-radius: 1rem;
     overflow: hidden;
     border: 2px solid #333;
     background-color: #3a3a3a;
     transition: border-color 0.2s ease;
-    padding: 0;
+    padding: 0px;
 }
 
 .genre-input-group.input-group:focus-within {

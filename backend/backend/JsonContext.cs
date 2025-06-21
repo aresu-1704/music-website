@@ -55,6 +55,9 @@ namespace backend
     [JsonSerializable(typeof(MessageResponse))]
     [JsonSerializable(typeof(FollowingDetailsListResponse))]
     [JsonSerializable(typeof(FollowingDetailsResponse))]
+    [JsonSerializable(typeof(backend.Controllers.VerifyEmailOtpRequest))]
+    [JsonSerializable(typeof(backend.Controllers.ChangePasswordRequest))]
+    [JsonSerializable(typeof(backend.Controllers.UpdateAddressRequest))]
 
     public partial class JsonContext : JsonSerializerContext
     {

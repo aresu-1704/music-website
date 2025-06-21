@@ -1,11 +1,11 @@
 /* General Page Setup */
-.history-page {
+.favorite-page {
     background-color: #121212;
     color: #ffffff;
     min-height: 100vh;
 }
 
-.history-container {
+.favorite-container {
     max-width: 1600px;
     margin: 0 auto;
     padding-left: 2rem;
@@ -17,11 +17,11 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    color: #1DB954; /* Spotify Green */
+    color: #e54764; /* A shade of pink/red for favorites */
 }
 
 /* Header */
-.history-header {
+.favorite-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -30,7 +30,7 @@
     margin-bottom: 2rem;
 }
 
-.history-title {
+.favorite-title {
     font-size: 2.5rem;
     font-weight: 700;
     display: flex;
@@ -38,8 +38,8 @@
     gap: 0.75rem;
 }
 
-.history-clock-icon {
-    opacity: 0.8;
+.favorite-heart-icon {
+    color: #e54764;
 }
 
 .delete-all-btn {
@@ -49,25 +49,27 @@
     font-weight: 600;
     border-radius: 50px;
     padding: 0.6rem 1.2rem;
+    border-color: #e54764;
+    color: #e54764;
     transition: all 0.2s ease-in-out;
 }
 
 .delete-all-btn:hover {
     transform: scale(1.05);
-    background-color: #dc3545;
+    background-color: #e54764;
     color: white;
 }
 
 
 /* Grid Layout */
-.history-grid {
+.favorite-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
 }
 
 /* Music Card */
-.history-music-card {
+.favorite-music-card {
     background-color: #181818;
     border-radius: 12px;
     overflow: hidden;
@@ -76,18 +78,18 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.history-music-card:hover {
+.favorite-music-card:hover {
     background-color: #282828;
     transform: translateY(-5px);
 }
 
-.history-card-image-container {
+.favorite-card-image-container {
     position: relative;
     width: 100%;
     padding-top: 100%; /* 1:1 Aspect Ratio */
 }
 
-.history-card-image {
+.favorite-card-image {
     position: absolute;
     top: 0;
     left: 0;
@@ -106,7 +108,7 @@
     font-weight: bold;
 }
 
-.history-card-overlay {
+.favorite-card-overlay {
     position: absolute;
     top: 0;
     left: 0;
@@ -121,42 +123,42 @@
     transition: opacity 0.3s ease;
 }
 
-.history-music-card:hover .history-card-overlay {
+.favorite-music-card:hover .favorite-card-overlay {
     opacity: 1;
 }
 
-.history-card-overlay .play-button,
-.history-card-overlay .icon-button {
+.favorite-card-overlay .play-button,
+.favorite-card-overlay .icon-button {
     background: transparent;
     border: none;
     color: white;
     padding: 0;
     transition: transform 0.2s ease, color 0.2s ease;
 }
-.history-card-overlay .play-button:hover,
-.history-card-overlay .icon-button:hover {
+.favorite-card-overlay .play-button:hover {
     transform: scale(1.15);
-    color: #1DB954;
+    color: #1DB954; /* Green for play */
 }
 
-.history-card-overlay .icon-button:hover {
-    color: #ff4d4d; /* Red for delete */
+.favorite-card-overlay .icon-button:hover {
+    transform: scale(1.15);
 }
 
-.history-card-overlay .icon-button[title="Thông tin"]:hover {
+.favorite-card-overlay .icon-button[title="Thông tin"]:hover {
      color: #17a2b8; /* Blue for info */
 }
 
-
-.history-card-info {
-    padding: 1rem;
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
+.favorite-card-overlay .icon-button[title="Bỏ yêu thích"]:hover {
+    color: #f0f0f0;
 }
 
-.history-card-title {
+
+.favorite-card-info {
+    padding: 1rem;
+    text-align: left;
+}
+
+.favorite-card-title {
     font-size: 1.1rem;
     font-weight: 600;
     margin: 0;
@@ -164,27 +166,16 @@
     overflow: hidden;
     text-overflow: ellipsis;
     color: #ffffff;
-    margin-bottom: 0.25rem;
 }
 
-.history-card-artist {
+.favorite-card-subtitle {
     font-size: 0.9rem;
     color: #b3b3b3;
-    margin: 0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    flex-grow: 1;
-}
-
-.history-card-subtitle {
-    font-size: 0.8rem;
-    color: #888;
-    margin-top: 0.5rem;
+    margin: 0.25rem 0 0 0;
 }
 
 /* Empty State */
-.history-empty-state {
+.favorite-empty-state {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -196,7 +187,7 @@
     color: #b3b3b3;
 }
 
-.empty-history-img {
+.empty-favorite-img {
     width: 150px;
     height: 150px;
     object-fit: cover;
@@ -205,13 +196,13 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
-.history-empty-state h3 {
+.favorite-empty-state h3 {
     margin-top: 2rem;
     color: #ffffff;
     font-weight: 600;
 }
 
-/* Modal Customization */
+/* Modal Customization from History.css - assuming these styles are global or should be duplicated */
 .modal-content {
     background-color: #282828;
     color: #ffffff;
@@ -231,7 +222,7 @@
 
 /* Responsive Design */
 @media (max-width: 992px) {
-    .history-grid {
+    .favorite-grid {
         grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
         gap: 1.5rem;
     }
@@ -239,44 +230,44 @@
 
 
 @media (max-width: 768px) {
-    .history-container {
+    .favorite-container {
         padding-left: 1.5rem;
         padding-right: 1.5rem;
     }
-    .history-header {
+    .favorite-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 1.5rem;
         padding-bottom: 1.5rem;
     }
-    .history-title {
+    .favorite-title {
         font-size: 2rem;
     }
     .delete-all-btn {
         width: 100%;
     }
-     .history-grid {
+     .favorite-grid {
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 1.5rem;
     }
 }
 
 @media (max-width: 576px) {
-     .history-container {
+     .favorite-container {
         padding-left: 1rem;
         padding-right: 1rem;
     }
-    .history-grid {
+    .favorite-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
         gap: 1rem;
     }
-     .history-card-info {
+     .favorite-card-info {
         padding: 0.75rem;
     }
-    .history-card-title {
+    .favorite-card-title {
         font-size: 1rem;
     }
-    .history-card-subtitle {
+    .favorite-card-subtitle {
         font-size: 0.8rem;
     }
-}
+} 

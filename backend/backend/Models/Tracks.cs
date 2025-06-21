@@ -2,6 +2,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace backend.Models
 {
@@ -55,5 +56,8 @@ namespace backend.Models
 
         [BsonElement("updated_at")]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        [BsonElement("embedding")]
+        public float[]? Embedding { get; set; }
     }
 }

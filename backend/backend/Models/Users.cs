@@ -74,5 +74,11 @@ namespace backend.Models
 
         [BsonElement("expired_date")]
         public DateTime ExpiredDate { get; set; }
+
+        [BsonElement("address")]
+        public string? Address { get; set; }
+
+        [BsonElement("is_email_verified")]
+        public bool IsEmailVerified { get; set; } = false;
     }
 }

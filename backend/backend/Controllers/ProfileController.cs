@@ -44,7 +44,9 @@ namespace backend.Controllers
                 gender = user.Gender,
                 avatarBase64 = avatarBase64,
                 expiredDate = user.ExpiredDate,
-                Role = user.Role
+                Role = user.Role,
+                address = user.Address,
+                isEmailVerified = user.IsEmailVerified
             };
 
             return Ok(response);
@@ -65,14 +67,16 @@ namespace backend.Controllers
                 ? $"http://localhost:5270/avatar/{user.AvatarUrl}"
                 : null;
 
-
             var response = new PublicProfileDataDto
             {
                 fullname = user.Name,
                 dateOfBirth = user.DateOfBirth,
                 gender = user.Gender,
                 avatarBase64 = avatarBase64,
-                Role = user.Role
+                Role = user.Role,
+                FollowCount = user.FollowCount,
+                address = user.Address,
+                isEmailVerified = user.IsEmailVerified
             };
 
             return Ok(response);
@@ -129,12 +133,67 @@ namespace backend.Controllers
             }
         }
 
+        [Authorize]
+        [HttpPost("change-password/{userId}")]
+        public async Task<IActionResult> ChangePassword(string userId, [FromBody] ChangePasswordRequest request)
+        {
+            var result = await _userService.ChangePassword(userId, request.OldPassword, request.NewPassword);
+            if (result)
+                return Ok("Đổi mật khẩu thành công");
+            else
+                return BadRequest("Mật khẩu cũ không đúng hoặc có lỗi");
+        }
 
         [HttpGet("my-tracks/{profileId}")]
         public async Task<IActionResult> GetMyTracks(string profileId)
         {
             var response = await _trackService.GetUserTracksResponseAsync(profileId);
             return Ok(response);
+        }
+
+        [Authorize]
+        [HttpPut("address/{userId}")]
+        public async Task<IActionResult> UpdateAddress(string userId, [FromBody] UpdateAddressRequest request)
+        {
+            var user = await _userService.GetProfileInfo(userId);
+            if (user == null)
+                return NotFound("Không tìm thấy người dùng.");
+            var result = await _userService.UpdatePersonalData(userId, user.Name, user.Gender, user.DateOfBirth, user.AvatarUrl, request.Address, user.IsEmailVerified);
+            if (result == "Success")
+                return Ok("Cập nhật địa chỉ thành công");
+            else
+                return BadRequest("Cập nhật địa chỉ thất bại");
+        }
+
+        [Authorize]
+        [HttpPost("send-verify-email-otp/{userId}")]
+        public async Task<IActionResult> SendVerifyEmailOtp(string userId)
+        {
+            var user = await _userService.GetProfileInfo(userId);
+            if (user == null)
+                return NotFound("Không tìm thấy người dùng.");
+            var result = await _userService.SendOtpAsync(user.Email);
+            if (!result)
+                return BadRequest("Không gửi được OTP xác minh email.");
+            return Ok("Đã gửi OTP xác minh email.");
+        }
+
+        [Authorize]
+        [HttpPost("verify-email-otp/{userId}")]
+        public async Task<IActionResult> VerifyEmailOtp(string userId, [FromBody] VerifyEmailOtpRequest request)
+        {
+            var user = await _userService.GetProfileInfo(userId);
+            if (user == null)
+                return NotFound("Không tìm thấy người dùng.");
+            var result = await _userService.VerifyOnlyOtpAsync(user.Email, request.Otp);
+            if (!result)
+                return BadRequest("OTP không hợp lệ hoặc đã hết hạn.");
+            // Đánh dấu đã xác minh email
+            var updateResult = await _userService.UpdatePersonalData(userId, user.Name, user.Gender, user.DateOfBirth, user.AvatarUrl, user.Address, true);
+            if (updateResult == "Success")
+                return Ok("Xác minh email thành công.");
+            else
+                return BadRequest("Xác minh email thất bại");
         }
     }
 
@@ -149,6 +208,8 @@ namespace backend.Controllers
         public string avatarBase64 { get; set; }
         public DateTime expiredDate { get; set; }
         public string Role { get; set; }
+        public string? address { get; set; }
+        public bool isEmailVerified { get; set; }
     }
     #endregion
 
@@ -182,5 +243,23 @@ namespace backend.Controllers
         public string Role { get; set; }
         public string avatarBase64 { get; set; }
         public int FollowCount { get; set; }
+        public string? address { get; set; }
+        public bool isEmailVerified { get; set; }
+    }
+
+    public class ChangePasswordRequest
+    {
+        public string OldPassword { get; set; }
+        public string NewPassword { get; set; }
+    }
+
+    public class UpdateAddressRequest
+    {
+        public string Address { get; set; }
+    }
+
+    public class VerifyEmailOtpRequest
+    {
+        public string Otp { get; set; }
     }
 }

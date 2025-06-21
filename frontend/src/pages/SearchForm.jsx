@@ -1,179 +1,158 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
-import { PlayCircle, Heart, Info } from 'lucide-react';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
+import { PlayCircle } from 'lucide-react';
 import { fetchSearchResults } from '../services/searchService';
-import '../styles/Discover.css';
+import '../styles/Search.css';
 import { useMusicPlayer } from '../context/musicPlayerContext';
-import {Badge, Spinner} from "react-bootstrap";
+import { Badge, Spinner, Container } from "react-bootstrap";
 
-const MusicCard = ({ id, title, artist, imageUrl, likeCount, playCount, isPublic, onPlay }) => {
-  const [hover, setHover] = useState(false);
-
-  const handlePlay = (e) => {
-    e.preventDefault();
-    onPlay();
-  };
-  
-  return (
-    <div
-      className="music-card text-center text-white px-2"
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{ cursor: 'pointer', position: 'relative' }}
-    >
-      <Link to={`/track/${id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-        <img
-          src={imageUrl || '/images/default-music.jpg'}
-          alt={title}
-          style={{
-            width: '100%',
-            height: '340px',
-            objectFit: 'cover',
-            borderRadius: '16px',
-            boxShadow: '0 6px 15px rgba(0, 0, 0, 0.6)',
-          }}
-        />
-        {!isPublic && (
-            <Badge
-                bg="warning"
-                text="dark"
-                className="position-absolute top-0 end-0 m-3"
-            >
-              👑 VIP
-            </Badge>
-        )}
-        <div className="music-icons-top d-flex gap-3 position-absolute top-0 start-0 m-3">
-          <Info size={22} color="white" />
+const MusicCard = ({ track, onPlay, onInfo }) => {
+    return (
+        <div className="search-music-card" onClick={() => onInfo(track)}>
+            <div className="search-card-image-container">
+                <img
+                    src={track.imageUrl || '/images/default-music.jpg'}
+                    alt={track.title}
+                    className="search-card-image"
+                />
+                {!track.isPublic && (
+                    <Badge bg="warning" text="dark" className="vip-badge">
+                        👑 VIP
+                    </Badge>
+                )}
+                <div className="search-card-overlay">
+                    <button
+                        className="play-button"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onPlay(track);
+                        }}
+                    >
+                        <PlayCircle size={50} />
+                    </button>
+                </div>
+            </div>
+            <div className="search-card-info">
+                <p className="search-card-title">{track.title}</p>
+                <p className="search-card-artist">{track.artistName ? track.artistName : 'Musicresu'}</p>
+            </div>
         </div>
-        {hover && (
-          <div className="music-card-overlay">
-            <button className="play-button border-0 bg-transparent" onClick={handlePlay}>
-              <PlayCircle size={60} color="white" />
-            </button>
-          </div>
-        )}
-        <div className="mt-3">
-          <div className="fw-bold" style={{ fontSize: '16px', color: '#fff' }}>{title}</div>
-          <div style={{ fontSize: '13px', color: '#ccc' }}>{artist}</div>
-          <div style={{ fontSize: '13px', color: '#ccc' }}>
-            {likeCount} likes | {playCount} plays
-          </div>
-        </div>
-      </Link>
-    </div>
-  );
+    );
 };
 
+const UserCard = ({ user }) => (
+    <Link to={`/personal-profile/${user.id}`} className="search-user-card">
+        <img
+            src={user.avatarBase64 || '/images/default-avatar.png'}
+            alt={user.fullname}
+            className="search-user-avatar"
+        />
+        <div className="search-user-info">
+            <div className="search-user-fullname">{user.fullname}</div>
+            <div className="search-user-username">@{user.username}</div>
+        </div>
+    </Link>
+);
+
+
 const SearchForm = () => {
-  const [searchParams] = useSearchParams();
-  const query = searchParams.get('query') || searchParams.get('q') || '';
-  const [results, setResults] = useState({ tracks: [], users: [] });
-  const [loading, setLoading] = useState(false);
-  const { playTrackList } = useMusicPlayer();
+    const [searchParams] = useSearchParams();
+    const query = searchParams.get('query') || searchParams.get('q') || '';
+    const [results, setResults] = useState({ tracks: [], users: [] });
+    const [loading, setLoading] = useState(false);
+    const { playTrackList } = useMusicPlayer();
+    const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!query) {
-      setResults({ tracks: [], users: [] });
-      return;
-    }
-    setLoading(true);
-    fetchSearchResults(query)
-      .then(data => setResults(data))
-      .catch(() => setResults({ tracks: [], users: [] }))
-      .finally(() => setLoading(false));
-  }, [query]);
+    useEffect(() => {
+        if (!query) {
+            setResults({ tracks: [], users: [] });
+            return;
+        }
+        setLoading(true);
+        fetchSearchResults(query)
+            .then(data => {
+                const mappedTracks = data.tracks.map(track => ({
+                    ...track,
+                    artist: track.artistName,
+                    imageUrl: track.imageBase64 || '/images/default-music.jpg'
+                }));
+                setResults({ ...data, tracks: mappedTracks });
+            })
+            .catch(() => setResults({ tracks: [], users: [] }))
+            .finally(() => setLoading(false));
+    }, [query]);
 
-  const handlePlayTrack = (track) => {
-    // Tạo playlist tạm thời từ kết quả tìm kiếm
-    const searchPlaylist = results.tracks.map(track => ({
-      id: track.id,
-      title: track.title,
-      subtitle: track.artistName || 'Musicresu',
-      isPublic: track.isPublic,
-      imageUrl: track.imageBase64 || '/images/default-music.jpg',
-      url: track.audioUrl || ''
-    }));
-    
-    // Tìm index của track được chọn
-    const trackIndex = searchPlaylist.findIndex(t => t.id === track.id);
-    
-    // Phát nhạc với playlist tạm thời
-    if (trackIndex !== -1) {
-      playTrackList(searchPlaylist, trackIndex);
-    }
-  };
+    const handlePlayTrack = (track) => {
+        const searchPlaylist = results.tracks.map(t => ({
+            id: t.id,
+            title: t.title,
+            subtitle: t.artistName || 'Musicresu',
+            isPublic: t.isPublic,
+            imageUrl: t.imageBase64 || '/images/default-music.jpg',
+            url: t.audioUrl || ''
+        }));
 
-  return (
-    <div className="bg-dark py-5" style={{ minHeight: '100vh' }}>
-      <div className="container">
-        <h2 className="text-white mb-4">Kết quả tìm kiếm cho "{query}"</h2>
-        {loading && (
-            <div className="d-flex justify-content-center align-items-center vh-100">
-              <Spinner animation="border" role="status" />
-            </div>
-        )}
+        const trackIndex = searchPlaylist.findIndex(t => t.id === track.id);
 
-        {!loading && (
-          <>
-            {/* Tracks Section */}
-            {results.tracks.length > 0 && (
-              <>
-                <h4 className="text-white mb-4">🎵 Bài hát</h4>
-                <div className="row">
-                  {results.tracks.map((track) => (
-                    <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" key={track.id}>
-                      <MusicCard
-                        id={track.id}
-                        title={track.title}
-                        artist={track.artistName}
-                        imageUrl={track.imageBase64 || '/images/default-music.jpg'}
-                        likeCount={track.likeCount}
-                        playCount={track.playCount}
-                        isPublic={track.isPublic}
-                        onPlay={() => handlePlayTrack(track)}
-                      />
-                    </div>
-                  ))}
+        if (trackIndex !== -1) {
+            playTrackList(searchPlaylist, trackIndex);
+        }
+    };
+
+    return (
+        <div className="search-page">
+            {loading ? (
+                <div className="loading-container">
+                    <Spinner animation="border" role="status" />
                 </div>
-              </>
-            )}
+            ) : (
+                <Container fluid className="search-container py-4">
+                    <div className="search-header">
+                        <h1 className="search-title">
+                            Kết quả tìm kiếm cho <span className="search-query">"{query}"</span>
+                        </h1>
+                    </div>
 
-            {/* Users Section */}
-            {results.users.length > 0 && (
-              <>
-                <h4 className="text-white mb-4">👤 Người dùng</h4>
-                <div className="row">
-                  {results.users.map((user) => (
-                    <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" key={user.id}>
-                      <Link to={`/personal-profile/${user.id}`} className="text-decoration-none">
-                        <div className="bg-secondary bg-opacity-10 rounded-4 p-4 d-flex align-items-center gap-3">
-                          <img
-                            src={user.avatarBase64 || '/images/default-avatar.png'}
-                            alt={user.name}
-                            style={{ width: 56, height: 56, borderRadius: '50%', objectFit: 'cover', border: '2px solid #fff2' }}
-                          />
-                          <div>
-                            <div className="fw-bold text-white" style={{ fontSize: 16 }}>{user.fullname}</div>
-                            <div style={{ color: '#bbb', fontSize: 13 }}>@{user.username}</div>
-                          </div>
+                    {!query || (results.tracks.length === 0 && results.users.length === 0) ? (
+                        <div className="search-empty-state text-center">
+                            <img src="/images/default-music.jpg" alt="No results" className="empty-search-img mb-4" />
+                            <h3>Không tìm thấy kết quả</h3>
+                            <p>Vui lòng thử sử dụng từ khóa khác.</p>
                         </div>
-                      </Link>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
+                    ) : (
+                        <>
+                            {results.tracks.length > 0 && (
+                                <section className="search-section">
+                                    <h2 className="search-section-title">Bài hát</h2>
+                                    <div className="search-grid">
+                                        {results.tracks.map((track) => (
+                                            <MusicCard
+                                                key={track.id}
+                                                track={track}
+                                                onPlay={handlePlayTrack}
+                                                onInfo={(track) => navigate(`/track/${track.id}`)}
+                                            />
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
 
-            {results.tracks.length === 0 && results.users.length === 0 && (
-              <div className="text-center mt-4 text-white">
-                Không có kết quả
-              </div>
+                            {results.users.length > 0 && (
+                                <section className="search-section">
+                                    <h2 className="search-section-title">Người dùng</h2>
+                                    <div className="user-grid">
+                                        {results.users.map((user) => (
+                                            <UserCard key={user.id} user={user} />
+                                        ))}
+                                    </div>
+                                </section>
+                            )}
+                        </>
+                    )}
+                </Container>
             )}
-          </>
-        )}
-      </div>
-    </div>
-  );
+        </div>
+    );
 };
 
 export default SearchForm;

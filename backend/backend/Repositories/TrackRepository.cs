@@ -102,5 +102,24 @@ namespace backend.Repositories
 
             return await _tracks.Find(finalFilter).ToListAsync();
         }
+
+        public async Task<List<Track>> GetPublicApprovedTracksByArtistIdAsync(string artistId)
+        {
+            var filter = Builders<Track>.Filter.And(
+                Builders<Track>.Filter.Eq(t => t.ArtistId, artistId),
+                Builders<Track>.Filter.Eq(t => t.IsPublic, true),
+                Builders<Track>.Filter.Eq(t => t.IsApproved, true)
+            );
+            return await _tracks.Find(filter).ToListAsync();
+        }
+
+        public async Task<List<Track>> GetApprovedTracksByArtistIdAsync(string artistId)
+        {
+            var filter = Builders<Track>.Filter.And(
+                Builders<Track>.Filter.Eq(t => t.ArtistId, artistId),
+                Builders<Track>.Filter.Eq(t => t.IsApproved, true)
+            );
+            return await _tracks.Find(filter).ToListAsync();
+        }
     }
 }

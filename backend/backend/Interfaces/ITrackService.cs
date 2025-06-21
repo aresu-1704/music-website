@@ -21,6 +21,9 @@ namespace backend.Interfaces
         Task<TrackMusic> GetMusicByIdAsync(string id);
         Task<string> UpdatePlayCount(string id);
         Task<TrackInfo> GetTrackInfo(string id);
+        Task<List<Track>> GetPublicApprovedTracksByArtistIdAsync(string artistId);
+        Task<List<Track>> GetApprovedTracksByArtistIdAsync(string artistId);
+        Task<UserTracksResponse> GetUserTracksResponseAsync(string profileId);
         Task ApproveTrack(string id);
         Task ChangePublicStatus(string id);
         Task<bool> DeleteTrack(string trackId, string userId, string role);

@@ -21,12 +21,12 @@ import SearchForm from './pages/SearchForm';
 import PolicyForm from "./pages/PolicyForm";
 import NotFoundForm from "./pages/NotFoundForm";
 import TrackDetail from "./pages/TrackDetailForm";
+import PersonalProfileForm from './pages/PersonalProfileForm';
 import FavoriteForm from './pages/FavoriteForm';
 import HistoryForm from './pages/HistoryForm';
 import AdminTrackList from "./pages/AdminTrackListForm";
 import UploadTrackForm from "./pages/UploadTrackForm";
 import RevenueChartForm from "./pages/RevenueChartForm";
-
 
 const queryClient = new QueryClient();
 
@@ -50,6 +50,7 @@ const App = () => (
                             <Route path="/new-password" element={<NewPassword />} />
                             <Route path="/policy" element={<PolicyForm />} />
                             <Route path="track/:trackId" element={<TrackDetail /> } />
+                            <Route path="/personal-profile/:profileId" element={<PersonalProfileForm />} />
                             <Route path="/histories" element={<HistoryForm />} />
                             <Route path="/track-management" element={<AdminTrackList /> } />
                             <Route path="/likes" element={<FavoriteForm />} />

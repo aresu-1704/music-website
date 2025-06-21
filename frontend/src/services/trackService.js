@@ -54,7 +54,6 @@ export async function getTopLikeTracks() {
     }
 }
 
-
 export const getTrackById = async (id) => {
     const res = await fetch(`http://localhost:5270/api/Track/track-info/${id}`, {
         method: 'GET',
@@ -91,6 +90,16 @@ export const getTrackDetail = async (trackId) => {
     const data = await response.json();
     return data;
 };
+
+
+export const getTracksByArtistId = async (profileId) => {
+    const res = await fetch(`http://localhost:5270/api/Profile/my-tracks/${profileId}`);
+    if (!res.ok) {
+        throw new Error('Không thể lấy danh sách bài hát.');
+    }
+    return await res.json();
+};
+
 
 export const getAllTracks = async () => {
     const res = await fetch('http://localhost:5270/api/Track/all-track', {

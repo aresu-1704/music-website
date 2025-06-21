@@ -1,4 +1,5 @@
-﻿using backend.Interfaces;
+﻿using backend.Controllers;
+using backend.Interfaces;
 using backend.Models;
 
 namespace backend.Services
@@ -54,10 +55,39 @@ namespace backend.Services
                 };
             }).ToList();
 
+            var userDtoTasks = users.Select(async user =>
+            {
+                string avatarBase64 = null;
+                if (!string.IsNullOrEmpty(user.AvatarUrl))
+                {
+                    try
+                    {
+                        byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(user.AvatarUrl);
+                        avatarBase64 = Convert.ToBase64String(imageBytes);
+                        avatarBase64 = $"data:image/jpeg;base64,{avatarBase64}";
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Lỗi khi đọc ảnh: {ex.Message}");
+                        avatarBase64 = null;
+                    }
+                }
+
+                return new SearchUserDto
+                {
+                    id = user.Id,
+                    fullname = user.Name,
+                    username = user.Username,
+                    avatarBase64 = avatarBase64,
+                };
+            });
+
+            var usersDto = (await Task.WhenAll(userDtoTasks)).ToList();
+
             return new SearchResultDto
             {
                 Tracks = trackDtos,
-                Users = users
+                Users = usersDto,
             };
         }
 

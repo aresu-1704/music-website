@@ -145,15 +145,15 @@ const SearchForm = () => {
                 <div className="row">
                   {results.users.map((user) => (
                     <div className="col-12 col-sm-6 col-md-4 col-lg-3 mb-4" key={user.id}>
-                      <Link to={`/profile/${user.id}`} className="text-decoration-none">
+                      <Link to={`/personal-profile/${user.id}`} className="text-decoration-none">
                         <div className="bg-secondary bg-opacity-10 rounded-4 p-4 d-flex align-items-center gap-3">
                           <img
-                            src={user.avatarUrl || '/images/default-avatar.png'}
+                            src={user.avatarBase64 || '/images/default-avatar.png'}
                             alt={user.name}
                             style={{ width: 56, height: 56, borderRadius: '50%', objectFit: 'cover', border: '2px solid #fff2' }}
                           />
                           <div>
-                            <div className="fw-bold text-white" style={{ fontSize: 16 }}>{user.name}</div>
+                            <div className="fw-bold text-white" style={{ fontSize: 16 }}>{user.fullname}</div>
                             <div style={{ color: '#bbb', fontSize: 13 }}>@{user.username}</div>
                           </div>
                         </div>

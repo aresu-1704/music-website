@@ -43,6 +43,16 @@ namespace backend
     [JsonSerializable(typeof(FollowingListResponse))]
     [JsonSerializable(typeof(List<PaymentRecord>))]
     [JsonSerializable(typeof(PublicProfileDataDto))]
+    [JsonSerializable(typeof(List<PlaylistDto>))]
+    [JsonSerializable(typeof(PlaylistDto))]
+    [JsonSerializable(typeof(PlaylistDetailDto))]
+    [JsonSerializable(typeof(UserPlaylistLimits))]
+    [JsonSerializable(typeof(CreatePlaylistRequest))]
+    [JsonSerializable(typeof(UpdatePlaylistRequest))]
+    [JsonSerializable(typeof(AddTrackToPlaylistRequest))]
+    [JsonSerializable(typeof(PlaylistTrackDto))]
+    [JsonSerializable(typeof(ErrorResponse))]
+    [JsonSerializable(typeof(MessageResponse))]
 
     public partial class JsonContext : JsonSerializerContext
     {

@@ -28,6 +28,8 @@ import AdminTrackList from "./pages/AdminTrackListForm";
 import UploadTrackForm from "./pages/UploadTrackForm";
 import RevenueChartForm from "./pages/RevenueChartForm";
 import MyTrackForm from "./pages/MyTrackForm";
+import LibraryForm from './pages/LibraryForm';
+import PlaylistDetailForm from './pages/PlaylistDetailForm';
 
 const queryClient = new QueryClient();
 
@@ -55,13 +57,11 @@ const App = () => (
                             <Route path="/histories" element={<HistoryForm />} />
                             <Route path="/track-management" element={<AdminTrackList /> } />
                             <Route path="/likes" element={<FavoriteForm />} />
-                            <Route path="/upload" element={<UploadTrackForm />} />
-
-
-
-
                             <Route path="/my-tracks/:profileId" element={<MyTrackForm />} />
-                            <Route path="/statistic" element={<RevenueChartForm />} />
+                            <Route path={"/upload"} element={<UploadTrackForm />} />
+                            <Route path="/library/:userId" element={<LibraryForm />} />
+                            <Route path="/playlist/:playlistId" element={<PlaylistDetailForm />} />
+                            <Route path={"/statistic"} element={<RevenueChartForm />} />
                             <Route path="/*" element={<NotFoundForm />} />
                         </Routes>
                     </MainLayout>

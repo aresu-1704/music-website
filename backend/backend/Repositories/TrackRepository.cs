@@ -22,9 +22,14 @@ namespace backend.Repositories
         public async Task<Track?> GetByIdAsync(string id) =>
             await _tracks.Find(t => t.Id == id).FirstOrDefaultAsync();
 
-        public async Task<List<Track>> GetByArtistIdAsync(string artistId) =>
-            await _tracks.Find(t => t.ArtistId == artistId).ToListAsync();
-
+        public async Task<List<Track>> GetByArtistIdAsync(string artistId)
+        {
+            var filter = Builders<Track>.Filter.And(
+                Builders<Track>.Filter.Eq(t => t.ArtistId, artistId),
+                Builders<Track>.Filter.Eq(t => t.IsApproved, true)
+            );
+            return await _tracks.Find(filter).ToListAsync();
+        }
 
         public async Task<List<Track>> SearchByTitleAsync(string keyword) =>
             await _tracks.Find(t => t.Title.ToLower().Contains(keyword.ToLower())).ToListAsync();
@@ -93,6 +98,25 @@ namespace backend.Repositories
             var filter = Builders<Track>.Filter.Or(
                 Builders<Track>.Filter.Regex(t => t.Title, new MongoDB.Bson.BsonRegularExpression(lowerKeyword, "i")),
                 Builders<Track>.Filter.Regex(t => t.ArtistId, new MongoDB.Bson.BsonRegularExpression(lowerKeyword, "i"))
+            );
+            return await _tracks.Find(filter).ToListAsync();
+        }
+
+        public async Task<List<Track>> GetPublicApprovedTracksByArtistIdAsync(string artistId)
+        {
+            var filter = Builders<Track>.Filter.And(
+                Builders<Track>.Filter.Eq(t => t.ArtistId, artistId),
+                Builders<Track>.Filter.Eq(t => t.IsPublic, true),
+                Builders<Track>.Filter.Eq(t => t.IsApproved, true)
+            );
+            return await _tracks.Find(filter).ToListAsync();
+        }
+
+        public async Task<List<Track>> GetApprovedTracksByArtistIdAsync(string artistId)
+        {
+            var filter = Builders<Track>.Filter.And(
+                Builders<Track>.Filter.Eq(t => t.ArtistId, artistId),
+                Builders<Track>.Filter.Eq(t => t.IsApproved, true)
             );
             return await _tracks.Find(filter).ToListAsync();
         }

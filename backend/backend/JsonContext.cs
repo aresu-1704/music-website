@@ -35,7 +35,10 @@ namespace backend
     [JsonSerializable(typeof(List<FavoriteTracksResponse>))]
     [JsonSerializable(typeof(List<HistoryTrackResponse>))]
     [JsonSerializable(typeof(List<TrackInfo>))]
-
+    [JsonSerializable(typeof(List<TrackListItemDto>))]
+    [JsonSerializable(typeof(backend.Controllers.UserTracksResponse))]
+    [JsonSerializable(typeof(FollowCheckResponse))]
+    [JsonSerializable(typeof(FollowingListResponse))]
     public partial class JsonContext : JsonSerializerContext
     {
     }

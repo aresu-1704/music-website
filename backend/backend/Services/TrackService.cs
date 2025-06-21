@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace backend.Services
 {
@@ -245,6 +246,41 @@ namespace backend.Services
             {
                 return null;
             }
+        }
+
+        public async Task<List<Track>> GetPublicApprovedTracksByArtistIdAsync(string artistId)
+        {
+            return await _trackRepository.GetPublicApprovedTracksByArtistIdAsync(artistId);
+        }
+
+        public async Task<List<Track>> GetApprovedTracksByArtistIdAsync(string artistId)
+        {
+            return await _trackRepository.GetApprovedTracksByArtistIdAsync(artistId);
+        }
+
+        public async Task<UserTracksResponse> GetUserTracksResponseAsync(string profileId)
+        {
+            var user = await _userRepository.GetByIdAsync(profileId);
+            var tracks = await GetApprovedTracksByArtistIdAsync(profileId);
+            var result = tracks.Select(track => new TrackListItemDto
+            {
+                Id = track.Id,
+                Title = track.Title,
+                Genres = track.Genres,
+                CoverImage = !string.IsNullOrEmpty(track.Cover)
+                    ? $"http://localhost:5270/cover_images/{track.Cover}"
+                    : null,
+                IsPublic = track.IsPublic,
+                IsApproved = track.IsApproved,
+                UpdatedAt = track.UpdatedAt,
+                ArtistId = track.ArtistId,
+                ArtistName = user?.Name ?? "Musicresu"
+            }).ToList();
+            return new UserTracksResponse
+            {
+                Role = user?.Role ?? "normal",
+                Tracks = result
+            };
         }
     }
 

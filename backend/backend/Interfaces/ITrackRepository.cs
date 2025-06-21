@@ -22,5 +22,7 @@ namespace backend.Interfaces
         Task<List<Track>> GetTopLikeTracksAsync(int limit = 20);
         Task IncreaseLikeCountAsync(string trackId);
         Task DecreaseLikeCountAsync(string trackId);
+        Task<List<Track>> GetPublicApprovedTracksByArtistIdAsync(string artistId);
+        Task<List<Track>> GetApprovedTracksByArtistIdAsync(string artistId);
     }
 }

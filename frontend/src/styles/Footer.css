@@ -5,23 +5,24 @@
     right: 0;
     height: 80px;
     background-color: #1a1a1a;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1.25fr 2fr 1fr; /* trái - giữa - phải */
     align-items: center;
-    justify-content: space-between;
     padding: 0 24px;
     color: white;
     z-index: 1000;
     border-top: 2px solid #ff4d4d;
     box-shadow: 0 -2px 5px rgba(0,0,0,0.3);
+    gap: 12px;
 }
 
-/* ===== LEFT: Track Info ===== */
+/* Trái */
 .track-info {
     display: flex;
     align-items: center;
     gap: 12px;
-    width: 25%;
-    min-width: 180px;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .track-info img {
@@ -35,23 +36,26 @@
     font-weight: bold;
     font-size: 16px;
     color: white;
-    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .track-info .subtitle {
     font-size: 13px;
     color: #ccc;
-    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* ===== CENTER: Controls + Progress ===== */
+/* Giữa */
 .center-controls-horizontal {
-    flex: 1;
-    max-width: 600px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 6px;
 }
 
 .control-buttons {
@@ -72,11 +76,10 @@
     color: #ff4d4d;
 }
 
-/* Progress */
 .progress-wrapper {
     width: 100%;
     cursor: pointer;
-    padding: 0 16px;
+    padding: 0 8px;
 }
 
 .progress-time {
@@ -101,23 +104,21 @@
     width: 0%;
 }
 
-/* ===== RIGHT: Volume & Extras ===== */
+/* Phải */
 .volume-section {
     display: flex;
     align-items: center;
     gap: 12px;
-    width: 25%;
-    min-width: 180px;
     justify-content: flex-end;
+    min-width: 0;
+    overflow: hidden;
 }
 
-/* Thanh trượt âm lượng */
 .volume-section input[type="range"] {
     width: 80px;
-    accent-color: #ff4d4d; /* đỏ */
+    accent-color: #ff4d4d;
 }
 
-/* Nút (icon) */
 .volume-section button {
     background: none;
     border: none;
@@ -127,14 +128,12 @@
 }
 
 .volume-section button:hover {
-    color: #ff4d4d; /* đỏ đậm khi hover */
-}
-
-/* Icon (svg) */
-.volume-section svg {
     color: #ff4d4d;
 }
 
+.volume-section svg {
+    color: #ff4d4d;
+}
 
 .replay-button {
     color: gray;
@@ -161,4 +160,3 @@
 .like-button svg {
     color: inherit;
 }
-

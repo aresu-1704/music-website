@@ -116,7 +116,7 @@ const PlaylistDetailForm = () => {
             setSearchQuery('');
             fetchPlaylistDetail();
         } catch (error) {
-            toast.error(error.message || 'Bạn đã đạt giới hạn. Vui lòng nâng cấp tài khoản để thêm nhiều bài hát hơn!');
+            toast.error(error.message || 'Vui lòng nâng cấp tài khoản !');
         }
     };
 

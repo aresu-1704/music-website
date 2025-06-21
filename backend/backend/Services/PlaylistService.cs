@@ -258,7 +258,7 @@ namespace backend.Services
                 throw new InvalidOperationException("Không có quyền thêm bài hát vào playlist này.");
 
             if (!await CanAddTrackToPlaylistAsync(playlistId, userId, trackId))
-                throw new InvalidOperationException("Bạn đã đạt giới hạn. Vui lòng nâng cấp tài khoản để thêm nhiều bài hát hơn!");
+                throw new InvalidOperationException("Vui lòng nâng cấp tài khoản !");
 
             var existingTrack = await _playlistRepository.GetPlaylistTrackAsync(playlistId, trackId);
             if (existingTrack != null)
@@ -342,11 +342,11 @@ namespace backend.Services
         {
             return role switch
             {
-                "normal" => (10, 10),
-                "Vip" => (50, 50),
-                "Premium" => (int.MaxValue, int.MaxValue),
-                "admin" => (int.MaxValue, int.MaxValue),
-                _ => (10, 10)
+                "normal" => (int.MaxValue, int.MaxValue), // Không giới hạn playlist và bài hát
+                "Vip" => (int.MaxValue, int.MaxValue), // Không giới hạn playlist và bài hát
+                "Premium" => (int.MaxValue, int.MaxValue), // Không giới hạn
+                "admin" => (int.MaxValue, int.MaxValue), // Không giới hạn
+                _ => (int.MaxValue, int.MaxValue) // Mặc định không giới hạn
             };
         }
 

@@ -51,7 +51,7 @@ const NavbarUserDropdown = ({ user, onLogout }) => (
                     <Dropdown.Item as={Link} to="/likes">
                         <FaHeart className="me-2 text-danger" /> Đã thích
                     </Dropdown.Item>
-                    <Dropdown.Item as={Link} to="/follow">
+                    <Dropdown.Item as={Link} to={`/follow/${user.id}`}>
                         <FaEye className="me-2" /> Đang theo dõi
                     </Dropdown.Item>
                 </>

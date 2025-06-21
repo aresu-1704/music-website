@@ -116,7 +116,7 @@ const AdminTrackList = () => {
     });
 
     return (
-        <Container fluid className="admin-dark-bg px-5 pt-5">
+        <Container fluid className="admin-dark-bg px-5 pt-5 p-3">
             <div className="container mt-0">
                 <h3>🎵 Quản lý danh sách nhạc</h3>
 

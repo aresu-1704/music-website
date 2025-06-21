@@ -65,7 +65,7 @@ const App = () => (
                             <Route path="/library/:userId" element={<LibraryForm />} />
                             <Route path="/playlist/:playlistId" element={<PlaylistDetailForm />} />
                             <Route path={"/statistic"} element={<RevenueChartForm />} />
-                            <Route path="/FollowingList/:userId" element={<FollowForm />} />
+                            <Route path="/follow/:userId" element={<FollowForm />} />
                             <Route path="/recommend/:userId" element={<RecommendForm />} />
                             <Route path="/*" element={<NotFoundForm />} />
                         </Routes>

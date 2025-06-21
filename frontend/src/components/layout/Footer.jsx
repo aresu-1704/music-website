@@ -220,6 +220,9 @@ const Footer = () => {
         if (currentTrack?.isPublic === false) {
             if (playlist.length > 1) {
                 playNext();
+                if (currentTrackIndex === playlist.length - 1) {
+                    playTrackList([], 0);
+                }
             } else {
                 playTrackList([], 0);
             }
@@ -233,10 +236,10 @@ const Footer = () => {
             {currentTrack && audioUrl && (
                 <footer className="footer-player">
                     <div className="track-info">
-                        <img src={currentTrack?.imageUrl || '/images/default-music.jpg'} alt="cover" />
+                        <img src={currentTrack?.imageUrl || currentTrack?.coverImage || '/images/default-music.jpg'} alt="cover" />
                         <div>
                             <div className="title">{currentTrack?.title || "Chưa chọn bài hát nào"}</div>
-                            <div className="subtitle">{currentTrack?.subtitle || ""}</div>
+                            <div className="subtitle">{currentTrack?.subtitle || currentTrack?.uploaderName || currentTrack?.artistName || ""}</div>
                         </div>
                     </div>
 

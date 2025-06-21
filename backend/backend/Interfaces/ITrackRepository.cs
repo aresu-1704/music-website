@@ -28,7 +28,7 @@ namespace backend.Interfaces
 
         Task IncreaseLikeCountAsync(string trackId);
         Task DecreaseLikeCountAsync(string trackId);
-        Task<List<Track>> GetPublicApprovedTracksByArtistIdAsync(string artistId);
-        Task<List<Track>> GetApprovedTracksByArtistIdAsync(string artistId);
+
+        Task<List<Track>> GetApprovedTracksByArtistIdAsync(string artistId);        
     }
 }

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Google, Facebook, Apple } from 'react-bootstrap-icons';
 import { toast, ToastContainer } from "react-toastify";
 import { useAuth } from "../context/authContext";
 import { useNavigate, Link } from "react-router-dom";
@@ -110,22 +109,6 @@ export default function SignInForm() {
                                 </Form>
                             )}
                         </Formik>
-
-                        <div>
-                            <div className="text-center mb-3">Hoặc đăng nhập với</div>
-                            <button onClick={() => alert("Google")} className="btn btn-outline-danger w-100 mb-2 position-relative">
-                                <Google size={20} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
-                                <span className="d-block text-center w-100">Đăng nhập với Google</span>
-                            </button>
-                            <button onClick={() => alert("Facebook")} className="btn btn-outline-primary w-100 mb-2 position-relative">
-                                <Facebook size={20} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
-                                <span className="d-block text-center w-100">Đăng nhập với Facebook</span>
-                            </button>
-                            <button onClick={() => alert("Apple")} className="btn btn-outline-secondary w-100 position-relative">
-                                <Apple size={20} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)' }} />
-                                <span className="d-block text-center w-100">Đăng nhập với Apple</span>
-                            </button>
-                        </div>
                     </div>
                 </div>
             )}

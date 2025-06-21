@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Button, Badge, Spinner, Modal } from 'react-bootstrap';
-import { PlayCircle, Info, ChevronRight, ChevronLeft, Trash2, Clock } from 'lucide-react';
+import { PlayCircle, Info, Trash2, Clock } from 'lucide-react';
 import { useMusicPlayer } from '../context/musicPlayerContext';
 import { useAuth } from '../context/authContext';
 import { getUserHistory, deleteHistoryTrack, deleteAllHistory } from '../services/historyService';
@@ -175,7 +175,7 @@ const HistoryForm = () => {
             </Modal>
             {isLoading && (
                 <Container fluid className="history-bg d-flex align-items-center justify-content-center" style={{ minHeight: '100vh' }}>
-                        <Spinner animation="border" role="status" />
+                    <Spinner animation="border" role="status" />
                 </Container>
             )}
 
@@ -198,7 +198,7 @@ const HistoryForm = () => {
                             {error}
                         </div>
                     )}
-                    
+
                     {!error && historyTracks.length > 0 ? (
                         <div className="history-grid-section">
                             {historyTracks.map((track) => (
@@ -209,12 +209,12 @@ const HistoryForm = () => {
                                         imageUrl={track.imageUrl}
                                         isPublic={track.isPublic}
                                         onPlay={() => {
-                                const index = historyTracks.findIndex(t => t.trackId === track.trackId);
-                                playTrackList(historyTracks, index);
-                            }}
+                                            const index = historyTracks.findIndex(t => t.trackId === track.trackId);
+                                            playTrackList(historyTracks, index);
+                                        }}
                                         onInfo={() => navigate(`/track/${track.trackId}`)}
                                         onDelete={() => handleDeleteTrack(track)}
-                        />
+                                    />
                                 </div>
                             ))}
                         </div>
@@ -231,4 +231,4 @@ const HistoryForm = () => {
     );
 };
 
-export default HistoryForm; 
+export default HistoryForm;

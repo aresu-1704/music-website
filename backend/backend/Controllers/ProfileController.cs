@@ -30,21 +30,9 @@ namespace backend.Controllers
                 return NotFound("Không tìm thấy người dùng.");
             }
 
-            string avatarBase64 = null;
-            if (!string.IsNullOrEmpty(user.AvatarUrl))
-            {
-                try
-                {
-                    byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(user.AvatarUrl);
-                    avatarBase64 = Convert.ToBase64String(imageBytes);
-                    avatarBase64 = $"data:image/jpeg;base64,{avatarBase64}";
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Lỗi khi đọc ảnh: {ex.Message}");
-                    avatarBase64 = null;
-                }
-            }
+            var avatarBase64 = !string.IsNullOrEmpty(user.AvatarUrl)
+                ? $"http://localhost:5270/avatar/{user.AvatarUrl}"
+                : null;
 
             var response = new GetProfileDataResponse
             {
@@ -72,21 +60,10 @@ namespace backend.Controllers
                 return NotFound("Không tìm thấy người dùng.");
             }
 
-            string avatarBase64 = null;
-            if (!string.IsNullOrEmpty(user.AvatarUrl))
-            {
-                try
-                {
-                    byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(user.AvatarUrl);
-                    avatarBase64 = Convert.ToBase64String(imageBytes);
-                    avatarBase64 = $"data:image/jpeg;base64,{avatarBase64}";
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Lỗi khi đọc ảnh: {ex.Message}");
-                    avatarBase64 = null;
-                }
-            }
+            var avatarBase64 = !string.IsNullOrEmpty(user.AvatarUrl)
+                ? $"http://localhost:5270/avatar/{user.AvatarUrl}"
+                : null;
+
 
             var response = new PublicProfileDataDto
             {
@@ -120,7 +97,8 @@ namespace backend.Controllers
         [HttpPut("personal-avt/{userID}")]
         public async Task<IActionResult> UpdatePersonalDataForm(string userID, [FromForm] PersonalAvatarRequest request)
         {
-            string avtPath = null;
+            string? fileName = null;
+
             if (request.Avatar != null && request.Avatar.Length > 0)
             {
                 var uploadsFolder = Path.Combine("storage", "avatar");
@@ -129,17 +107,16 @@ namespace backend.Controllers
                     Directory.CreateDirectory(uploadsFolder);
                 }
 
-                var filePath = Path.Combine(uploadsFolder, $"{userID}-avt.jpg");
+                fileName = $"{userID}-avt.jpg";
+                var filePath = Path.Combine(uploadsFolder, fileName);
 
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await request.Avatar.CopyToAsync(stream);
                 }
-
-                avtPath = filePath;
             }
 
-            var result = await _userService.UpdatePersonalData(userID, request.FullName, request.Gender, request.DateOfBirth, avtPath);
+            var result = await _userService.UpdatePersonalData(userID, request.FullName, request.Gender, request.DateOfBirth, fileName);
 
             if (result == "Success")
             {
@@ -150,6 +127,7 @@ namespace backend.Controllers
                 return BadRequest("Không tồn tại");
             }
         }
+
 
         [HttpGet("my-tracks/{profileId}")]
         public async Task<IActionResult> GetMyTracks(string profileId)
@@ -203,5 +181,6 @@ namespace backend.Controllers
         public DateTime dateOfBirth { get; set; }
         public string Role { get; set; }
         public string avatarBase64 { get; set; }
+        public int FollowCount { get; set; }
     }
 }

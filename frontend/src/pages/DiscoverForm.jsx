@@ -9,47 +9,78 @@ import {useNavigate} from "react-router-dom";
 const MusicCard = ({ id, title, subtitle, imageUrl, isPublic, onPlay, onInfo }) => {
     const [hover, setHover] = useState(false);
     return (
-        <div
-            className="music-card text-center text-white px-2"
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
-            style={{ cursor: 'pointer', position: 'relative' }}
-        >
-            <div>
+        <>
+            <div
+                className="music-card text-white px-2"
+                onMouseEnter={() => setHover(true)}
+                onMouseLeave={() => setHover(false)}
+                style={{ cursor: 'pointer', position: 'relative', height: '340px', borderRadius: '16px', overflow: 'hidden' }}
+            >
                 <img
                     src={imageUrl || '/images/default-music.jpg'}
                     alt={title}
                     style={{
                         width: '100%',
-                        height: '340px',
+                        height: '100%',
                         objectFit: 'cover',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        zIndex: 1,
+                        transition: 'opacity 0.3s',
                         borderRadius: '16px',
-                        boxShadow: '0 6px 15px rgba(0, 0, 0, 0.6)',
                     }}
                 />
+
+
                 {!isPublic && (
                     <Badge
                         bg="warning"
                         text="dark"
                         className="position-absolute top-0 end-0 m-3"
+                        style={{ zIndex: 3 }}
                     >
                         👑 VIP
                     </Badge>
                 )}
+
+                <div className="music-icons-top d-flex gap-3 position-absolute top-0 start-0 m-3" style={{ zIndex: 3 }}>
+                    <Info size={22} onClick={onInfo} style={{ cursor: 'pointer' }} />
+                </div>
+
+                <div
+                    className="music-card-overlay d-flex align-items-center justify-content-center"
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        zIndex: 2,
+                        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                        opacity: hover ? 1 : 0,
+                        transition: 'opacity 0.3s ease',
+                    }}
+                >
+                    <button className="play-button border-0 bg-transparent">
+                        <PlayCircle size={100} color="white" onClick={onPlay} />
+                    </button>
+                </div>
             </div>
-            <div className="music-icons-top d-flex gap-3 position-absolute top-0 start-0 m-3">
-                <Info size={22} onClick={onInfo} style={{ cursor: 'pointer' }} />
-            </div>
-            <div className="music-card-overlay">
-                <button className="play-button border-0 bg-transparent" onClick={onPlay}>
-                    <PlayCircle size={60} color="white" />
-                </button>
-            </div>
-            <div className="mt-3">
+            {/* Title và subtitle */}
+            <div
+                className="music-info position-absolute text-start w-100 px-3"
+                style={{
+                    bottom: '10px',
+                    zIndex: 3,
+                    color: 'white',
+                    textShadow: '0 0 4px black',
+                }}
+            >
                 <div className="fw-bold" style={{ fontSize: '16px' }}>{title}</div>
                 <div style={{ fontSize: '13px', color: '#ccc' }}>{subtitle}</div>
             </div>
-        </div>
+        </>
     );
 };
 
@@ -77,7 +108,7 @@ const ScrollableSection = ({ title, items, onPlay, onInfo }) => {
         <div className="mb-5">
             <h4 className="text-white mb-4">{title}</h4>
 
-            <div className="position-relative" style={{ height: '400px' }}>
+            <div className="scrollable-wrapper position-relative" style={{ height: '400px' }}>
                 <div className="d-flex overflow-hidden flex-nowrap w-100 h-100" style={{ padding: '0 60px' }}>
                     {visibleItems.map((item) => (
                         <div

@@ -1,63 +1,80 @@
-/* Đảm bảo ảnh và overlay full chiều ngang card */
 .music-card {
     position: relative;
+    width: 100%;
+    height: 340px; /* Cố định chiều cao để ảnh và overlay đồng bộ */
+    border-radius: 16px;
     overflow: hidden;
 }
 
-/* Fix ảnh */
+/* Ảnh làm nền */
 .music-card img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: 340px;
+    height: 100%;
     object-fit: cover;
+    z-index: 1;
     border-radius: 16px;
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
     transition: opacity 0.3s ease;
     display: block;
 }
 
-/* Làm mờ khi hover card */
+/* Hover làm mờ ảnh */
 .music-card:hover img {
     opacity: 0.3;
 }
 
-/* Overlay nút play */
+/* Lớp overlay nằm trên ảnh */
 .music-card-overlay {
     position: absolute;
     top: 0;
     left: 0;
-    width: calc(100% - 1rem); /* Trừ padding 0.5rem trái/phải từ px-2 */
-    height: 340px;
+    width: 100%;
+    height: 100%;
+    padding: 0.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0;
+    z-index: 2;
     transition: opacity 0.3s ease;
-    margin-left: 0.5rem; /* Bù lại đúng padding px-2 */
 }
 
-/* Hover card thì hiện nút */
+/* Hover card thì overlay hiện */
 .music-card:hover .music-card-overlay {
     opacity: 1;
 }
 
-/* Nút play khi hover nổi lên */
+/* Icon play */
 .play-button:hover svg {
     transform: scale(1.1);
     filter: drop-shadow(0 0 6px #fff);
     transition: 0.2s ease;
 }
 
-/* Icon top bên trái */
+/* Icon góc trái trên */
 .music-icons-top {
     position: absolute;
     top: 10px;
     left: 10px;
-    z-index: 2;
+    z-index: 3;
 }
 
-/* Icon trái tim viền đỏ khi hover */
+/* Hover icon */
 .music-icons-top svg:hover {
     stroke: red;
     stroke-width: 2;
     transition: stroke 0.2s;
+}
+
+.music-card img:hover {
+    opacity: 0.3; /* hoặc bỏ nếu bạn dùng overlay rồi */
+}
+
+.scrollable-wrapper {
+    overflow-x: hidden;
+    max-width: 100%;
+    box-sizing: border-box;
 }

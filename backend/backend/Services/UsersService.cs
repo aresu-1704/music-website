@@ -43,21 +43,10 @@ namespace backend.Services
 
                 if(hashPassword == storePassword)
                 {
-                    string avatarBase64 = null;
-                    if (!string.IsNullOrEmpty(loginUser.AvatarUrl))
-                    {
-                        try
-                        {
-                            byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(loginUser.AvatarUrl);
-                            avatarBase64 = Convert.ToBase64String(imageBytes);
-                            avatarBase64 = $"data:image/jpeg;base64,{avatarBase64}";
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Lỗi khi đọc ảnh: {ex.Message}");
-                            avatarBase64 = null;
-                        }
-                    }
+                    string? avatarBase64 = !string.IsNullOrEmpty(loginUser.AvatarUrl)
+                        ? $"http://localhost:5270/avatar/{loginUser.AvatarUrl}"
+                        : null;
+
                     string token = _jwtService.GenerateJwtToken(loginUser.Id, loginUser.Name, loginUser.Role.ToString());
                     loginUser.LastLogin = DateTime.UtcNow;
                     await _usersRepository.UpdateAsync(loginUser.Id, loginUser);
@@ -370,6 +359,21 @@ namespace backend.Services
             {
                 Console.WriteLine($"VerifyOtpAsync: An unexpected error occurred: {ex.ToString()}");
                 return false;
+            }
+        }
+        public async Task UpdateFollowCount(string id, int count)
+        {
+            var user = await _usersRepository.GetByIdAsync(id);
+            if (user != null)
+            {
+                if(user.FollowCount == 0)
+                {
+                    return;
+                }
+
+                user.FollowCount = user.FollowCount + count;
+                
+                await _usersRepository.UpdateAsync(id, user);
             }
         }
     }

@@ -51,26 +51,10 @@ namespace backend.Services
 
             foreach (var track in tracks)
             {
-                string? base64Image = null;
-                var cover = track.Cover;
+                string? base64Image = !string.IsNullOrEmpty(track.Cover)
+                    ? $"http://localhost:5270/cover_images/{track.Cover}"
+                    : null;
 
-                if (!string.IsNullOrEmpty(cover))
-                {
-                    var coverPath = Path.Combine("storage", "cover_images", cover); // bỏ GetCurrentDirectory nếu app đã định cấu hình base path đúng
-                    if (File.Exists(coverPath))
-                    {
-                        var bytes = await File.ReadAllBytesAsync(coverPath);
-                        var ext = Path.GetExtension(cover).ToLower().TrimStart('.');
-                        var mimeType = ext switch
-                        {
-                            "jpg" or "jpeg" => "image/jpeg",
-                            "png" => "image/png",
-                            "webp" => "image/webp",
-                            _ => "application/octet-stream"
-                        };
-                        base64Image = $"data:{mimeType};base64,{Convert.ToBase64String(bytes)}";
-                    }
-                }
 
                 Users? uploader = null;
                 if (track.ArtistId != null)
@@ -166,25 +150,13 @@ namespace backend.Services
 
             foreach (var track in tracks)
             {
-                string? base64Image = null;
+                string? imageUrl = null;
 
                 if (!string.IsNullOrEmpty(track.Cover))
                 {
-                    var coverPath = Path.Combine(Directory.GetCurrentDirectory(), "storage", "cover_images", track.Cover);
-                    if (File.Exists(coverPath))
-                    {
-                        var imageBytes = await File.ReadAllBytesAsync(coverPath);
-                        var extension = Path.GetExtension(track.Cover).ToLower().TrimStart('.');
-                        var mimeType = extension switch
-                        {
-                            "jpg" or "jpeg" => "image/jpeg",
-                            "png" => "image/png",
-                            "webp" => "image/webp",
-                            _ => "application/octet-stream"
-                        };
-
-                        base64Image = $"data:{mimeType};base64,{Convert.ToBase64String(imageBytes)}";
-                    }
+                    imageUrl = !string.IsNullOrEmpty(track.Cover)
+                        ? $"http://localhost:5270/cover_images/{track.Cover}"
+                        : null;
                 }
 
                 result.Add(new TrackThumbnail
@@ -192,7 +164,7 @@ namespace backend.Services
                     Id = track.Id,
                     Title = track.Title,
                     IsPublic = track.IsPublic,
-                    ImageBase64 = base64Image
+                    ImageBase64 = imageUrl
                 });
             }
 
@@ -206,25 +178,13 @@ namespace backend.Services
 
             foreach (var track in tracks)
             {
-                string? base64Image = null;
+                string? imageUrl = null;
 
                 if (!string.IsNullOrEmpty(track.Cover))
                 {
-                    var coverPath = Path.Combine(Directory.GetCurrentDirectory(), "storage", "cover_images", track.Cover);
-                    if (File.Exists(coverPath))
-                    {
-                        var imageBytes = await File.ReadAllBytesAsync(coverPath);
-                        var extension = Path.GetExtension(track.Cover).ToLower().TrimStart('.');
-                        var mimeType = extension switch
-                        {
-                            "jpg" or "jpeg" => "image/jpeg",
-                            "png" => "image/png",
-                            "webp" => "image/webp",
-                            _ => "application/octet-stream"
-                        };
-
-                        base64Image = $"data:{mimeType};base64,{Convert.ToBase64String(imageBytes)}";
-                    }
+                    imageUrl = !string.IsNullOrEmpty(track.Cover)
+                        ? $"http://localhost:5270/cover_images/{track.Cover}"
+                        : null;
                 }
 
                 result.Add(new TrackThumbnail
@@ -232,7 +192,7 @@ namespace backend.Services
                     Id = track.Id,
                     Title = track.Title,
                     IsPublic = track.IsPublic,
-                    ImageBase64 = base64Image
+                    ImageBase64 = imageUrl
                 });
             }
 
@@ -292,27 +252,10 @@ namespace backend.Services
                     return null;
                 }
 
-                // Xử lý ảnh cover
-                string? base64Image = null;
-                if (!string.IsNullOrEmpty(track.Cover))
-                {
-                    var coverPath = Path.Combine("storage", "cover_images", track.Cover);
-                    if (File.Exists(coverPath))
-                    {
-                        var bytes = await File.ReadAllBytesAsync(coverPath);
-                        var ext = Path.GetExtension(track.Cover).ToLower().TrimStart('.');
-                        var mimeType = ext switch
-                        {
-                            "jpg" or "jpeg" => "image/jpeg",
-                            "png" => "image/png",
-                            "webp" => "image/webp",
-                            _ => "application/octet-stream"
-                        };
-                        base64Image = $"data:{mimeType};base64,{Convert.ToBase64String(bytes)}";
-                    }
-                }
+                string? base64Image = !string.IsNullOrEmpty(track.Cover)
+                    ? $"http://localhost:5270/cover_images/{track.Cover}"
+                    : null;
 
-                // Lấy thông tin uploader nếu có
                 Users? uploader = null;
                 if (!string.IsNullOrEmpty(track.ArtistId))
                 {
@@ -328,7 +271,7 @@ namespace backend.Services
                     Genres = track.Genres,
                     IsPublic = track.IsPublic,
                     ImageBase64 = base64Image,
-                    lastUpdate = track.UpdatedAt == null ? track.CreatedAt : track.UpdatedAt,
+                    LastUpdate = track.UpdatedAt == null ? track.CreatedAt : track.UpdatedAt,
                     PlaysCount = track.PlayCount,
                     LikesCount = track.LikeCount
                 };
@@ -339,13 +282,7 @@ namespace backend.Services
             }
         }
 
-
-        public async Task<List<Track>> GetPublicApprovedTracksByArtistIdAsync(string artistId)
-        {
-            return await _trackRepository.GetPublicApprovedTracksByArtistIdAsync(artistId);
-        }
-
-        public async Task<List<Track>> GetApprovedTracksByArtistIdAsync(string artistId)
+        public async Task<List<Track>> GetTracksByArtistIdAsync(string artistId)
         {
             return await _trackRepository.GetApprovedTracksByArtistIdAsync(artistId);
         }
@@ -353,7 +290,7 @@ namespace backend.Services
         public async Task<UserTracksResponse> GetUserTracksResponseAsync(string profileId)
         {
             var user = await _userRepository.GetByIdAsync(profileId);
-            var tracks = await GetApprovedTracksByArtistIdAsync(profileId);
+            var tracks = await GetTracksByArtistIdAsync(profileId);
             var result = tracks.Select(track => new TrackListItemDto
             {
                 Id = track.Id,
@@ -364,7 +301,7 @@ namespace backend.Services
                     : null,
                 IsPublic = track.IsPublic,
                 IsApproved = track.IsApproved,
-                UpdatedAt = track.UpdatedAt,
+                UpdatedAt = track.UpdatedAt != null ? track.UpdatedAt : track.CreatedAt,
                 ArtistId = track.ArtistId,
                 ArtistName = user?.Name ?? "Musicresu"
             }).ToList();

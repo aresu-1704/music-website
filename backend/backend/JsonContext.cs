@@ -42,6 +42,7 @@ namespace backend
     [JsonSerializable(typeof(FollowCheckResponse))]
     [JsonSerializable(typeof(FollowingListResponse))]
     [JsonSerializable(typeof(List<PaymentRecord>))]
+    [JsonSerializable(typeof(PublicProfileDataDto))]
     [JsonSerializable(typeof(List<PlaylistDto>))]
     [JsonSerializable(typeof(PlaylistDto))]
     [JsonSerializable(typeof(PlaylistDetailDto))]

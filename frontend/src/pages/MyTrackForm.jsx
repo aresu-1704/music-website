@@ -6,15 +6,15 @@ import {
     PlayFill, LockFill, CheckCircle, Trash
 } from 'react-bootstrap-icons';
 import { useNavigate } from 'react-router-dom';
-import {changeApprove, changePublic, deleteTrack, getAllTracks} from '../services/trackService';
+import {changeApprove, changePublic, deleteTrack, getAllTracks, getTracksByArtistId} from '../services/trackService';
 import { useAuth } from "../context/authContext";
 import '../styles/AdminTrackList.css';
 import {useMusicPlayer} from "../context/musicPlayerContext";
 import {useLoginSessionOut} from "../services/loginSessionOut";
-import {deleteAllFavorites} from "../services/favoritesService";
-import {ToastContainer} from "react-toastify"; // nhớ tạo file này
+import {ToastContainer} from "react-toastify";
+import {Info} from "lucide-react"; // nhớ tạo file này
 
-const AdminTrackList = () => {
+const MyTrackForm = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
     const [tracks, setTracks] = useState([]);
@@ -52,15 +52,15 @@ const AdminTrackList = () => {
     };
 
     useEffect(() => {
-        if (!(user?.isLoggedIn && user?.role === 'admin')) {
+        if (!(user?.isLoggedIn)) {
             navigate('/');
             return;
         }
 
         const fetchTracks = async () => {
             try {
-                const data = await getAllTracks();
-                setTracks(data);
+                const data = await getTracksByArtistId(user.id);
+                setTracks(data.tracks);
             } catch (err) {
                 console.error('Lỗi khi tải danh sách nhạc:', err);
             } finally {
@@ -71,36 +71,8 @@ const AdminTrackList = () => {
         fetchTracks();
     }, [user, navigate]);
 
-    const handleApprove = async (trackId) => {
-        await changeApprove(trackId);
-        setTracks(prev =>
-            prev.map(t =>
-                t.trackId === trackId ? { ...t, isApproved: !t.isApproved } : t
-            )
-        );
-    };
-
-    const handleTogglePublic = async (trackId) => {
-        await changePublic(trackId);
-        setTracks(prev =>
-            prev.map(t =>
-                t.trackId === trackId ? { ...t, isPublic: !t.isPublic } : t
-            )
-        );
-    };
-
-
-    const handlePlayMusic = (track) => {
-        const playList = [
-            {
-                id: track.trackId,
-                title: track.title,
-                subtitle: track.uploaderName !== null ? track.uploaderName : "Musicresu",
-                imageUrl: track.imageBase64,
-                isPublic: track.isPublic,
-            }
-        ];
-        playTrackList(playList, 0);
+    const handleTrackDetail = (trackId) => {
+        navigate(`/track/${trackId}`);
     }
 
     const filteredTracks = tracks.filter(t => {
@@ -109,11 +81,11 @@ const AdminTrackList = () => {
             (filterStatus === 'approved' && t.isApproved) ||
             (filterStatus === 'pending' && !t.isApproved);
 
-        const uploaderName = (t.uploaderName || 'Musicresu').toLowerCase();
-        const matchArtist = uploaderName.includes(searchQuery.toLowerCase());
+        const matchTitle = t.title.toLowerCase().includes(searchQuery.toLowerCase());
 
-        return matchStatus && matchArtist;
+        return matchStatus && matchTitle;
     });
+
 
     return (
         <Container fluid className="admin-dark-bg px-5 pt-5">
@@ -147,10 +119,11 @@ const AdminTrackList = () => {
                                     <Form.Control
                                         className="bg-dark text-light border-secondary dark-input"
                                         type="text"
-                                        placeholder="Tìm theo tên nghệ sĩ..."
+                                        placeholder="Tìm theo tên nhạc..."
                                         value={searchQuery}
                                         onChange={e => setSearchQuery(e.target.value)}
                                     />
+
                                 </InputGroup>
                             </Col>
                         </Row>
@@ -164,7 +137,7 @@ const AdminTrackList = () => {
                                     <Row className="g-0 align-items-center">
                                         <Col xs={12} md="auto">
                                             <Card.Img
-                                                src={track.imageBase64}
+                                                src={track.coverImage}
                                                 style={{
                                                     width: '240px',
                                                     height: '240px',
@@ -205,63 +178,21 @@ const AdminTrackList = () => {
                                                                     )}<br />
                                                                 </>
                                                             )}
-
-                                                            {track.uploaderId === null && (
-                                                                <>
-                                                                    <strong>Hiển thị:</strong>{' '}
-                                                                    {track.isPublic ? (
-                                                                        <span className="text-primary">Công khai</span>
-                                                                    ) : (
-                                                                        <span className="text-warning">VIP</span>
-                                                                    )}
-                                                                </>
-                                                            )}
-
                                                         </Card.Text>
                                                     </div>
 
-                                                    {/* Nút Play ở góc phải gần ảnh */}
                                                     <div>
                                                         <Button
-                                                            variant="danger"
-                                                            className="rounded-circle shadow"
-                                                            style={{ width: 50, height: 50 }}
-                                                            onClick={() => handlePlayMusic(track)}
+                                                            variant="dark"
+                                                            className="info-button"
+                                                            onClick={() => handleTrackDetail(track.id)}
                                                         >
-                                                            <PlayFill size={25} />
+                                                            <Info size={22} />
                                                         </Button>
                                                     </div>
                                                 </div>
 
-                                                {/* Các nút còn lại ở dưới */}
                                                 <div className="d-flex justify-content-end gap-2 mt-3 flex-wrap">
-                                                    {track.uploaderId == null && (
-                                                        <Button
-                                                            variant={track.isPublic ? 'secondary' : 'info'}
-                                                            onClick={() => handleTogglePublic(track.trackId)}
-                                                        >
-                                                            {track.isPublic
-                                                                ? 'Chuyển sang nhạc VIP'
-                                                                : 'Chuyển sang nhạc thường'}
-                                                        </Button>
-                                                    )}
-
-                                                    {!track.isApproved ? (
-                                                        <Button
-                                                            variant="success"
-                                                            onClick={() => handleApprove(track.trackId)}
-                                                        >
-                                                            <CheckCircle /> Phê duyệt
-                                                        </Button>
-                                                    ) : (
-                                                        <Button
-                                                            variant="warning"
-                                                            onClick={() => handleApprove(track.trackId)}
-                                                        >
-                                                            <LockFill /> Khóa
-                                                        </Button>
-                                                    )}
-
                                                     <Button
                                                         variant="danger"
                                                         onClick={() => handleDelete(track.trackId)}
@@ -301,4 +232,4 @@ const AdminTrackList = () => {
     );
 };
 
-export default AdminTrackList;
+export default MyTrackForm;

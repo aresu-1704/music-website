@@ -21,7 +21,6 @@ namespace backend.Controllers
             _trackService = trackService;
         }
 
-        // POST: api/tracks/upload
         [Authorize]
         [HttpPost("upload")]
         [Consumes("multipart/form-data")]
@@ -52,7 +51,6 @@ namespace backend.Controllers
             }
         }
 
-        // GET: api/tracks/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTrackById(string id)
         {
@@ -263,7 +261,7 @@ namespace backend.Controllers
         public string[] Genres { get; set; }
         public bool IsPublic { get; set ; }
         public string ImageBase64 { get; set; }
-        public DateTime lastUpdate { get; set; }
+        public DateTime LastUpdate { get; set; }
         public int PlaysCount { get; set; }
         public int LikesCount { get; set; }
 

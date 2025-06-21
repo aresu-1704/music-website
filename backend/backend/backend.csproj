@@ -25,4 +25,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="storage\playlist_cover\" />
+  </ItemGroup>
+
 </Project>

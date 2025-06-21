@@ -4,7 +4,6 @@ namespace backend.Interfaces
 {
     public interface IUsersService
     {
-        //Task<List<Users>> GetAllAsync();
         Task<(string?, string?)> VerifyLogin(string username, string password);
         Task<string> Register(string username, string fullname, string email, string password, string phoneNumber, DateTime dateOfBirth, int gender);
         Task<bool> Logout(string token);
@@ -14,7 +13,6 @@ namespace backend.Interfaces
         Task<bool> SendOtpAsync(string email);
         Task<bool> VerifyOnlyOtpAsync(string email, string otp);
         Task<bool> VerifyOtpAsync(string email, string otp, string newPassword);
-        //Task UpdateAsync(string id, Users user);
-        //Task DeleteAsync(string id);
+        Task UpdateFollowCount(string id, int count);
     }
 }

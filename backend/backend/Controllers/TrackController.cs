@@ -15,10 +15,14 @@ namespace backend.Controllers
     public class TrackController : ControllerBase
     {
         private readonly ITrackService _trackService;
+        private readonly ITrackRecommendationService _trackRecommendationService;
+        private readonly IHistoryService _historyService;
 
-        public TrackController(ITrackService trackService)
+        public TrackController(ITrackService trackService, ITrackRecommendationService trackRecommendationService, IHistoryService historyService)
         {
             _trackService = trackService;
+            _trackRecommendationService = trackRecommendationService;
+            _historyService = historyService;
         }
 
         [Authorize]
@@ -194,6 +198,18 @@ namespace backend.Controllers
             {
                 return Unauthorized("Không có quyền xóa nhạc này");
             }
+        }
+
+        [Authorize]
+        [HttpGet("recommend-track/{userId}")]
+        public async Task<IActionResult> GetRecommendTrack(string userId)
+        {
+            var histories = await _historyService.GetUserHistoriesAsync(userId);
+            var top10TrackIds = histories.Take(10)
+                                         .Select(h => h.trackId)
+                                         .ToList();
+            var trackIds = await _trackRecommendationService.GetSimilarTrackIdsAsync(top10TrackIds, 20);
+            return Ok(await _trackService.GetRecommentTrack(trackIds));
         }
     }
 

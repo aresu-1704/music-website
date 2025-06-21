@@ -31,6 +31,7 @@ import MyTrackForm from "./pages/MyTrackForm";
 import LibraryForm from './pages/LibraryForm';
 import PlaylistDetailForm from './pages/PlaylistDetailForm';
 import FollowForm from './pages/FollowForm';
+import RecommendForm from "./pages/RecommendForm";
 
 
 const queryClient = new QueryClient();
@@ -65,6 +66,7 @@ const App = () => (
                             <Route path="/playlist/:playlistId" element={<PlaylistDetailForm />} />
                             <Route path={"/statistic"} element={<RevenueChartForm />} />
                             <Route path="/FollowingList/:userId" element={<FollowForm />} />
+                            <Route path="/recommend/:userId" element={<RecommendForm />} />
                             <Route path="/*" element={<NotFoundForm />} />
                         </Routes>
                     </MainLayout>

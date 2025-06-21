@@ -1,4 +1,5 @@
 ﻿using backend.Controllers;
+using backend.DTOs;
 using backend.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Serialization;
@@ -31,8 +32,8 @@ namespace backend
     [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
     [JsonSerializable(typeof(FavoriteCheckResponse))]
     [JsonSerializable(typeof(FavoriteToggleResponse))]
-    [JsonSerializable(typeof(backend.Models.SearchResultDto))]
-    [JsonSerializable(typeof(backend.Models.TrackSearchDto))]
+    [JsonSerializable(typeof(SearchResultDto))]
+    [JsonSerializable(typeof(TrackSearchDto))]
     [JsonSerializable(typeof(List<FavoriteTracksResponse>))]
     [JsonSerializable(typeof(List<HistoryTrackResponse>))]
     [JsonSerializable(typeof(List<NotificationDto>))]

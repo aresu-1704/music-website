@@ -18,6 +18,13 @@ const NavbarMenuUser = ({ isActive, user, onRequireSignin, searchTerm, setSearch
             )}
         </li>
         <li className="nav-item">
+            {user?.isLoggedIn ? (
+                <Link to={`/recommend/${user.id}`} className={`nav-link ${isActive("/recommend") ? "active text-danger fw-semibold" : "text-secondary"}`}>Dành cho bạn</Link>
+            ) : (
+                <span className="nav-link text-secondary" style={{ cursor: 'pointer' }} onClick={onRequireSignin}>Dành cho bạn</span>
+            )}
+        </li>
+        <li className="nav-item">
             <form onSubmit={handleSearchSubmit} className="d-flex align-items-center" style={{ width: '500px', position: 'relative' }}>
                 <svg
                     xmlns="http://www.w3.org/2000/svg"

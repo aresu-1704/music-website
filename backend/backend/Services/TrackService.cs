@@ -1,4 +1,6 @@
 ﻿using backend.Controllers;
+using backend.DTOs;
+using backend.Features.Extractor;
 using backend.Interfaces;
 using backend.Models;
 using backend.Services;
@@ -8,9 +10,9 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace backend.Services
 {
@@ -79,6 +81,7 @@ namespace backend.Services
             return result;
         }
 
+        #region Úp nhạc lên Embedding
         public async Task<Track> UploadTrackAsync(IFormFile file, string title, string? artistId, string[]? genres, string? base64Cover)
         {
             if (file == null || file.Length == 0)
@@ -88,7 +91,6 @@ namespace backend.Services
             if (extension != ".mp3")
                 throw new ArgumentException("Chỉ chấp nhận file .mp3");
 
-            // ==== 1. Lưu file nhạc ====
             var mp3FileName = $"{Guid.NewGuid()}.mp3";
             var mp3Folder = Path.Combine(Directory.GetCurrentDirectory(), "storage", "tracks");
             var mp3FullPath = Path.Combine(mp3Folder, mp3FileName);
@@ -100,7 +102,6 @@ namespace backend.Services
                 await file.CopyToAsync(stream);
             }
 
-            // ==== 2. Lưu ảnh bìa nếu có ====
             string? savedCoverFileName = null;
             if (!string.IsNullOrEmpty(base64Cover))
             {
@@ -109,7 +110,7 @@ namespace backend.Services
                     var base64Data = base64Cover.Split(',').Last();
                     var bytes = Convert.FromBase64String(base64Data);
 
-                    savedCoverFileName = $"{Guid.NewGuid()}.jpg"; // hoặc png nếu bạn detect kiểu mime
+                    savedCoverFileName = $"{Guid.NewGuid()}.jpg";
                     var imageFolder = Path.Combine(Directory.GetCurrentDirectory(), "storage", "cover_images");
                     var imageFullPath = Path.Combine(imageFolder, savedCoverFileName);
 
@@ -122,6 +123,8 @@ namespace backend.Services
                 }
             }
 
+            var embedding = await EmbeddingTrack(mp3FileName);
+
             var track = new Track
             {
                 Title = title,
@@ -131,12 +134,31 @@ namespace backend.Services
                 Filename = mp3FileName,
                 IsApproved = artistId == null ? true : false,
                 CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                UpdatedAt = DateTime.UtcNow,
+                Embedding = embedding
             };
 
             await _trackRepository.CreateAsync(track);
             return track;
         }
+
+        public async Task<float[]?> EmbeddingTrack(string fileName)
+        {
+            var storagePath = Path.Combine(Directory.GetCurrentDirectory(), "storage", "tracks");
+
+            var trackPath = Path.Combine(storagePath, fileName);
+            try
+            {
+                var extractor = new AudioFeatureService();
+                return extractor.ExtractFeatures(trackPath);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+        }
+        #endregion
 
         public async Task<Track?> GetByIdAsync(string id)
         {
@@ -174,6 +196,34 @@ namespace backend.Services
         public async Task<List<TrackThumbnail>> GetTopLikeThumbnailsAsync(int limit = 20)
         {
             var tracks = await _trackRepository.GetTopLikeTracksAsync(limit);
+            var result = new List<TrackThumbnail>();
+
+            foreach (var track in tracks)
+            {
+                string? imageUrl = null;
+
+                if (!string.IsNullOrEmpty(track.Cover))
+                {
+                    imageUrl = !string.IsNullOrEmpty(track.Cover)
+                        ? $"http://localhost:5270/cover_images/{track.Cover}"
+                        : null;
+                }
+
+                result.Add(new TrackThumbnail
+                {
+                    Id = track.Id,
+                    Title = track.Title,
+                    IsPublic = track.IsPublic,
+                    ImageBase64 = imageUrl
+                });
+            }
+
+            return result;
+        }
+
+        public async Task<List<TrackThumbnail>> GetRecommentTrack(List<string?> trackIds)
+        {
+            var tracks = await _trackRepository.GetRecommendTrack(trackIds);
             var result = new List<TrackThumbnail>();
 
             foreach (var track in tracks)
@@ -305,6 +355,7 @@ namespace backend.Services
                 ArtistId = track.ArtistId,
                 ArtistName = user?.Name ?? "Musicresu"
             }).ToList();
+
             return new UserTracksResponse
             {
                 Role = user?.Role ?? "normal",

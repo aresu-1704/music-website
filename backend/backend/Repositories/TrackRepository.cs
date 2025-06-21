@@ -1,4 +1,5 @@
-﻿using backend.Interfaces;
+﻿using backend.DTOs;
+using backend.Interfaces;
 using backend.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -73,6 +74,14 @@ namespace backend.Repositories
                                 .ToListAsync();
         }
 
+        public async Task<List<Track>> GetRecommendTrack(List<string?> trackIds)
+        {
+            var filter = Builders<Track>.Filter.Eq(t => trackIds.Contains(t.Id) && t.IsApproved, true);
+            return await _tracks.Find(_ => true)
+                                .Limit(20)
+                                .ToListAsync();
+        }
+
         public async Task IncreaseLikeCountAsync(string trackId)
         {
             var filter = Builders<Track>.Filter.Eq(t => t.Id, trackId);
@@ -110,5 +119,30 @@ namespace backend.Repositories
             );
             return await _tracks.Find(filter).ToListAsync();
         }
+
+        public async Task<List<EmbeddingTrackDto>> GetEmbedding(List<string> ids)
+        {
+            var tracks = await _tracks
+                .Find(t => ids.Contains(t.Id) && t.IsApproved == true && t.Embedding != null)
+                .ToListAsync();
+
+            return tracks.Select(track => new EmbeddingTrackDto
+            {
+                Id = track.Id,
+                Embedding = track.Embedding
+            }).ToList();
+        }
+
+        public async Task<List<Track>> GetAllValidWithEmbedding()
+        {
+            var filter = Builders<Track>.Filter.And(
+                Builders<Track>.Filter.Eq(t => t.IsApproved, true),
+                Builders<Track>.Filter.Ne(t => t.Embedding, null),
+                Builders<Track>.Filter.Exists(t => t.Embedding, true)
+            );
+
+            return await _tracks.Find(filter).ToListAsync();
+        }
+
     }
 }

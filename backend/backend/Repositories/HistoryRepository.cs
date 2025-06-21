@@ -26,7 +26,10 @@ namespace backend.Repositories
 
         public async Task<IEnumerable<Histories>> GetByUserIdAsync(string userId)
         {
-            return await _collection.Find(h => h.UserId == userId).ToListAsync();
+            return await _collection
+                .Find(h => h.UserId == userId)
+                .SortByDescending(h => h.LastPlay)
+                .ToListAsync();
         }
 
         public async Task AddOrUpdateAsync(Histories history)

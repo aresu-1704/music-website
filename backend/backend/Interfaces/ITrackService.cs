@@ -12,6 +12,7 @@ namespace backend.Interfaces
         Task<Track?> GetByIdAsync(string id);
         Task<List<TrackThumbnail>> GetTopPlayedThumbnailsAsync(int limit = 20);
         Task<List<TrackThumbnail>> GetTopLikeThumbnailsAsync(int limit = 20);
+        Task<List<TrackThumbnail>> GetRecommentTrack(List<string?> trackIds);
         Task<TrackMusic> GetMusicByIdAsync(string id);
         Task<string> UpdatePlayCount(string id);
         Task<TrackInfo> GetTrackInfo(string id);

@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using backend.Controllers;
+using backend.DTOs;
 
 namespace backend.Interfaces
 {
@@ -25,10 +26,15 @@ namespace backend.Interfaces
 
         Task<List<Track>> GetTopPlayedTracksAsync(int limit = 20);
         Task<List<Track>> GetTopLikeTracksAsync(int limit = 20);
+        Task<List<Track>> GetRecommendTrack(List<string?> trackIds);
 
         Task IncreaseLikeCountAsync(string trackId);
         Task DecreaseLikeCountAsync(string trackId);
 
-        Task<List<Track>> GetApprovedTracksByArtistIdAsync(string artistId);        
+        Task<List<Track>> GetApprovedTracksByArtistIdAsync(string artistId);
+
+        Task<List<EmbeddingTrackDto>> GetEmbedding(List<string> ids);
+        Task<List<Track>> GetAllValidWithEmbedding();
+
     }
 }

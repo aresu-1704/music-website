@@ -12,7 +12,7 @@ namespace backend.Models
         [BsonRequired]
         public string Id { get; set; }
 
-        // ========== Thông tin cơ bản ==========
+
         [Required(ErrorMessage = "Tên bài hát không được để trống.")]
         [BsonRequired]
         [BsonElement("title")]
@@ -25,7 +25,7 @@ namespace backend.Models
         [BsonElement("genres")]
         public string[]? Genres { get; set; }
 
-        // ========== Thông tin file ==========
+
         [Required(ErrorMessage = "Tên file không được để trống.")]
         [BsonRequired]
         [BsonElement("filename")]
@@ -34,14 +34,14 @@ namespace backend.Models
         [BsonElement("cover_image")]
         public string? Cover { get; set; }
 
-        // ========== Tương tác ==========
+
         [BsonElement("like_count")]
         public int LikeCount { get; set; } = 0;
 
         [BsonElement("play_count")]
         public int PlayCount { get; set; } = 0;
 
-        // ========== Phân quyền & trạng thái ==========
+
         [BsonElement("is_public")]
         public bool IsPublic { get; set; } = true;
 
@@ -49,11 +49,13 @@ namespace backend.Models
         public bool IsApproved { get; set; } = false;
 
 
-        // ========== Thời gian ==========
         [BsonElement("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         [BsonElement("updated_at")]
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        [BsonElement("embedding")]
+        public float[]? Embedding { get; set; }
     }
 }

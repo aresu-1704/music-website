@@ -1,4 +1,4 @@
-using backend.Models;
+using backend.DTOs;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;

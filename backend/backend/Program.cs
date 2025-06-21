@@ -96,6 +96,7 @@ builder.Services.AddScoped<IPaymentRecordRepository, PaymentRecordRepository>();
 builder.Services.AddScoped<IPaymentRecordService, PaymentRecordService>();
 builder.Services.AddScoped<IPlaylistRepository, PlaylistRepository>();
 builder.Services.AddScoped<IPlaylistService, PlaylistService>();
+builder.Services.AddScoped<ITrackRecommendationService, TrackRecommendationService>();
 
 //Redis cache
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
@@ -132,10 +133,10 @@ builder.Services.AddAuthentication("Bearer")
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
 
-            ValidIssuer = configuration["JWT:Issuer"],            // Tên ứng dụng phát hành token
-            ValidAudience = configuration["JWT:Audience"],             // Đối tượng sử dụng token
+            ValidIssuer = configuration["JWT:Issuer"],           
+            ValidAudience = configuration["JWT:Audience"],      
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(configuration["JWT:Key"])),  // Khóa bí mật để xác thực token
+                Encoding.UTF8.GetBytes(configuration["JWT:Key"])),
             NameClaimType = JwtRegisteredClaimNames.Sub,
             RoleClaimType = "role"
         };

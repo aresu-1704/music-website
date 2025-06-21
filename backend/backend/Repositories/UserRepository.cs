@@ -72,7 +72,5 @@ namespace backend.Repositories
                 .Find(u => userIds.Contains(u.Id))
                 .ToListAsync();
         }
-
-
     }
 }

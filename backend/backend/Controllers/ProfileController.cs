@@ -1,9 +1,9 @@
 ﻿using backend.Interfaces;
-using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using backend.DTOs;
 
 namespace backend.Controllers
 {

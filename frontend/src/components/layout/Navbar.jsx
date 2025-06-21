@@ -4,10 +4,8 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from "../../context/authContext";
 import { useQueryClient } from "@tanstack/react-query";
 
-import { Dropdown } from "react-bootstrap";
 import '../../styles/Navbar.css';
 
-// Component con đã tách
 import NavbarBrand from "../navbar/NavbarBrand";
 import NavbarMenuUser from "../navbar/NavbarMenuUser";
 import NavbarMenuAdmin from "../navbar/NavbarMenuAdmin";

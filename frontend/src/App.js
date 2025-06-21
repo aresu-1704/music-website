@@ -22,6 +22,7 @@ import PolicyForm from "./pages/PolicyForm";
 import NotFoundForm from "./pages/NotFoundForm";
 import TrackDetail from "./pages/TrackDetailForm";
 import PersonalProfileForm from './pages/PersonalProfileForm';
+import FollowForm from './pages/FollowForm';
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ const App = () => (
                             <Route path="track/:trackId" element={<TrackDetail /> } />
                             <Route path="/Profile/MyTracks/:profileId" element={<PersonalProfileForm />} />
                             <Route path="/Profile/:profileId" element={<ProfileForm />} />
+                            <Route path="/FollowingList/:userId" element={<FollowForm />} />
                             <Route path="/*" element={<NotFoundForm />} />
                         </Routes>
                         <ToastContainer />

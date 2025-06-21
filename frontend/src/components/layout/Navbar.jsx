@@ -208,7 +208,7 @@ const Navbar = () => {
                                                 <Dropdown.Item as={Link} to="/likes">
                                                     <FaHeart className="me-2" /> Đã thích
                                                 </Dropdown.Item>
-                                                <Dropdown.Item as={Link} to="/follow">
+                                                <Dropdown.Item as={Link} to={`/FollowingList/${user.id}`}>
                                                     <FaEye className="me-2" /> Đang theo dõi
                                                 </Dropdown.Item>
                                                 <Dropdown.Item as={Link} to="/policy">
@@ -277,7 +277,7 @@ const Navbar = () => {
                                             <Dropdown.Item as={Link} to="/likes">
                                                 <FaHeart className="me-2" /> Đã thích
                                             </Dropdown.Item>
-                                            <Dropdown.Item as={Link} to="/follow">
+                                            <Dropdown.Item as={Link} to={`/FollowingList/${user.id}`}>
                                                 <FaEye className="me-2" /> Đang theo dõi
                                             </Dropdown.Item>
                                             <Dropdown.Item as={Link} to="/policy">

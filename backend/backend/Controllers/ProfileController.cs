@@ -3,6 +3,7 @@ using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace backend.Controllers
 {
@@ -11,10 +12,12 @@ namespace backend.Controllers
     public class ProfileController : Controller
     {
         private readonly IUsersService _userService;
+        private readonly ITrackService _trackService;
 
-        public ProfileController(IUsersService usersService)
+        public ProfileController(IUsersService usersService, ITrackService trackService)
         {
             _userService = usersService;
+            _trackService = trackService;
         }
 
         [Authorize]
@@ -55,6 +58,7 @@ namespace backend.Controllers
                 isEmailVerified = user.IsEmailVerified,
                 isPhoneVerified = user.IsPhoneVerified,
                 expiredDate = user.ExpiredDate,
+                role = user.Role,
             };
 
             return Ok(response);
@@ -110,6 +114,20 @@ namespace backend.Controllers
                 return BadRequest("Không tồn tại");
             }
         }
+
+        [HttpGet("MyTracks/{profileId}")]
+        public async Task<IActionResult> GetUserTracks(string profileId)
+        {
+            try
+            {
+                var userTracksResponse = await _trackService.GetUserTracksResponseAsync(profileId);
+                return Ok(userTracksResponse);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Lỗi khi lấy danh sách bài hát: {ex.Message}");
+            }
+        }
     }
 
     #region Lấy dữ liệu người dùng
@@ -124,6 +142,7 @@ namespace backend.Controllers
         public bool isEmailVerified { get; set; }
         public bool isPhoneVerified { get; set; }
         public DateTime expiredDate { get; set; }
+        public string role { get; set; }
     }
     #endregion
 
@@ -141,6 +160,11 @@ namespace backend.Controllers
         public int Gender { get; set; }
         public DateTime DateOfBirth { get; set; }
         public IFormFile Avatar { get; set; }
+    }
+    public class UserTracksResponse
+    {
+        public string Role { get; set; }
+        public List<TrackListItemDto> Tracks { get; set; }
     }
     #endregion
 }

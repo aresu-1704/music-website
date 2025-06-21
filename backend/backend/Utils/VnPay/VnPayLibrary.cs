@@ -31,18 +31,29 @@ namespace backend.VnPay
                 collection.FirstOrDefault(k => k.Key == "vnp_SecureHash").Value; //hash của dữ liệu trả về
             var orderInfo = vnPay.GetResponseData("vnp_OrderInfo");
 
-            // Tách userId và tier từ orderInfo
-            string userId = "", tier = "";
+            string userId = "";
+            string tier = "";
+
             try
             {
-                var match = Regex.Match(orderInfo, @"^(.+?)\},\s*([^ ]+)");
-                if (match.Success)
+                // Tách phần trước dấu phẩy đầu tiên
+                var parts = orderInfo.Split(',', 2);
+
+                if (parts.Length >= 2)
                 {
-                    userId = match.Groups[1].Value;
-                    tier = match.Groups[2].Value;
+                    userId = parts[0].Trim();     // phần trước dấu phẩy
+                    var tierMatch = Regex.Match(parts[1], @"^\s*(\S+)\b");
+
+                    if (tierMatch.Success)
+                        tier = tierMatch.Groups[1].Value;
                 }
             }
-            catch { }
+            catch
+            {
+                // fallback nếu parse lỗi
+                userId = "";
+                tier = "";
+            }
             var checkSignature =
                 vnPay.ValidateSignature(vnpSecureHash, hashSecret); //check Signature
             if (!checkSignature)

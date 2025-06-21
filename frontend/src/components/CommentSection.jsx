@@ -7,6 +7,7 @@ import { useLoginSessionOut } from "../services/loginSessionOut";
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import {useAuth} from "../context/authContext";
+import '../styles/CommentSection.css'
 
 export default function CommentSection({ trackId }) {
     const [comments, setComments] = useState([]);
@@ -98,7 +99,7 @@ export default function CommentSection({ trackId }) {
             ) : (
                 // Trong phần render comment:
                 comments.map(comment => (
-                    <Card key={comment.commentId} className="my-2 bg-secondary text-light">
+                    <Card key={comment.commentId} className="my-2 comment-card">
                         <Card.Body className="d-flex">
                             <Image
                                 src={comment.imageBase64 || '/images/default-avatar.jpg'}

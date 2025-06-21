@@ -161,9 +161,11 @@ const UploadTrackForm = () => {
                                 id="cover-input"
                                 className="d-none"
                                 onChange={(e) => {
-                                    const file = e.currentTarget.files[0];
-                                    formik.setFieldValue('cover', file);
-                                    setPreviewImage(URL.createObjectURL(file));
+                                    const file = e.currentTarget.files?.[0];
+                                    if (file) {
+                                        formik.setFieldValue('cover', file);
+                                        setPreviewImage(URL.createObjectURL(file));
+                                    }
                                 }}
                             />
                             <Button variant="outline-light" onClick={() => document.getElementById('cover-input').click()}>
@@ -185,9 +187,11 @@ const UploadTrackForm = () => {
                                 id="audio-input"
                                 className="d-none"
                                 onChange={(e) => {
-                                    const file = e.currentTarget.files[0];
-                                    formik.setFieldValue('file', file);
-                                    setPreviewAudio(URL.createObjectURL(file));
+                                    const file = e.currentTarget.files?.[0];
+                                    if (file) {
+                                        formik.setFieldValue('file', file);
+                                        setPreviewAudio(URL.createObjectURL(file));
+                                    }
                                 }}
                             />
                             <Button variant="outline-light" onClick={() => document.getElementById('audio-input').click()}>

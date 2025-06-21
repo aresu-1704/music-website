@@ -69,6 +69,13 @@ const Footer = () => {
     };
 
     useEffect(() => {
+        playTrackList([], 0)
+        setIsPlaying(false);
+        setIsLiked(false);
+        setIsReplay(false);
+    }, [user?.isLoggedIn]);
+
+    useEffect(() => {
         if (!currentTrack || !currentTrack.id) return;
 
         const fetchFavoriteStatus = async () => {

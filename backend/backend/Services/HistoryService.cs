@@ -27,8 +27,11 @@ namespace backend.Services
             foreach (var history in historyList)
             {
                 var track = await _trackRepository.GetByIdAsync(history.TrackId);
+                if (track == null)
+                    continue; // bỏ qua nếu track không tồn tại
+
                 string base64Image = null;
-                if (track != null && !string.IsNullOrEmpty(track.Cover))
+                if (!string.IsNullOrEmpty(track.Cover))
                 {
                     try
                     {
@@ -49,18 +52,20 @@ namespace backend.Services
                     }
                     catch
                     {
-                        base64Image = null; // Nếu lỗi, trả về null
+                        base64Image = null;
                     }
                 }
+
                 tracks.Add(new HistoryTrackResponse
                 {
                     trackId = track.Id,
                     title = track.Title,
                     isPublic = track.IsPublic,
-                    lastPlay = history.LastPlay,
+                    lastPlay = history?.LastPlay,
                     imageBase64 = base64Image
                 });
             }
+
             return tracks;
         }
 

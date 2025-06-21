@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const NavbarMenuAdmin = ({ isActive }) => (
     <>
         <li className="nav-item">
-            <Link to="/statistic" className={`nav-link ${isActive("/statistic") ? "active text-danger fw-semibold" : "text-secondary"}`}>Số liệu thống kê</Link>
+            <Link to="/statistic" className={`nav-link ${isActive("/statistic") ? "active text-danger fw-semibold" : "text-secondary"}`}>Thống kê doanh thu</Link>
         </li>
         <li className="nav-item">
             <Link to="/account-mn" className={`nav-link ${isActive("/account-mn") ? "active text-danger fw-semibold" : "text-secondary"}`}>Tài khoản người dùng</Link>

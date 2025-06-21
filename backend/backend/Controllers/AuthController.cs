@@ -32,7 +32,6 @@ namespace backend.Controllers
 
             if (token == null)
             {
-                // Sai tài khoản hoặc mật khẩu → 401 Unauthorized
                 return Unauthorized(new LoginResponse
                 {
                     Message = "Sai tên đăng nhập hoặc mật khẩu",
@@ -42,7 +41,6 @@ namespace backend.Controllers
             }
             else if (token == "Tài khoản đã bị khóa")
             {
-                // Tài khoản bị khóa → 403 Forbidden
                 return StatusCode(StatusCodes.Status403Forbidden, new LoginResponse
                 {
                     Message = "Tài khoản của bạn đã bị vô hiệu hóa",

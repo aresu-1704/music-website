@@ -37,6 +37,7 @@ namespace backend
     [JsonSerializable(typeof(List<HistoryTrackResponse>))]
     [JsonSerializable(typeof(List<NotificationDto>))]
     [JsonSerializable(typeof(List<TrackInfo>))]
+    [JsonSerializable(typeof(List<PaymentRecord>))] 
 
     public partial class JsonContext : JsonSerializerContext
     {

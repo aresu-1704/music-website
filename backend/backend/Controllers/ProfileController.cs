@@ -52,8 +52,6 @@ namespace backend.Controllers
                 dateOfBirth = user.DateOfBirth,
                 gender = user.Gender,
                 avatarBase64 = avatarBase64,
-                isEmailVerified = user.IsEmailVerified,
-                isPhoneVerified = user.IsPhoneVerified,
                 expiredDate = user.ExpiredDate,
             };
 
@@ -121,8 +119,6 @@ namespace backend.Controllers
         public DateTime dateOfBirth { get; set; }
         public int gender { get; set; }
         public string avatarBase64 { get; set; }
-        public bool isEmailVerified { get; set; }
-        public bool isPhoneVerified { get; set; }
         public DateTime expiredDate { get; set; }
     }
     #endregion

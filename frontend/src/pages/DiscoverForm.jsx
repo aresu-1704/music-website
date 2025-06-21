@@ -65,6 +65,14 @@ const ScrollableSection = ({ title, items, onPlay, onInfo }) => {
 
     const visibleItems = items.slice(startIndex, startIndex + visibleCount);
 
+    if (visibleItems == null) {
+        return (
+            <div className="text-center mt-4 text-white">
+                Không có kết quả
+            </div>
+        )
+    }
+
     return (
         <div className="mb-5">
             <h4 className="text-white mb-4">{title}</h4>

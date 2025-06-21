@@ -25,6 +25,7 @@ import FavoriteForm from './pages/FavoriteForm';
 import HistoryForm from './pages/HistoryForm';
 import AdminTrackList from "./pages/AdminTrackListForm";
 import UploadTrackForm from "./pages/UploadTrackForm";
+import RevenueChartForm from "./pages/RevenueChartForm";
 
 
 const queryClient = new QueryClient();
@@ -58,7 +59,7 @@ const App = () => (
 
 
 
-
+                            <Route path={"/statistic"} element={<RevenueChartForm />} />
                             <Route path="/*" element={<NotFoundForm />} />
                         </Routes>
                     </MainLayout>

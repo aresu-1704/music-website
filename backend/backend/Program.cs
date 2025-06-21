@@ -90,6 +90,8 @@ builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<INotificationService, NotificationService>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<ISearchService, SearchService>();
+builder.Services.AddScoped<IPaymentRecordRepository, PaymentRecordRepository>();
+builder.Services.AddScoped<IPaymentRecordService, PaymentRecordService>();
 
 //Redis cache
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>

@@ -69,14 +69,6 @@ namespace backend.Models
         [BsonElement("role")]
         public string Role { get; set; } = "normal";
 
-        [BsonElement("is_email_verified")]
-        public bool IsEmailVerified { get; set; } = false;
-
-        [BsonElement("is_phone_verified")]
-        public bool IsPhoneVerified { get; set; } = false;
-
-
-
         //Gói nâng cấp tài khoản
         [BsonElement("expired_date")]
         public DateTime ExpiredDate { get; set; }

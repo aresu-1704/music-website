@@ -227,7 +227,7 @@ const FollowForm = () => {
                                                 <div className="mt-auto">
                                                     <div className="d-flex gap-2">
                                                         <Link 
-                                                            to={`/Profile/MyTracks/${following.followingId}`}
+                                                            to={`/personal-profile/${following.followingId}`}
                                                             className="flex-grow-1"
                                                         >
                                                             <Button 

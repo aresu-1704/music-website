@@ -133,15 +133,16 @@ const UploadTrackForm = () => {
 
                     <Form.Group className="mb-3">
                         <Form.Label>Thể loại</Form.Label>
-                        <InputGroup>
+                        <InputGroup className="genre-input-group">
                             <Form.Control
                                 value={genreInput}
                                 onChange={(e) => setGenreInput(e.target.value)}
                                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddGenre())}
-                                placeholder="Nhập thể loại"
-                                className="bg-secondary text-white border-0"
+                                placeholder="Nhập thể loại và nhấn Enter hoặc nút +"
                             />
-                            <Button variant="danger" onClick={handleAddGenre}><Plus /></Button>
+                            <Button onClick={handleAddGenre}>
+                                <Plus size={24} />
+                            </Button>
                         </InputGroup>
                         <div className="mt-2">
                             {genres.map((g, i) => (

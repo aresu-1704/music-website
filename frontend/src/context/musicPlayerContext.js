@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { getTrackById } from "../services/trackService";
+import { updateHistory } from "../services/playHistoryService";
 
 const MusicPlayerContext = createContext();
 
@@ -28,6 +29,10 @@ export const MusicPlayerProvider = ({ children }) => {
             try {
                 const data = await getTrackById(currentTrack.id);
                 setAudioUrl(data.audioUrl);
+
+                // Lưu lịch sử nghe nhạc
+                await updateHistory(currentTrack.id);
+
             } catch (error) {
                 setCurrentTrackIndex(currentTrackIndex + 1 % playlist.length);
             }

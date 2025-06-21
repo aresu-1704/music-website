@@ -46,7 +46,7 @@ const NavbarMenuUser = ({ isActive, user, onRequireSignin, searchTerm, setSearch
         </li>
         <li className="nav-item">
             {user?.isLoggedIn ? (
-                <Link to="/library" className={`nav-link ${isActive("/library") ? "active text-danger fw-semibold" : "text-secondary"}`}>Thư viện</Link>
+                <Link to={`/library/${user.id}`} className={`nav-link ${isActive("/library") ? "active text-danger fw-semibold" : "text-secondary"}`}>Thư viện</Link>
             ) : (
                 <span className="nav-link text-secondary" style={{ cursor: 'pointer' }} onClick={onRequireSignin}>Thư viện</span>
             )}

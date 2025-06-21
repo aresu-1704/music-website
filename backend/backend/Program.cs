@@ -94,6 +94,8 @@ builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<IPaymentRecordRepository, PaymentRecordRepository>();
 builder.Services.AddScoped<IPaymentRecordService, PaymentRecordService>();
+builder.Services.AddScoped<IPlaylistRepository, PlaylistRepository>();
+builder.Services.AddScoped<IPlaylistService, PlaylistService>();
 
 //Redis cache
 builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
@@ -231,6 +233,13 @@ app.UseStaticFiles(new StaticFileOptions
     FileProvider = new PhysicalFileProvider(
         Path.Combine(Directory.GetCurrentDirectory(), "storage", "cover_images")),
     RequestPath = "/cover_images"
+});
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "storage", "playlist_cover")),
+    RequestPath = "/playlist_cover"
 });
 
 app.Run();

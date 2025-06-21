@@ -67,4 +67,16 @@ namespace backend.DTOs
         public int CurrentPlaylists { get; set; }
         public string UserRole { get; set; }
     }
-} 
+
+    #region Response Models
+    public class ErrorResponse
+    {
+        public string Error { get; set; } = string.Empty;
+    }
+
+    public class MessageResponse
+    {
+        public string Message { get; set; } = string.Empty;
+    }
+    #endregion
+}

@@ -1,5 +1,6 @@
 ﻿using backend.Controllers;
 using backend.Models;
+using backend.DTOs;
 
 namespace backend.Interfaces
 {

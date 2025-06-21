@@ -1,4 +1,5 @@
-﻿using backend.Interfaces;
+﻿using backend.DTOs;
+using backend.Interfaces;
 using backend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -54,21 +55,5 @@ namespace backend.Controllers
             await _commentService.DeleteAsync(commentId);
             return Ok("Đã xóa");
         }
-    }
-
-    public class CommentDetail
-    {
-        public string CommentId { get; set; }
-        public string UserId { get; set; }
-        public string UserName { get; set; }
-        public string ImageBase64 { get; set; }
-        public string Contents { get; set; }
-        public DateTime CreateAt { get; set; }
-    }
-
-    public class AddCommentRequest
-    {
-        public string TrackId { get; set; }
-        public string Content { get; set; }
-    }
+    }    
 }

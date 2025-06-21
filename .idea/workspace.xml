@@ -5,17 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7fcf1a4e-08d2-4244-ab25-c37e69d2fb59" name="Changes" comment="Phét ko xài dc file cũ nên push lại">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/backend/Controllers/ProfileController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/Controllers/ProfileController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/Controllers/TrackController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/Controllers/TrackController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/Interfaces/ITrackRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/Interfaces/ITrackRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/Interfaces/ITrackService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/Interfaces/ITrackService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/JsonContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/JsonContext.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/Models/TrackSearchDto.cs" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/Models/TrackSearchDto.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/Repositories/TrackRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/Repositories/TrackRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/backend/Services/TrackService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/backend/backend/Services/TrackService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/services/trackService.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/services/trackService.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/PersonalProfileForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/PersonalProfileForm.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,6 +98,7 @@
       <workItem from="1750485834359" duration="304000" />
       <workItem from="1750487033699" duration="28000" />
       <workItem from="1750490042096" duration="983000" />
+      <workItem from="1750494606565" duration="943000" />
     </task>
     <task id="LOCAL-00001" summary="Tìm kiếm được nhưng vẫn chưa load được ảnh và chưa phát nhạc được conchoPHat fix đi">
       <option name="closed" value="true" />

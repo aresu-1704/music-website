@@ -45,9 +45,6 @@ const PersonalProfileForm = () => {
                 const data = await fetchProfileData(profileId);
                 setUserInfo(data);
                 setRole(data.role || null);
-                console.log('Profile data:', data);
-                console.log('Role from profile:', data.role);
-                console.log('User info:', data);
             } catch (err) {
                 console.error('Lỗi khi fetch profile data:', err);
             }
@@ -125,7 +122,7 @@ const PersonalProfileForm = () => {
                             }}
                         />
                         {/* VIP */}
-                        {(user?.id === profileId ? user?.role === 'Vip' : role === 'Vip') && (
+                        {role === 'Vip' && (
                             <span
                                 style={{
                                     position: 'absolute',
@@ -153,7 +150,7 @@ const PersonalProfileForm = () => {
                             </span>
                         )}
                         {/* Premium */}
-                        {(user?.id === profileId ? user?.role === 'Premium' : role === 'Premium') && (
+                        {role === 'Premium' && (
                             <span
                                 style={{
                                     position: 'absolute',
@@ -181,7 +178,7 @@ const PersonalProfileForm = () => {
                             </span>
                         )}
                         {/* Admin */}
-                        {(user?.id === profileId ? user?.role === 'admin' : role === 'admin') && (
+                        {role === 'admin' && (
                             <span
                                 style={{
                                     position: 'absolute',

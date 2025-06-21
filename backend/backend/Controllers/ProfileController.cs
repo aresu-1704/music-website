@@ -11,10 +11,12 @@ namespace backend.Controllers
     public class ProfileController : Controller
     {
         private readonly IUsersService _userService;
+        private readonly ITrackService _trackService;
 
-        public ProfileController(IUsersService usersService)
+        public ProfileController(IUsersService usersService, ITrackService trackService)
         {
             _userService = usersService;
+            _trackService = trackService;
         }
 
         [Authorize]
@@ -55,6 +57,7 @@ namespace backend.Controllers
                 isEmailVerified = user.IsEmailVerified,
                 isPhoneVerified = user.IsPhoneVerified,
                 expiredDate = user.ExpiredDate,
+                Role = user.Role
             };
 
             return Ok(response);
@@ -110,6 +113,13 @@ namespace backend.Controllers
                 return BadRequest("Không tồn tại");
             }
         }
+
+        [HttpGet("MyTracks/{profileId}")]
+        public async Task<IActionResult> GetMyTracks(string profileId)
+        {
+            var response = await _trackService.GetUserTracksResponseAsync(profileId);
+            return Ok(response);
+        }
     }
 
     #region Lấy dữ liệu người dùng
@@ -124,6 +134,7 @@ namespace backend.Controllers
         public bool isEmailVerified { get; set; }
         public bool isPhoneVerified { get; set; }
         public DateTime expiredDate { get; set; }
+        public string Role { get; set; }
     }
     #endregion
 
@@ -143,4 +154,10 @@ namespace backend.Controllers
         public IFormFile Avatar { get; set; }
     }
     #endregion
+
+    public class UserTracksResponse
+    {
+        public string Role { get; set; }
+        public List<TrackListItemDto> Tracks { get; set; }
+    }
 }

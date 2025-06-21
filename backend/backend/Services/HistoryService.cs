@@ -28,32 +28,12 @@ namespace backend.Services
             {
                 var track = await _trackRepository.GetByIdAsync(history.TrackId);
                 if (track == null)
-                    continue; // bỏ qua nếu track không tồn tại
+                    continue;
 
-                string base64Image = null;
+                string? base64Image = null;
                 if (!string.IsNullOrEmpty(track.Cover))
                 {
-                    try
-                    {
-                        var coverPath = Path.Combine(Directory.GetCurrentDirectory(), "storage", "cover_images", track.Cover);
-                        if (File.Exists(coverPath))
-                        {
-                            var imageBytes = await File.ReadAllBytesAsync(coverPath);
-                            var extension = Path.GetExtension(track.Cover).ToLower().TrimStart('.');
-                            var mimeType = extension switch
-                            {
-                                "jpg" or "jpeg" => "image/jpeg",
-                                "png" => "image/png",
-                                "webp" => "image/webp",
-                                _ => "application/octet-stream"
-                            };
-                            base64Image = $"data:{mimeType};base64,{Convert.ToBase64String(imageBytes)}";
-                        }
-                    }
-                    catch
-                    {
-                        base64Image = null;
-                    }
+                    base64Image = $"http://localhost:5270/cover_images/{track.Cover}";
                 }
 
                 tracks.Add(new HistoryTrackResponse

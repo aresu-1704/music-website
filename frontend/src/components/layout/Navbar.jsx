@@ -1,6 +1,6 @@
 // src/components/Navbar.jsx
 import React, { useState } from "react";
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from "../../context/authContext";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -96,7 +96,13 @@ const Navbar = () => {
                                     {user?.isLoggedIn && (
                                         <>
                                             <li className="nav-item">
-                                                <a href="/my-tracks" className={`nav-link ${isActive("/my-tracks") ? "active text-danger fw-semibold" : "text-secondary"}`}>Nhạc của tôi</a>
+                                                <Link
+                                                    to={`/my-tracks/${user.id}`}
+                                                    className={`nav-link ${isActive("/my-tracks") ? "active text-danger fw-semibold" : "text-secondary"}`}
+                                                >
+                                                    Nhạc của tôi
+                                                </Link>
+
                                             </li>
                                             <li className="nav-item dropdown">
                                                 <NavbarUserDropdown user={user} onLogout={handleLogoutClick} />

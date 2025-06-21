@@ -1,0 +1,140 @@
+/* Avatar và khung thông tin cá nhân */
+.personal-info-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 3rem;
+    padding: 2rem;
+    border-radius: 1.5rem;
+    background-color: black;
+    border: 1px solid #ffffff22;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.personal-avatar-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-right: 3rem;
+}
+
+.personal-avatar-img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 7px solid #ffffff33;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.vip-badge,
+.premium-badge,
+.admin-badge {
+    position: absolute;
+    right: 60px;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    z-index: 2;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    border: 1px solid white;
+}
+
+.vip-badge {
+    background-color: #ffc107;
+    color: black;
+}
+
+.premium-badge {
+    background-color: #0dcaf0;
+    color: black;
+}
+
+.admin-badge {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Thông tin người dùng */
+.personal-name {
+    font-weight: bold;
+    color: white;
+    font-size: 3.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.personal-detail {
+    color: #ddd;
+    font-size: 15px;
+}
+
+.follow-button {
+    margin-top: 1rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.music-card {
+    background-color: #1f1f1f;
+    border-radius: 16px;
+    overflow: hidden;
+    padding: 0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.music-card-inner {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    gap: 16px;
+}
+
+.music-cover img {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+.music-info {
+    flex: 1;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.music-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #fff;
+}
+
+.music-meta {
+    font-size: 0.9rem;
+    color: #bbb;
+}
+
+.music-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.play-button {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+

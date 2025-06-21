@@ -110,7 +110,6 @@ export default function TrackDetail() {
                         </div>
                     </Card>
 
-                    {/* Bình luận */}
                     <div className="track-card mt-5">
                         <h5>Bình luận về bài hát</h5>
                         <CommentSection trackId={track.trackId} />

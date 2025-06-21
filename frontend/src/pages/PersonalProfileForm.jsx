@@ -23,6 +23,7 @@ const PersonalProfileForm = () => {
     const [isFollowing, setIsFollowing] = useState(false);
     const [followLoading, setFollowLoading] = useState(false);
     const handleSessionOut = useLoginSessionOut();
+    const [followCount, setFollowCount] = useState(0);
 
     useEffect(() => {
         const fetchTracks = async () => {
@@ -90,9 +91,11 @@ const PersonalProfileForm = () => {
         try {
             if (isFollowing) {
                 await unfollowUser(profileId, handleSessionOut);
+                setFollowCount(followCount - 1);
                 setIsFollowing(false);
             } else {
                 await followUser(profileId, handleSessionOut);
+                setFollowCount(followCount + 1);
                 setIsFollowing(true);
             }
         } catch (err) {
@@ -105,7 +108,6 @@ const PersonalProfileForm = () => {
 
     return (
         <Container fluid className="px-5 pt-5 bg-dark min-vh-100">
-            {/* Thông tin cá nhân - LUÔN hiển thị nếu có userInfo */}
             {userInfo && (
                 <div className="d-flex align-items-center mb-5 p-4 rounded-4 bg-black shadow" style={{ border: '1px solid #ffffff22' }}>
                     <div style={{ position: 'relative', display: 'inline-block', marginRight: 48 }}>
@@ -207,12 +209,13 @@ const PersonalProfileForm = () => {
                         )}
                     </div>
                     <div>
-                        <div className="fw-bold text-white" style={{ fontSize: 56, marginBottom: 12, lineHeight: 1 }}>
+                        <div className="fw-bold text-white" style={{ fontSize: 46, marginBottom: 24, lineHeight: 1 }}>
                             {userInfo.fullname}
                         </div>
-                        <div className="text-light" style={{ fontSize: 15, lineHeight: '1.8' }}>
+                        <div className="personal-detail">
                             <span className="me-4"><strong>Giới tính:</strong> {genderToString(userInfo.gender)}</span>
-                            <span><strong>Ngày sinh:</strong> {userInfo.dateOfBirth ? new Date(userInfo.dateOfBirth).toLocaleDateString('vi-VN') : 'Không xác định'}</span>
+                            <span className="me-4"><strong>Ngày sinh:</strong> {userInfo.dateOfBirth ? new Date(userInfo.dateOfBirth).toLocaleDateString('vi-VN') : 'Không xác định'}</span>
+                            <span><strong>Lượt theo dõi:</strong> {followCount}</span>
                         </div>
                         {/* Nút Theo dõi - LUÔN hiển thị nếu không phải chính mình */}
                         {user?.id && user.id !== profileId && (
@@ -225,7 +228,7 @@ const PersonalProfileForm = () => {
                                 {isFollowing ? (
                                     <>
                                         <PersonCheckFill size={16} />
-                                        Đã theo dõi
+                                        Hủy theo dõi
                                     </>
                                 ) : (
                                     <>
@@ -263,7 +266,7 @@ const PersonalProfileForm = () => {
                         </div>
                     ) : (
                         <Row>
-                            {tracks.filter(track => track.isApproved).map(track => (
+                            {tracks.map(track => (
                                 <Col xs={12} key={track.id} className="mb-3">
                                     <Card className="d-flex flex-row align-items-center bg-black text-light border-0 shadow rounded-4 p-3 mb-3">
                                         <div
@@ -282,6 +285,9 @@ const PersonalProfileForm = () => {
                                                 alt={track.title}
                                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                             />
+                                            {!track.isPublic && (
+                                                <span className="position-absolute top-0 end-0 m-1 badge text-dark bg-warning">👑 VIP</span>
+                                            )}
                                         </div>
 
                                         <div className="flex-grow-1">

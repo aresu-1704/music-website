@@ -233,4 +233,18 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/cover_images"
 });
 
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "storage", "avatar")),
+    RequestPath = "/avatar"
+});
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "storage", "avatar")),
+    RequestPath = "/playlist_cover"
+});
+
 app.Run();

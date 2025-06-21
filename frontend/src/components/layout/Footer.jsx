@@ -220,6 +220,9 @@ const Footer = () => {
         if (currentTrack?.isPublic === false) {
             if (playlist.length > 1) {
                 playNext();
+                if (currentTrackIndex === playlist.length - 1) {
+                    playTrackList([], 0);
+                }
             } else {
                 playTrackList([], 0);
             }

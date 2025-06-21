@@ -7,13 +7,7 @@ namespace backend.Interfaces
 {
     public interface ITrackService
     {
-        Task<Track> UploadTrackAsync(
-            IFormFile file,
-            string title,
-            string? artistId,
-            string[]? genre,
-            string? cover
-        );
+        Task<Track> UploadTrackAsync(IFormFile file, string title, string? artistId, string[]? genre, string? cover);
         Task<List<TrackAdminView>> GetAllTrack();
         Task<Track?> GetByIdAsync(string id);
         Task<List<TrackThumbnail>> GetTopPlayedThumbnailsAsync(int limit = 20);
@@ -21,8 +15,7 @@ namespace backend.Interfaces
         Task<TrackMusic> GetMusicByIdAsync(string id);
         Task<string> UpdatePlayCount(string id);
         Task<TrackInfo> GetTrackInfo(string id);
-        Task<List<Track>> GetPublicApprovedTracksByArtistIdAsync(string artistId);
-        Task<List<Track>> GetApprovedTracksByArtistIdAsync(string artistId);
+        Task<List<Track>> GetTracksByArtistIdAsync(string artistId);
         Task<UserTracksResponse> GetUserTracksResponseAsync(string profileId);
         Task ApproveTrack(string id);
         Task ChangePublicStatus(string id);

@@ -1,11 +1,22 @@
-// components/navbar/NavbarUserDropdown.jsx
 import { Link } from 'react-router-dom';
 import { Dropdown } from 'react-bootstrap';
-import { FaUser, FaShieldAlt, FaSignOutAlt, FaCogs, FaHeart, FaEye } from 'react-icons/fa';
+import {
+    FaUser,
+    FaShieldAlt,
+    FaSignOutAlt,
+    FaGem,        // biểu tượng VIP/Premium
+    FaHeart,
+    FaEye,
+    FaIdBadge     // biểu tượng thông tin tài khoản
+} from 'react-icons/fa';
 
 const NavbarUserDropdown = ({ user, onLogout }) => (
     <Dropdown align="end">
-        <Dropdown.Toggle variant="link" id="dropdown-user" className="nav-link text-danger d-flex align-items-center gap-2">
+        <Dropdown.Toggle
+            variant="link"
+            id="dropdown-user"
+            className="nav-link text-danger d-flex align-items-center gap-2"
+        >
             <div
                 style={{
                     width: "32px",
@@ -26,16 +37,19 @@ const NavbarUserDropdown = ({ user, onLogout }) => (
         </Dropdown.Toggle>
 
         <Dropdown.Menu className="custom-dropdown-menu">
+            <Dropdown.Item as={Link} to={`/personal-profile/${user.id}`}>
+                <FaUser className="me-2" /> Trang cá nhân
+            </Dropdown.Item>
             <Dropdown.Item as={Link} to={`/profile/${user.id}`}>
-                <FaUser className="me-2" /> Thông tin cá nhân
+                <FaIdBadge className="me-2" /> Thông tin tài khoản
             </Dropdown.Item>
             {user.role !== "admin" && (
                 <>
                     <Dropdown.Item as={Link} to={`/upgrade/${user.id}`}>
-                        <FaCogs className="me-2" /> Nâng cấp tài khoản
+                        <FaGem className="me-2 text-warning" /> Nâng cấp VIP
                     </Dropdown.Item>
                     <Dropdown.Item as={Link} to="/likes">
-                        <FaHeart className="me-2" /> Đã thích
+                        <FaHeart className="me-2 text-danger" /> Đã thích
                     </Dropdown.Item>
                     <Dropdown.Item as={Link} to="/follow">
                         <FaEye className="me-2" /> Đang theo dõi

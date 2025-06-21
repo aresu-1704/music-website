@@ -55,13 +55,13 @@ const App = () => (
                             <Route path="/histories" element={<HistoryForm />} />
                             <Route path="/track-management" element={<AdminTrackList /> } />
                             <Route path="/likes" element={<FavoriteForm />} />
-                            <Route path={"/upload"} element={<UploadTrackForm />} />
+                            <Route path="/upload" element={<UploadTrackForm />} />
 
 
 
 
-                            <Route path={"/my-tracks"} element={<MyTrackForm />} />
-                            <Route path={"/statistic"} element={<RevenueChartForm />} />
+                            <Route path="/my-tracks/:profileId" element={<MyTrackForm />} />
+                            <Route path="/statistic" element={<RevenueChartForm />} />
                             <Route path="/*" element={<NotFoundForm />} />
                         </Routes>
                     </MainLayout>

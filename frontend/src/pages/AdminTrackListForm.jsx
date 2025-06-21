@@ -11,7 +11,8 @@ import { useAuth } from "../context/authContext";
 import '../styles/AdminTrackList.css';
 import {useMusicPlayer} from "../context/musicPlayerContext";
 import {useLoginSessionOut} from "../services/loginSessionOut";
-import {ToastContainer} from "react-toastify";
+import {deleteAllFavorites} from "../services/favoritesService";
+import {ToastContainer} from "react-toastify"; // nhớ tạo file này
 
 const AdminTrackList = () => {
     const { user } = useAuth();
@@ -150,7 +151,6 @@ const AdminTrackList = () => {
                                         value={searchQuery}
                                         onChange={e => setSearchQuery(e.target.value)}
                                     />
-
                                 </InputGroup>
                             </Col>
                         </Row>
@@ -160,7 +160,7 @@ const AdminTrackList = () => {
                             <p className="text-muted">Không có bài nhạc nào phù hợp.</p>
                         ) : (
                             filteredTracks.map(track => (
-                                <Card key={track.trackId} className="mb-3 track-card">
+                                <Card key={track.trackId} className="mb-3 admin-track-card">
                                     <Row className="g-0 align-items-center">
                                         <Col xs={12} md="auto">
                                             <Card.Img
@@ -200,18 +200,23 @@ const AdminTrackList = () => {
                                                                     <strong>Tình trạng:</strong>{' '}
                                                                     {track.isApproved ? (
                                                                         <span className="text-success">Đã duyệt</span>
-                                                                        ) : (
+                                                                    ) : (
                                                                         <span className="text-danger">Chưa duyệt</span>
-                                                                        )}<br />
+                                                                    )}<br />
                                                                 </>
                                                             )}
 
-                                                            <strong>Hiển thị:</strong>{' '}
-                                                            {track.isPublic ? (
-                                                                <span className="text-primary">Công khai</span>
-                                                            ) : (
-                                                                <span className="text-warning">VIP</span>
+                                                            {track.uploaderId === null && (
+                                                                <>
+                                                                    <strong>Hiển thị:</strong>{' '}
+                                                                    {track.isPublic ? (
+                                                                        <span className="text-primary">Công khai</span>
+                                                                    ) : (
+                                                                        <span className="text-warning">VIP</span>
+                                                                    )}
+                                                                </>
                                                             )}
+
                                                         </Card.Text>
                                                     </div>
 

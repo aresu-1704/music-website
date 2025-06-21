@@ -20,20 +20,18 @@ namespace backend.Services
             var tracks = await _trackRepository.SearchByTitleOrArtistAsync(query);
             var users = await _userRepository.SearchByUsernameOrNameAsync(query);
 
-            // Lấy danh sách artistId duy nhất, loại bỏ null
             var artistIds = tracks
                 .Where(t => !string.IsNullOrEmpty(t.ArtistId))
                 .Select(t => t.ArtistId)
                 .Distinct()
                 .ToList();
 
-            // Lấy thông tin user tương ứng với artistId
             var artists = await _userRepository.GetUsersByIdsAsync(artistIds);
             var artistDict = artists.ToDictionary(u => u.Id, u => u.Name);
 
             var trackDtos = tracks.Select(track =>
             {
-                string artistName = null;
+                string? artistName = null;
                 if (!string.IsNullOrEmpty(track.ArtistId) &&
                     artistDict.TryGetValue(track.ArtistId, out var name))
                 {
@@ -57,20 +55,11 @@ namespace backend.Services
 
             var userDtoTasks = users.Select(async user =>
             {
-                string avatarBase64 = null;
+                string? avatarBase64 = null;
                 if (!string.IsNullOrEmpty(user.AvatarUrl))
                 {
-                    try
-                    {
-                        byte[] imageBytes = await System.IO.File.ReadAllBytesAsync(user.AvatarUrl);
-                        avatarBase64 = Convert.ToBase64String(imageBytes);
-                        avatarBase64 = $"data:image/jpeg;base64,{avatarBase64}";
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"Lỗi khi đọc ảnh: {ex.Message}");
-                        avatarBase64 = null;
-                    }
+                    var fileName = Path.GetFileName(user.AvatarUrl);
+                    avatarBase64 = $"http://localhost:5270/avatar/{fileName}";
                 }
 
                 return new SearchUserDto
@@ -90,7 +79,5 @@ namespace backend.Services
                 Users = usersDto,
             };
         }
-
-
     }
 }

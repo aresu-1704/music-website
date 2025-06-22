@@ -107,9 +107,13 @@ const AdminTrackList = () => {
             filterStatus === 'all' ||
             (filterStatus === 'approved' && t.isApproved) ||
             (filterStatus === 'pending' && !t.isApproved);
+
         const uploaderName = (t.uploaderName || 'Musicresu').toLowerCase();
-        const matchArtist = uploaderName.includes(searchQuery.toLowerCase());
-        return matchStatus && matchArtist;
+        const title = (t.title || '').toLowerCase();
+
+        const matchSearch = uploaderName.includes(searchQuery.toLowerCase()) || title.includes(searchQuery.toLowerCase());
+
+        return matchStatus && matchSearch;
     });
 
     const stats = {
@@ -151,7 +155,7 @@ const AdminTrackList = () => {
                     <Form.Control
                         type="text"
                         className="filter-input"
-                        placeholder="Tìm theo tên nghệ sĩ..."
+                        placeholder="Tìm theo tên nghệ sĩ hoặc tên bài hát..."
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
                     />

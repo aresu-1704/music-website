@@ -1,6 +1,6 @@
 // src/services/commentService.js
 
-const API_BASE = 'http://localhost:5270/api/Comment';
+const API_BASE = `${process.env.REACT_APP_API_BASE_URL}/api/Comment`;
 
 export const getCommentsByTrackId = async (trackId) => {
     const res = await fetch(`${API_BASE}/comments/${trackId}`);

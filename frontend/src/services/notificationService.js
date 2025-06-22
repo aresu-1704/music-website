@@ -1,6 +1,6 @@
 // services/notificationService.js
 
-const API_BASE = 'http://localhost:5270/api/Notification'; // đổi URL tùy backend
+const API_BASE = `${process.env.REACT_APP_API_BASE_URL}/api/Notification`; // đổi URL tùy backend
 
 export const getNotificationsByUserId = async (userId) => {
     const res = await fetch(`${API_BASE}/my-notification/${userId}`,{

@@ -1,7 +1,8 @@
+const API_BASE = `${process.env.REACT_APP_API_BASE_URL}`;
 
 export const uploadTrack = async (formData, handleSessionOut) => {
     try {
-        const res = await fetch('http://localhost:5270/api/Track/upload', {
+        const res = await fetch(`${API_BASE}/api/Track/upload`, {
             method: 'POST',
             body: formData,
             headers: {
@@ -21,7 +22,7 @@ export const uploadTrack = async (formData, handleSessionOut) => {
 };
 
 export async function getTopTracks() {
-    const res = await fetch('http://localhost:5270/api/Track/top-played', {
+    const res = await fetch(`${API_BASE}/api/Track/top-played`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -30,15 +31,13 @@ export async function getTopTracks() {
 
     if (res.status === 200) {
         return res.json();
-    }
-
-    else {
+    } else {
         return { success: false, status: res.status };
     }
 }
 
 export async function getTopLikeTracks() {
-    const res = await fetch('http://localhost:5270/api/Track/top-like', {
+    const res = await fetch(`${API_BASE}/api/Track/top-like`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -47,15 +46,13 @@ export async function getTopLikeTracks() {
 
     if (res.status === 200) {
         return res.json();
-    }
-
-    else {
+    } else {
         return { success: false, status: res.status };
     }
 }
 
 export const getTrackById = async (id) => {
-    const res = await fetch(`http://localhost:5270/api/Track/track-info/${id}`, {
+    const res = await fetch(`${API_BASE}/api/Track/track-info/${id}`, {
         method: 'GET',
     });
 
@@ -67,7 +64,7 @@ export const getTrackById = async (id) => {
 };
 
 export const updateTrackPlayCount = async (id) => {
-    const res = await fetch(`http://localhost:5270/api/Track/play-count/${id}`, {
+    const res = await fetch(`${API_BASE}/api/Track/play-count/${id}`, {
         method: 'PUT',
     });
 
@@ -77,7 +74,7 @@ export const updateTrackPlayCount = async (id) => {
 }
 
 export const getTrackDetail = async (trackId) => {
-    const response = await fetch(`http://localhost:5270/api/Track/track-detail/${trackId}`, {
+    const response = await fetch(`${API_BASE}/api/Track/track-detail/${trackId}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -91,18 +88,16 @@ export const getTrackDetail = async (trackId) => {
     return data;
 };
 
-
 export const getTracksByArtistId = async (profileId) => {
-    const res = await fetch(`http://localhost:5270/api/Profile/my-tracks/${profileId}`);
+    const res = await fetch(`${API_BASE}/api/Profile/my-tracks/${profileId}`);
     if (!res.ok) {
         throw new Error('Không thể lấy danh sách bài hát.');
     }
     return await res.json();
 };
 
-
 export const getAllTracks = async () => {
-    const res = await fetch('http://localhost:5270/api/Track/all-track', {
+    const res = await fetch(`${API_BASE}/api/Track/all-track`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -117,7 +112,7 @@ export const getAllTracks = async () => {
 }
 
 export const changeApprove = async (trackId) => {
-    const res = await fetch(`http://localhost:5270/api/Track/approve/${trackId}`, {
+    const res = await fetch(`${API_BASE}/api/Track/approve/${trackId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -129,9 +124,8 @@ export const changeApprove = async (trackId) => {
     }
 }
 
-
 export const changePublic = async (trackId) => {
-    const res = await fetch(`http://localhost:5270/api/Track/public/${trackId}`, {
+    const res = await fetch(`${API_BASE}/api/Track/public/${trackId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -144,7 +138,7 @@ export const changePublic = async (trackId) => {
 }
 
 export const deleteTrack = async (trackId, handleSessionOut) => {
-    const res = await fetch(`http://localhost:5270/api/Track/delete/${trackId}`, {
+    const res = await fetch(`${API_BASE}/api/Track/delete/${trackId}`, {
         method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
@@ -154,9 +148,7 @@ export const deleteTrack = async (trackId, handleSessionOut) => {
 
     if (res.status === 401 || res.status === 403) {
         handleSessionOut();
-    }
-
-    else if (!res.ok){
+    } else if (!res.ok){
         throw new Error(res.statusText);
     }
 }

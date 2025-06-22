@@ -157,23 +157,18 @@ builder.Services.AddAuthentication("Bearer")
 
             OnTokenValidated = async context =>
             {
-                // Lấy service kiểm tra blacklist token từ DI container
                 var tokenBlacklistService = context.HttpContext.RequestServices.GetRequiredService<ITokenBlacklistService>();
 
-                // Lấy claim jti (unique id của token) trong token vừa được xác thực
                 var jti = context.Principal?.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Jti)?.Value;
 
-                // Nếu token không có jti thì fail xác thực
                 if (string.IsNullOrEmpty(jti))
                 {
                     context.Fail("Token does not contain jti");
                     return;
                 }
 
-                // Kiểm tra jti này có bị blacklist hay không (ví dụ bị logout trước đó)
                 var isBlacklisted = await tokenBlacklistService.IsBlacklistedAsync(jti);
 
-                // Nếu token nằm trong blacklist thì fail xác thực
                 if (isBlacklisted)
                 {
                     context.Fail("Token is blacklisted");
@@ -187,13 +182,13 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:3000") // domain frontend
+            policy.WithOrigins("http://localhost:3000")
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
 });
 
-// Cái này tao cũng không biết cấu hình cái gì đừng hỏi tao
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll",
@@ -214,7 +209,6 @@ StartRedisIfNotRunning();
 
 var app = builder.Build();
 
-// Bật Swagger nếu đang ở môi trường Development
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

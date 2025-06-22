@@ -13,7 +13,7 @@ const MainLayout = ({ children }) => {
             }}
         >
             <Navbar />
-            <main className="flex-fill">
+            <main className="flex-fill" style={{ paddingTop: '90px' }}>
                 {children}
             </main>
             <Footer />

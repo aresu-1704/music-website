@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Container, Card, Row, Col, Alert, Button, Spinner } from 'react-bootstrap';
+import { useLocation } from 'react-router-dom';
+import { Container, Row, Col, Alert, Spinner } from 'react-bootstrap';
 import axios from 'axios';
 
 export default function PaymentResultForm() {
     const location = useLocation();
-    const navigate = useNavigate();
     const [result, setResult] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+
+    const API_BASE = `${process.env.REACT_APP_API_BASE_URL}`
 
     useEffect(() => {
         const fetchResult = async () => {
@@ -25,7 +26,7 @@ export default function PaymentResultForm() {
             const success = responseCode === '00' && transactionStatus === '00';
 
             try {
-                const apiUrl = `http://localhost:5270/api/VnPay/return${location.search}`;
+                const apiUrl = `${API_BASE}/api/VnPay/return${location.search}`;
                 const response = await axios.get(apiUrl);
 
                 setResult({

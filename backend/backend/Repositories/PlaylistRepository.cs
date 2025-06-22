@@ -70,10 +70,8 @@ namespace backend.Repositories
 
         public async Task AddTrackToPlaylistAsync(PlaylistTrack playlistTrack)
         {
-            // Tạo Id cho PlaylistTrack
             playlistTrack.Id = $"{playlistTrack.PlaylistId}_{playlistTrack.TrackId}";
             
-            // Lấy order cao nhất hiện tại
             var maxOrder = await _playlistTracks.Find(pt => pt.PlaylistId == playlistTrack.PlaylistId)
                 .SortByDescending(pt => pt.Order)
                 .Limit(1)

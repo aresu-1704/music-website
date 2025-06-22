@@ -50,7 +50,7 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className="navbar navbar-expand-lg navbar-light bg-black shadow px-4 py-3 mt-0">
+            <nav className="navbar navbar-expand-lg navbar-light bg-black shadow px-4 py-3 mt-0 fixed-top">
                 <div className="container-fluid">
                     <NavbarBrand />
 

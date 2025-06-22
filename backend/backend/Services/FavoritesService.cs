@@ -51,16 +51,10 @@ namespace backend.Services
             foreach (var trackId in tracksId)
             {
                 var track = await _trackRepository.GetByIdAsync(trackId);
-                string imageBase64 = null;
-                if (!string.IsNullOrEmpty(track.Cover))
-                {
-                    var coverPath = Path.Combine(Directory.GetCurrentDirectory(), "storage", "cover_images", track.Cover);
-                    if (File.Exists(coverPath))
-                    {
-                        var bytes = await File.ReadAllBytesAsync(coverPath);
-                        imageBase64 = "data:image/jpeg;base64," + Convert.ToBase64String(bytes);
-                    }
-                }
+                string? base64Image = !string.IsNullOrEmpty(track.Cover)
+                    ? $"http://localhost:5270/cover_images/{track.Cover}"
+                    : null;
+
                 tracks.Add(new FavoriteTracksResponse
                 {
                     trackId = track.Id,
@@ -69,7 +63,7 @@ namespace backend.Services
                     cover = track.Cover,
                     filename = track.Filename,
                     artistId = track.ArtistId,
-                    imageBase64 = imageBase64,
+                    imageBase64 = base64Image,
                 });
             }
             return tracks;                

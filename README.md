@@ -21,7 +21,7 @@
 | Thành phần     | Công nghệ                         |
 |----------------|----------------------------------|
 | Frontend       | React, React-Bootstrap, React Router DOM |
-| Backend        | ASP.NET Core Web API (.NET 7+)   |
+| Backend        | ASP.NET Core Web API (.NET 8+)   |
 | Database       | MongoDB                          |
 | Authentication | JWT                              |
 | Thanh toán     | VNPAY (Sandbox & Live supported) |

@@ -1,3 +1,7 @@
+<p>
+  <img src="preview.png" style="wight=100%" />
+</p>
+
 # 🎵 Musicresu – Nền tảng nghe nhạc hiện đại
 
 **Musicresu** là một nền tảng web nghe nhạc full-stack được xây dựng bằng **React**, **ASP.NET Core**, và **MongoDB**. Dự án hỗ trợ người dùng nghe nhạc, quản lý bài hát cá nhân, và thanh toán nâng cấp tài khoản thông qua **VNPAY**.

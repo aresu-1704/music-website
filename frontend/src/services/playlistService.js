@@ -1,6 +1,8 @@
+const API_BASE = `${process.env.REACT_APP_API_BASE_URL}`;
+
 export const getUserPlaylists = async (userId) => {
     try {
-        const response = await fetch(`http://localhost:5270/api/Playlist/user/${userId}`, {
+        const response = await fetch(`${API_BASE}/api/Playlist/user/${userId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -20,7 +22,7 @@ export const getUserPlaylists = async (userId) => {
 
 export const getPlaylistDetail = async (playlistId) => {
     try {
-        const response = await fetch(`http://localhost:5270/api/Playlist/${playlistId}`, {
+        const response = await fetch(`${API_BASE}/api/Playlist/${playlistId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -40,7 +42,7 @@ export const getPlaylistDetail = async (playlistId) => {
 
 export const createPlaylist = async (playlistData) => {
     try {
-        const response = await fetch('http://localhost:5270/api/Playlist', {
+        const response = await fetch(`${API_BASE}/api/Playlist`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -62,7 +64,7 @@ export const createPlaylist = async (playlistData) => {
 
 export const updatePlaylist = async (playlistId, playlistData) => {
     try {
-        const response = await fetch(`http://localhost:5270/api/Playlist/${playlistId}`, {
+        const response = await fetch(`${API_BASE}/api/Playlist/${playlistId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -84,7 +86,7 @@ export const updatePlaylist = async (playlistId, playlistData) => {
 
 export const deletePlaylist = async (playlistId) => {
     try {
-        const response = await fetch(`http://localhost:5270/api/Playlist/${playlistId}`, {
+        const response = await fetch(`${API_BASE}/api/Playlist/${playlistId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -105,7 +107,7 @@ export const deletePlaylist = async (playlistId) => {
 
 export const addTrackToPlaylist = async (playlistId, trackId) => {
     try {
-        const response = await fetch(`http://localhost:5270/api/Playlist/${playlistId}/tracks`, {
+        const response = await fetch(`${API_BASE}/api/Playlist/${playlistId}/tracks`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -127,7 +129,7 @@ export const addTrackToPlaylist = async (playlistId, trackId) => {
 
 export const removeTrackFromPlaylist = async (playlistId, trackId) => {
     try {
-        const response = await fetch(`http://localhost:5270/api/Playlist/${playlistId}/tracks/${trackId}`, {
+        const response = await fetch(`${API_BASE}/api/Playlist/${playlistId}/tracks/${trackId}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
@@ -148,7 +150,7 @@ export const removeTrackFromPlaylist = async (playlistId, trackId) => {
 
 export const getUserPlaylistLimits = async (userId) => {
     try {
-        const response = await fetch(`http://localhost:5270/api/Playlist/limits/${userId}`, {
+        const response = await fetch(`${API_BASE}/api/Playlist/limits/${userId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -164,4 +166,4 @@ export const getUserPlaylistLimits = async (userId) => {
     } catch (error) {
         throw error;
     }
-}; 
+};

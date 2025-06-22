@@ -1,4 +1,6 @@
-const BASE_URL = 'http://localhost:5270/api/History';
+const API_BASE = `${process.env.REACT_APP_API_BASE_URL}`;
+
+const BASE_URL = `${API_BASE}/api/History`;
 
 export const getUserHistory = async (userId) => {
     try {
@@ -14,7 +16,6 @@ export const getUserHistory = async (userId) => {
         throw error;
     }
 };
-
 
 export const deleteHistoryTrack = async (trackId) => {
     try {
@@ -46,4 +47,4 @@ export const deleteAllHistory = async () => {
         console.error('Error deleting all history:', error);
         throw error;
     }
-}; 
+};

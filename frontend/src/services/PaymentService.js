@@ -1,7 +1,8 @@
+const API_BASE = `${process.env.REACT_APP_API_BASE_URL}`;
 
 export const getPaymentsUrl = async (data) => {
     try {
-        const res = await fetch(`http://localhost:5270/api/VnPay/create`, {
+        const res = await fetch(`${API_BASE}/api/VnPay/create`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -25,4 +26,4 @@ export const getPaymentsUrl = async (data) => {
     catch (err) {
         return err.message;
     }
-}
+};

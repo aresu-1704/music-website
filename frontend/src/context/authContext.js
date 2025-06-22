@@ -2,9 +2,9 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import { queryClient } from "./queryClientContext";
 import {useNavigate} from "react-router-dom";
-import {useMusicPlayer} from "./musicPlayerContext";
 
 const AuthContext = createContext();
+const API_BASE = `${process.env.REACT_APP_API_BASE_URL}`
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState({ isLoggedIn: false });
@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }) => {
             setUser({isLoggedIn: false});
 
             const token = localStorage.getItem('token');
-            await fetch('http://localhost:5270/api/Auth/logout', {
+            await fetch(`${API_BASE}/api/Auth/logout`, {
                 method: 'POST',
                 headers: {
                     "ContentType": "application/json",

@@ -1,8 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 
+const API_BASE = `${process.env.REACT_APP_API_BASE_URL}`;
+
 export const fetchProfileData = async (userID) => {
     try {
-        const res = await fetch(`http://localhost:5270/api/Profile/my-profile/${userID}`, {
+        const res = await fetch(`${API_BASE}/api/Profile/my-profile/${userID}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -22,7 +24,7 @@ export const fetchProfileData = async (userID) => {
 
 export const getProfileData = async (userID) => {
     try {
-        const res = await fetch(`http://localhost:5270/api/Profile/profile/${userID}`, {
+        const res = await fetch(`${API_BASE}/api/Profile/profile/${userID}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -42,70 +44,58 @@ export const getProfileData = async (userID) => {
 
 export const updatePersonalData = async (userID, data) => {
     try {
-        const res = await fetch(`http://localhost:5270/api/Profile/personal/${userID}`, {
+        const res = await fetch(`${API_BASE}/api/Profile/personal/${userID}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
             },
             body: data,
-        })
+        });
 
         if (res.ok) {
-            return "Thành công"
-        }
-
-        else if (res.status === 403 ||  res.status === 401) {
+            return "Thành công";
+        } else if (res.status === 403 || res.status === 401) {
             return "Phiên đăng nhập hết hạn";
-        }
-
-        else if (res.status === 404) {
+        } else if (res.status === 404) {
             return "Không tìm thấy người dùng";
-        }
-
-        else if (res.status === 500) {
+        } else if (res.status === 500) {
             return "Máy chủ bảo trì";
         }
     }
     catch (error) {
         return error.message;
     }
-}
+};
 
 export const updatePersonalDataWithAvatar = async (userID, data) => {
     try {
-        const res = await fetch(`http://localhost:5270/api/Profile/personal-avt/${userID}`, {
+        const res = await fetch(`${API_BASE}/api/Profile/personal-avt/${userID}`, {
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
             },
             body: data,
-        })
+        });
 
         if (res.ok) {
-            return "Thành công"
-        }
-
-        else if (res.status === 403) {
+            return "Thành công";
+        } else if (res.status === 403) {
             return "Phiên đăng nhập hết hạn";
-        }
-
-        else if (res.status === 404) {
+        } else if (res.status === 404) {
             return "Không tìm thấy người dùng";
-        }
-
-        else if (res.status === 500) {
+        } else if (res.status === 500) {
             return "Máy chủ bảo trì";
         }
     }
     catch (error) {
-        return "Không thể kết nối đến maáy chủ"
+        return "Không thể kết nối đến máy chủ";
     }
-}
+};
 
 export const updateAddress = async (userID, address) => {
     try {
-        const res = await fetch(`http://localhost:5270/api/Profile/address/${userID}`, {
+        const res = await fetch(`${API_BASE}/api/Profile/address/${userID}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -123,7 +113,7 @@ export const updateAddress = async (userID, address) => {
 
 export const sendVerifyEmailOtp = async (userID) => {
     try {
-        const res = await fetch(`http://localhost:5270/api/Profile/send-verify-email-otp/${userID}`, {
+        const res = await fetch(`${API_BASE}/api/Profile/send-verify-email-otp/${userID}`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -139,7 +129,7 @@ export const sendVerifyEmailOtp = async (userID) => {
 
 export const verifyEmailOtp = async (userID, otp) => {
     try {
-        const res = await fetch(`http://localhost:5270/api/Profile/verify-email-otp/${userID}`, {
+        const res = await fetch(`${API_BASE}/api/Profile/verify-email-otp/${userID}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
